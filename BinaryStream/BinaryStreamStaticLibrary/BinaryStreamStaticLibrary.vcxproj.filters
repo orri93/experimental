@@ -15,10 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BinaryStreamFixture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\BinaryStream\FourBitNumberProtocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\BinaryStream\FourBitNumberProtocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
