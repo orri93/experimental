@@ -42,8 +42,6 @@ ffbnsp_size ffbsnp_CalculateFourBitLengthForWordBuffer(ffbnsp_size wordLength)
   return wordLength * 4;
 }
 
-
-
 ffbnsp_size ffbsnp_BytePackage(ffbnsp_ui8* buffer, ffbnsp_size byteLenght, ffbnsp_ui8* output, size_t outputReservedSize)
 {
   ffbnsp_ui8 value, lowFourBit, highFourBit;
@@ -58,8 +56,8 @@ ffbnsp_size ffbsnp_BytePackage(ffbnsp_ui8* buffer, ffbnsp_size byteLenght, ffbns
   {
     value = buffer[i];
     ffbsnp_SplitByteToTwoFourBit(value, &lowFourBit, &highFourBit);
-    lowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x00;
-    highFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x01;
+    lowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x00;
+    highFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x10;
 
     output[currentOutputPossition] = lowFourBit;
     if (++currentOutputPossition >= outputReservedSize - 1) {
@@ -93,10 +91,10 @@ ffbnsp_size ffbsnp_WordPackage(ffbnsp_ui16* buffer, ffbnsp_size wordLength, ffbn
     ffbsnp_SplitByteToTwoFourBit(highByte, &highByteLowFourBit, &highByteHighFourBit);
     
     // Specify it is a numbered stream and include count
-    lowByteLowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x00;
-    lowByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x01;
-    highByteLowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x02;
-    highByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_NUMBER_BIT | 0x03;
+    lowByteLowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x00;
+    lowByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x10;
+    highByteLowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x20;
+    highByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x30;
 
     output[currentOutputPossition] = lowByteLowFourBit;
     if (++currentOutputPossition >= outputReservedSize - 1) {
