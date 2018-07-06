@@ -42,15 +42,23 @@ ffbnsp_size ffbsnp_CalculateFourBitLengthForWordBuffer(ffbnsp_size wordLength)
   return wordLength * 4;
 }
 
-ffbnsp_size ffbsnp_BytePackage(ffbnsp_ui8* buffer, ffbnsp_size byteLenght, ffbnsp_ui8* output, size_t outputReservedSize)
+ffbnsp_size ffbsnp_BytePackage(
+  ffbnsp_ui8* buffer,
+  ffbnsp_size byteLenght,
+  ffbnsp_ui8* output,
+  ffbnsp_size outputReservedSize,
+  ffbnsp_size startPosition,
+  int* checksum)
 {
   ffbnsp_ui8 value, lowFourBit, highFourBit;
-  ffbnsp_size currentOutputPossition = 0;
+  ffbnsp_size currentOutputPossition = startPosition;
 
   if (outputReservedSize < 2)
   {
     return -1;
   }
+
+  *checksum = 0;
 
   for (ffbnsp_size i = 0; i < byteLenght; i++)
   {
@@ -58,6 +66,9 @@ ffbnsp_size ffbsnp_BytePackage(ffbnsp_ui8* buffer, ffbnsp_size byteLenght, ffbns
     ffbsnp_SplitByteToTwoFourBit(value, &lowFourBit, &highFourBit);
     lowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x00;
     highFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x10;
+
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & lowFourBit;
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & highFourBit;
 
     output[currentOutputPossition] = lowFourBit;
     if (++currentOutputPossition >= outputReservedSize - 1) {
@@ -71,17 +82,26 @@ ffbnsp_size ffbsnp_BytePackage(ffbnsp_ui8* buffer, ffbnsp_size byteLenght, ffbns
   return currentOutputPossition;
 }
 
-ffbnsp_size ffbsnp_WordPackage(ffbnsp_ui16* buffer, ffbnsp_size wordLength, ffbnsp_ui8* output, ffbnsp_size outputReservedSize)
+ffbnsp_size ffbsnp_WordPackage(
+  ffbnsp_ui16* buffer,
+  ffbnsp_size wordLength,
+  ffbnsp_ui8* output,
+  ffbnsp_size outputReservedSize,
+  ffbnsp_size startPosition,
+  int* checksum
+  )
 {
   ffbnsp_ui8 lowByte, highByte, lowByteLowFourBit, lowByteHighFourBit, highByteLowFourBit, highByteHighFourBit;
   ffbnsp_ui16 value;
 
-  ffbnsp_size currentOutputPossition = 0;
+  ffbnsp_size currentOutputPossition = startPosition;
 
   if (outputReservedSize < 4)
   {
     return -1;
   }
+
+  *checksum = 0;
 
   for (ffbnsp_size i = 0; i < wordLength; i++)
   {
@@ -95,6 +115,11 @@ ffbnsp_size ffbsnp_WordPackage(ffbnsp_ui16* buffer, ffbnsp_size wordLength, ffbn
     lowByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x10;
     highByteLowFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x20;
     highByteHighFourBit |= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_VALUE_OR_CHECKSUM | 0x30;
+
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & lowByteLowFourBit;
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & lowByteHighFourBit;
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & highByteLowFourBit;
+    *checksum ^= BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_LOWER_FOUR_BIT_MASK & highByteHighFourBit;
 
     output[currentOutputPossition] = lowByteLowFourBit;
     if (++currentOutputPossition >= outputReservedSize - 1) {
@@ -116,7 +141,100 @@ ffbnsp_size ffbsnp_WordPackage(ffbnsp_ui16* buffer, ffbnsp_size wordLength, ffbn
   return currentOutputPossition;
 }
 
+ffbnsp_size ffbsnp_CalculatePackageHeaderSize(int valueCount, int* valueLenght)
+{
+  ffbnsp_size headerSize = (
+    1 + // Package begins
+    1 + // Number of values (type)
+    1   // Payload length in bytes
+    );
+  return headerSize;
+}
 
+ffbnsp_size ffbsnp_CalculatePackagePayloadSize(int valueCount, int* valueLength)
+{
+  ffbnsp_size payloadSize = 0;
+  for (int i = 0; i < valueCount; i++)
+  {
+    int vlen = valueLength[i];
+    payloadSize += (
+      2 +     // Type and length
+      vlen +  // Actual value
+      1       // Value checksum
+      );
+  }
+  return
+    payloadSize +
+    1               // Total checksum
+    ;
+}
+
+ffbnsp_size ffbsnp_CreatePackageHeader(int valueCount, int* valueLength, ffbnsp_ui8* output, size_t outputReservedSize)
+{
+  ffbnsp_size headerSize = ffbsnp_CalculatePackageHeaderSize(valueCount, valueLength);
+  if (outputReservedSize < headerSize)
+  {
+    return -1;
+  }
+
+  if (valueCount > BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_COUNT_MASK)
+  {
+    return -1;
+  }
+
+  ffbnsp_size payloadSize = ffbsnp_CalculatePackagePayloadSize(valueCount, valueLength);
+  if (payloadSize > BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_LENGTH_MASK)
+  {
+    return -1;
+  }
+
+  int index = 0;
+  output[index++] = BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_START;
+  output[index++] = BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_COUNT |
+    (((ffbnsp_ui8)valueCount) & BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_COUNT_MASK);
+  output[index++] = BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_LENGTH |
+    (((ffbnsp_ui8)payloadSize) & BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_LENGTH_MASK);
+  return index;
+}
+
+ffbnsp_size ffbsnp_CreatePackagePayloade(int valueCount, int* valueLength, int *valueType, int *value, ffbnsp_ui8* output, size_t outputReservedSize)
+{
+  ffbnsp_size payloadSize = ffbsnp_CalculatePackagePayloadSize(valueCount, valueLength);
+  if (outputReservedSize < payloadSize)
+  {
+    return -1;
+  }
+  
+  int index = 0;
+  ffbnsp_ui8 buffer[4];
+  for (int i = 0; i < valueCount; i++)
+  {
+    int type = valueType[i];
+    if (type > BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_VALUE_MASK)
+    {
+      return -1;
+    }
+    output[index++] = BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_VALUE |
+      (((ffbnsp_ui8)type) & BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_TYPE_VALUE_MASK);
+    int length = valueLength[i];
+    if (length > BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_VALUE_LENGTH_MASK)
+    {
+      return -1;
+    }
+    output[index++] = BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_VALUE_LENGTH |
+      (((ffbnsp_ui8)length) & BINARY_STREAM_FOUR_BIT_NUMBER_PROTOCOL_PACKAGE_CONTROL_VALUE_LENGTH_MASK);
+    switch (length)
+    {
+    case 2:
+      index = ffbsnp_BytePackage()
+      break;
+    case 4:
+      break;
+    default:
+      return -1;
+    }
+  }
+}
 
 #ifdef __cplusplus
 }       /* fds_four_bit_number_stream_protocol */
