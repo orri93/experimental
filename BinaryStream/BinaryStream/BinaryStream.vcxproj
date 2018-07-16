@@ -72,7 +72,7 @@
     <ClCompile Include="FourBitNumberProtocol.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\FourBitNumberProtocol.h" />
+    <ClInclude Include="..\include\FourBitNumberProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

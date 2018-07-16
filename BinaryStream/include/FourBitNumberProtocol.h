@@ -38,6 +38,7 @@ namespace fds_four_bit_number_stream_protocol
 typedef uint16_t ffbnsp_ui16;
 typedef uint8_t ffbnsp_ui8;
 typedef signed int ffbnsp_size;
+typedef int ffbnsp_int;
 
 void ffbsnp_SplitWordToTwoByte(ffbnsp_ui16 value, ffbnsp_ui8* low, ffbnsp_ui8* high);
 void ffbsnp_SplitByteToTwoFourBit(ffbnsp_ui8 value, ffbnsp_ui8* low, ffbnsp_ui8* high);
@@ -54,7 +55,7 @@ ffbnsp_size ffbsnp_BytePackage(
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize,
   ffbnsp_size startPosition,
-  int* checksum
+  ffbnsp_int* checksum
   );
 ffbnsp_size ffbsnp_WordPackage(
   ffbnsp_ui16* buffer,
@@ -62,23 +63,23 @@ ffbnsp_size ffbsnp_WordPackage(
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize,
   ffbnsp_size startPosition,
-  int* checksum
+  ffbnsp_int* checksum
   );
 
-ffbnsp_size ffbsnp_CalculatePackageHeaderSize(int valueCount, int* valueLenght);
-ffbnsp_size ffbsnp_CalculatePackagePayloadSize(int valueCount, int* valueLength);
+ffbnsp_size ffbsnp_CalculatePackageHeaderSize(ffbnsp_int valueCount, ffbnsp_int* valueLenght);
+ffbnsp_size ffbsnp_CalculatePackagePayloadSize(ffbnsp_int valueCount, ffbnsp_int* valueLength);
 
 ffbnsp_size ffbsnp_CreatePackageHeader(
-  int valueCount,
-  int* valueLength,
+  ffbnsp_int valueCount,
+  ffbnsp_int* valueLength,
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize
   );
 ffbnsp_size ffbsnp_CreatePackagePayloade(
-  int valueCount,
-  int* valueLength,
-  int *valueType,
-  int *value,
+  ffbnsp_int valueCount,
+  ffbnsp_int* valueLength,
+  ffbnsp_int *valueType,
+  ffbnsp_int *value,
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize
   );

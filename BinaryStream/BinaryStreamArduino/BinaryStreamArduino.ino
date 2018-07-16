@@ -4,14 +4,14 @@
  Author:	SigurdssonGO
 */
 
-#include "Library1.h"
+#include "BinaryStreamLibrary.h"
 #include "src\LocalHeader1.h"
 
-Library1Class lib1 = Library1Class();
+BinaryStreamLibraryClass lib1 = BinaryStreamLibraryClass();
 
 // define prototypes for any methods that use 'user types' created in .ino code or use cpp/h files
 //
-void test(Library1Class _lib1);
+void test(BinaryStreamLibraryClass _lib1);
 
 
 // methods below here
@@ -31,7 +31,7 @@ void loop() {
 }
 
 //This method demonstrates 1) using a library 2) using user types as function params
-void test(Library1Class _lib1)
+void test(BinaryStreamLibraryClass _lib1)
 {
 	_lib1.hello("Hello Visual Micro");
 }

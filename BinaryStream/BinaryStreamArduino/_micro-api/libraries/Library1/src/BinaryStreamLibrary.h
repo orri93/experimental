@@ -2,13 +2,12 @@
 #include "Arduino.h"
 #include "FourBitNumberProtocol.h"
 
-class Library1Class
+class BinaryStreamLibraryClass
 {
 public:
-	Library1Class();
-	~Library1Class();
+  BinaryStreamLibraryClass();
+  ~BinaryStreamLibraryClass();
 
 	void hello(String msg);
-
 };
 

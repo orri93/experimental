@@ -48,7 +48,7 @@ ffbnsp_size ffbsnp_BytePackage(
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize,
   ffbnsp_size startPosition,
-  int* checksum)
+  ffbnsp_int* checksum)
 {
   ffbnsp_ui8 value, lowFourBit, highFourBit;
   ffbnsp_size currentOutputPossition = startPosition;
@@ -88,7 +88,7 @@ ffbnsp_size ffbsnp_WordPackage(
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize,
   ffbnsp_size startPosition,
-  int* checksum
+  ffbnsp_int* checksum
   )
 {
   ffbnsp_ui8 lowByte, highByte, lowByteLowFourBit, lowByteHighFourBit, highByteLowFourBit, highByteHighFourBit;
@@ -141,7 +141,7 @@ ffbnsp_size ffbsnp_WordPackage(
   return currentOutputPossition;
 }
 
-ffbnsp_size ffbsnp_CalculatePackageHeaderSize(int valueCount, int* valueLenght)
+ffbnsp_size ffbsnp_CalculatePackageHeaderSize(ffbnsp_int valueCount, ffbnsp_int* valueLenght)
 {
   ffbnsp_size headerSize = (
     1 + // Package begins
@@ -151,7 +151,7 @@ ffbnsp_size ffbsnp_CalculatePackageHeaderSize(int valueCount, int* valueLenght)
   return headerSize;
 }
 
-ffbnsp_size ffbsnp_CalculatePackagePayloadSize(int valueCount, int* valueLength)
+ffbnsp_size ffbsnp_CalculatePackagePayloadSize(ffbnsp_int valueCount, ffbnsp_int* valueLength)
 {
   ffbnsp_size payloadSize = 0;
   for (int i = 0; i < valueCount; i++)
@@ -169,7 +169,7 @@ ffbnsp_size ffbsnp_CalculatePackagePayloadSize(int valueCount, int* valueLength)
     ;
 }
 
-ffbnsp_size ffbsnp_CreatePackageHeader(int valueCount, int* valueLength, ffbnsp_ui8* output, ffbnsp_size outputReservedSize)
+ffbnsp_size ffbsnp_CreatePackageHeader(ffbnsp_int valueCount, ffbnsp_int* valueLength, ffbnsp_ui8* output, ffbnsp_size outputReservedSize)
 {
   ffbnsp_size headerSize = ffbsnp_CalculatePackageHeaderSize(valueCount, valueLength);
   if (outputReservedSize < headerSize)
@@ -198,17 +198,18 @@ ffbnsp_size ffbsnp_CreatePackageHeader(int valueCount, int* valueLength, ffbnsp_
 }
 
 ffbnsp_size ffbsnp_CreatePackagePayloade(
-  int valueCount,
-  int* valueLength,
-  int *valueType,
-  int *value,
+  ffbnsp_int valueCount,
+  ffbnsp_int* valueLength,
+  ffbnsp_int* valueType,
+  ffbnsp_int* value,
   ffbnsp_ui8* output,
   ffbnsp_size outputReservedSize
   )
 {
-  int i, index, checksum, totalchecksum, type, length;
+  ffbnsp_int i, checksum, totalchecksum, type, length;
   ffbnsp_ui8  buffer8[1];
   ffbnsp_ui16 buffer16[1];
+  ffbnsp_size index;
 
   ffbnsp_size payloadSize = ffbsnp_CalculatePackagePayloadSize(valueCount, valueLength);
   if (outputReservedSize < payloadSize)
@@ -251,7 +252,7 @@ ffbnsp_size ffbsnp_CreatePackagePayloade(
     }
     totalchecksum ^= checksum;
   }
-
+  return index;
 }
 
 #ifdef __cplusplus

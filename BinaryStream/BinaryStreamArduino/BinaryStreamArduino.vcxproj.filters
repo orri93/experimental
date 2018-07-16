@@ -34,18 +34,21 @@
     <None Include="sharing project code.txt">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="_micro-api\libraries\Library1\src\Library1.cpp">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="_micro-api\libraries\Library1\src\Library1.h">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="src\LocalHeader1.h">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="_micro-api\libraries\Library1\src\BinaryStreamLibrary.h">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="_micro-api\libraries\Library1\src\BinaryStreamLibrary.cpp">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.BinaryStreamArduino.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\FourBitNumberProtocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
