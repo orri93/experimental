@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>spring-boot-servlet-experimental</artifactId>
+	<groupId>gos.experimental</groupId>
+	<packaging>war</packaging>
+	<name>Spring Boot Servlet Sample</name>
+	<description>Spring Boot Servlet Sample</description>
+	<version>0.0.1-SNAPSHOT</version>
+	<url>http://projects.spring.io/spring-boot/</url>
+
+	<organization>
+		<name>Pivotal Software, Inc.</name>
+		<url>http://www.spring.io</url>
+	</organization>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<failOnMissingWebXml>false</failOnMissingWebXml>   
+		
+		
+	  <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- Properties for project and child projects -->
+    <nov.url>http://www.nov.com</nov.url>
+    <nov.cm.applications.version>0.0.1</nov.cm.applications.version>
+    <log4j2-log-path>file://var/log/</log4j2-log-path>
+
+    <!-- Version properties for dependencies -->
+    <org.springframework.boot-spring-boot-dependencies.version
+      >2.1.0.RELEASE</org.springframework.boot-spring-boot-dependencies.version>
+    <org.apache.camel-camel-parent.version>2.21.1</org.apache.camel-camel-parent.version>
+    <com.sun.xml.bind.version>2.2.11</com.sun.xml.bind.version>
+    <javax.xml.bind-jaxb-api.version>2.3.0</javax.xml.bind-jaxb-api.version>
+    <net.sf.saxon.version>8.7</net.sf.saxon.version>
+    <org.slf4j.version>1.7.25</org.slf4j.version>
+    <org.apache.logging.log4j.version>2.10.0</org.apache.logging.log4j.version>
+
+    <!-- Version properties for test dependency -->
+    <junit.version>4.12</junit.version>
+
+    <!-- Version properties for plug-ins -->
+    <org.codehaus.mojo-xml-maven-plugin.version 
+      >1.0.2</org.codehaus.mojo-xml-maven-plugin.version>
+    <org.codehaus.mojo-exec-maven-plugin.version>1.6.0</org.codehaus.mojo-exec-maven-plugin.version>
+    <org.springframework.boot-spring-boot-maven-plugin.version
+      >1.5.8.RELEASE</org.springframework.boot-spring-boot-maven-plugin.version>
+    <org.apache.maven.plugins-maven-compiler-plugin.version>3.7.0</org.apache.maven.plugins-maven-compiler-plugin.version>
+    <org.apache.maven.plugins-maven-resources-plugin.version>3.0.2</org.apache.maven.plugins-maven-resources-plugin.version>
+
+		<m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+		
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Logging dependency -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${org.apache.logging.log4j.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+			<!-- Spring Boot BOM -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${org.springframework.boot-spring-boot-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Camel BOM -->
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-parent</artifactId>
+				<version>${org.apache.camel-camel-parent.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			
+		</dependencies>		
+	</dependencyManagement>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+    
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+    
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.1.0.RELEASE</version>
+			</plugin>
+		</plugins>
+	</build>
+</project>

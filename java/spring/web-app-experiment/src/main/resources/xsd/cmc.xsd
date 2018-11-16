@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema 
+  elementFormDefault="qualified" 
+  targetNamespace="http://www.nov.com/schemas/cmc.xsd" 
+  xmlns:cmc="http://www.nov.com/schemas/cmc.xsd"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  version="1.0">
+
+  <xsd:complexType name="String">
+    <xsd:annotation>
+      <!-- xsd:appinfo>M</xsd:appinfo -->
+      <xsd:documentation xml:lang="en">The String Type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="activeModel" type="xsd:integer" />
+      <xsd:element name="axMd1" type="xsd:integer" />
+      <xsd:element name="torMd1" type="xsd:integer" />
+      <xsd:element name="torMd1" type="xsd:integer" />
+      <xsd:element name="data" maxOccurs="unbounded" type="xsd:decimal" />
+      <xsd:element name="ns" type="xsd:integer" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Well">
+    <xsd:annotation>
+      <!-- xsd:appinfo>M</xsd:appinfo -->
+      <xsd:documentation xml:lang="en">The Well Type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TrajData" maxOccurs="unbounded" type="xsd:decimal" />
+      <xsd:element name="nTraj" type="xsd:integer" />
+      <xsd:element name="BoreData"  maxOccurs="unbounded" type="xsd:decimal" />
+      <xsd:element name="nb" type="xsd:integer" />
+      <xsd:element name="Dr" type="xsd:integer" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ComprehensiveModelConfiguration">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en"
+      >The NOV Comprehensive Model Configuration Type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="String" type="cmc:String" />
+      <xsd:element name="Well" type="cmc:String" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:element
+    name="ComprehensiveModelConfiguration"
+    type="cmc:ComprehensiveModelConfiguration"
+  >
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en"
+      >The NOV Comprehensive Model Configuration root element</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+</xsd:schema>

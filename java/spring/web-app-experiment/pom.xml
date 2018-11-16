@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>gos.experimental</groupId>
+	<artifactId>web-app-experiment</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>web-app-experiment Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+
+
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Properties for project and child projects -->
+		<nov.url>http://www.nov.com</nov.url>
+		<nov.cm.applications.version>0.0.1</nov.cm.applications.version>
+		<log4j2-log-path>file://var/log/</log4j2-log-path>
+
+		<!-- Version properties for dependencies -->
+		<org.springframework-spring-framework-bom.version>5.1.2.RELEASE</org.springframework-spring-framework-bom.version>
+		<org.apache.camel-camel-parent.version>2.21.1</org.apache.camel-camel-parent.version>
+		<com.sun.xml.bind.version>2.2.11</com.sun.xml.bind.version>
+		<javax.xml.bind-jaxb-api.version>2.3.0</javax.xml.bind-jaxb-api.version>
+		<net.sf.saxon.version>8.7</net.sf.saxon.version>
+		<org.slf4j.version>1.7.25</org.slf4j.version>
+		<org.apache.logging.log4j.version>2.10.0</org.apache.logging.log4j.version>
+
+		<!-- Version properties for test dependency -->
+		<junit.version>4.12</junit.version>
+
+		<!-- Version properties for plug-ins -->
+		<org.codehaus.mojo-xml-maven-plugin.version>1.0.2</org.codehaus.mojo-xml-maven-plugin.version>
+		<org.codehaus.mojo-exec-maven-plugin.version>1.6.0</org.codehaus.mojo-exec-maven-plugin.version>
+		<org.springframework.boot-spring-boot-maven-plugin.version>1.5.8.RELEASE</org.springframework.boot-spring-boot-maven-plugin.version>
+		<org.apache.maven.plugins-maven-compiler-plugin.version>3.7.0</org.apache.maven.plugins-maven-compiler-plugin.version>
+		<org.apache.maven.plugins-maven-resources-plugin.version>3.0.2</org.apache.maven.plugins-maven-resources-plugin.version>
+
+		<org.junit-junit-bom.version>5.3.1</org.junit-junit-bom.version>
+
+		<m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Logging dependency -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${org.apache.logging.log4j.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+			<!-- Spring BOM -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>${org.springframework-spring-framework-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Camel BOM -->
+			<!-- dependency> <groupId>org.apache.camel</groupId> <artifactId>camel-parent</artifactId> 
+				<version>${org.apache.camel-camel-parent.version}</version> <scope>import</scope> 
+				<type>pom</type> </dependency -->
+
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${org.junit-junit-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>web-app-experiment</finalName>
+
+		<plugins>
+
+			<plugin>
+				<groupId>com.github.davidmoten.xsdforms</groupId>
+				<artifactId>xsd-forms-maven-plugin</artifactId>
+				<version>0.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- schema location can be on classpath or file system. Classpath is 
+						checked first -->
+					<schema>/resources/xsd/selection.xsd</schema>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
