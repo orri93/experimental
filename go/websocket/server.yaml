@@ -1,0 +1,3 @@
+# server configuration
+path: "/ws"
+port: 3001
