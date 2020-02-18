@@ -15,13 +15,15 @@ import (
 )
 
 var err error
-var start time
+
+var start time.Time
 
 const yamlconfigurationfile string = "server.yaml"
 
 type Configuration struct {
-	Path string `yaml:"path"`
-	Port uint16 `yaml:"port"`
+	Path  string `yaml:"path"`
+	Port  uint16 `yaml:"port"`
+	Delay uint32 `yaml:"delay"`
 }
 
 type Wrapper struct {
@@ -32,6 +34,8 @@ type Record struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
 }
+
+var configuration Configuration
 
 func logMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -55,13 +59,17 @@ func (configuration *Configuration) getConfiguration() *Configuration {
 func main() {
 	start = time.Now()
 
-	var configuration Configuration
-
 	configuration.getConfiguration()
+
+	fmt.Println("Path:", configuration.Path)
+	fmt.Println("Port:", configuration.Port)
+	fmt.Println("Delay:", configuration.Delay)
+
+	serv := fmt.Sprintf(":%d", configuration.Port)
 
 	logger := alice.New(logMiddleware)
 	http.Handle(configuration.Path, logger.Then(http.HandlerFunc(wsHandler)))
-	http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil)
+	http.ListenAndServe(serv, nil)
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -77,6 +85,7 @@ func (wrapper *Wrapper) createWrapper() *Wrapper {
 	elapsedns := elapsed.Nanoseconds()
 	wrapper.Record.X = float64(elapsedns) / 1000000000
 	wrapper.Record.Y = math.Sin(wrapper.Record.X)
+	return wrapper
 }
 
 func echo(conn *websocket.Conn) {
@@ -86,6 +95,7 @@ func echo(conn *websocket.Conn) {
 		if err = conn.WriteJSON(wrapper); err != nil {
 			log.Println(err)
 		}
-		time.Sleep(15 * time.Second)
+		delay := time.Duration(configuration.Delay) * time.Millisecond
+		time.Sleep(delay)
 	}
 }

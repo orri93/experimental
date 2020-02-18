@@ -1,3 +1,4 @@
 # server configuration
 path: "/ws"
 port: 3001
+delay: 5000
