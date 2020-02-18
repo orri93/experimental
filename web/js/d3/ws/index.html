@@ -23,13 +23,13 @@
     ></script>
   </head>
   <body>
-    <h1>Charts</h1>
-    <div id="chart-ring-year"></div>
-    <div id="chart-row-spenders"></div>
+    <h1>Chart</h1>
+
+    <div id="static-line"></div>
+    <div id="chart-line"></div>
 
     <script type="text/javascript">
-      var yearRingChart = dc.pieChart("#chart-ring-year"),
-        spenderRowChart = dc.rowChart("#chart-row-spenders");
+      var chartline = dc.pieChart("#chart-line");
 
       var connection = new WebSocket("ws://localhost:8001/websocket");
 

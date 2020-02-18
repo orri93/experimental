@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://dc-js.github.io/dc.js/css/dc.css"
+    />
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  </head>
+  <body>
+    <svg></svg>
+    <script type="text/javascript">
+      var api = "http://localhost:3001/api/v1";
+      document.addEventListener("DOMContentLoaded", function(event) {
+        fetch(api)
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          console.log(data)
+        })});
+    </script>
+  </body>
+</html>
