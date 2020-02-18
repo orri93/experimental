@@ -85,6 +85,7 @@ func (wrapper *Wrapper) createWrapper() *Wrapper {
 	elapsedns := elapsed.Nanoseconds()
 	wrapper.Record.X = float64(elapsedns) / 1000000000
 	wrapper.Record.Y = math.Sin(wrapper.Record.X)
+	fmt.Println("X:%f,Y:%f", wrapper.Record.X, wrapper.Record.Y)
 	return wrapper
 }
 
