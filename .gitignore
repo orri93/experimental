@@ -200,3 +200,10 @@ ModelManifest.xml
 node_modules/
 dist/
 npm-debug.log
+
+# CMake
+CMakeSettings.json
+
+# Visual Studio CMake
+.vs/
+out/

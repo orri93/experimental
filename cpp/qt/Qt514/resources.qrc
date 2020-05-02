@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/ExperimentalPanel.qml</file>
+        <file>qml/ExperimentalChart.qml</file>
+    </qresource>
+</RCC>
