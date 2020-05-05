@@ -3,5 +3,6 @@
         <file>qml/main.qml</file>
         <file>qml/ExperimentalPanel.qml</file>
         <file>qml/ExperimentalChart.qml</file>
+        <file>qml/Connection.qml</file>
     </qresource>
 </RCC>
