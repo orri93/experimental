@@ -61,8 +61,8 @@ ChartView {
 
   Connections {
     target: backend
-    onRefreshIntervalChanged: {
-      refreshTimer.interval = backend.refreshInterval;
+    onIntervalChanged: {
+      refreshTimer.interval = backend.interval;
     }
   }
 

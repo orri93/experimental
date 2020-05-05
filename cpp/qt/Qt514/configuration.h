@@ -2,19 +2,28 @@
 #define CONFIGURATION_H
 
 #include <memory>
+#include <functional>
 
 #include <QObject>
 #include <QSettings>
 #include <QMetaType>
+#include <QFileSystemWatcher>
 #include <QDebug>
+
+#include <items.h>
+#include <types.h>
 
 #define GOS_CONFIGURATION_FILE_PATH "Configuration.ini"
 
-class Configuration : public QObject {
+namespace configuration {
+enum class mode { normal, write, initializing };
+}
+
+class Configuration : public Items {
   Q_OBJECT
 
   /* Timer */
-  Q_PROPERTY(int refreshInterval READ refreshInterval WRITE setRefreshInterval NOTIFY refreshIntervalChanged)
+  Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)
 
   /* Experiment */
   Q_PROPERTY(bool boolean READ boolean WRITE setBoolean NOTIFY booleanChanged)
@@ -23,30 +32,24 @@ class Configuration : public QObject {
   Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
 
 public:
-  Configuration();
-
   explicit Configuration(const QString& filepath, QObject* parent = nullptr);
   explicit Configuration(QObject* parent = nullptr);
 
-  virtual QSettings* read();
-  virtual QSettings* write(const bool& sync);
+  virtual QSettings* initialize(const bool& watcher);
+
+  virtual QSettings* read(const bool& sync = false);
+  virtual QSettings* write(const bool& sync = false);
+
+  const configuration::mode& mode() const;
+  void setMode(const configuration::mode& mode);
 
   /*
    * Value access methods
    */
 
-   /* Timer configuration */
-  const int& refreshInterval() const;
-
-   /* Experiment configuration */
-  const bool& boolean() const;
-  const double& real() const;
-  const int& integer() const;
-  const QString& text() const;
-
 signals:
   /* Timer configuration */
-  void refreshIntervalChanged();
+  void intervalChanged();
 
   /* Experiment configuration */
   void booleanChanged();
@@ -56,7 +59,7 @@ signals:
 
 public slots:
   /* Timer configuration */
-  void setRefreshInterval(const int& value);
+  void setInterval(const int& value);
 
   /* Experiment configuration */
   void setBoolean(const bool& value);
@@ -67,28 +70,32 @@ public slots:
 protected:
   const QSettings::Format SettingsFormat = QSettings::IniFormat;
 
+private slots:
+  void onFileChanged(const QString& path);
+
 private:
   typedef std::unique_ptr<QSettings> SettingsPointer;
+  typedef std::unique_ptr<QFileSystemWatcher> WatcherPointer;
 
-  bool create();
+  void handle(std::function<void()> & changed);
+  void handle(std::function<void()> & changed, std::function<void()> & write);
+
+  void create();
+
+  /* Writing */
+  QSettings* startWriting();
+  void writeTimers();
+  void writeExperiment();
+  virtual QSettings* completeWriting(const bool& sync = false);
+
+  std::function<void()> fWriteTimers_;
+  std::function<void()> fWriteExperiment_;
 
   SettingsPointer settings_;
+  WatcherPointer watcher_;
 
   QString filepath_;
-
-  /* Timer configuration */
-  int refreshInterval_;
-
-  /* Experiment configuration */
-  bool boolean_;
-  double real_;
-  int integer_;
-  QString text_;
-
+  configuration::mode mode_;
 };
-
-namespace initialize {
-bool configuration(Configuration& configuration);
-}
 
 #endif // CONFIGURATION_H

@@ -4,8 +4,8 @@
 
 /* Timer configuration */
 #define GROUP_TIMER "Timer"
-#define KEY_REFRESH_INTERVAL "RefreshInterval"
-#define DEFAULT_REFRESH_INTERVAL 1000
+#define KEY_INTERVAL "Interval"
+#define DEFAULT_INTERVAL 1000
 
 /* Experiment configuration */
 #define GROUP_EXPERIMENT "Experiment"
@@ -18,31 +18,74 @@
 #define DEFAULT_INTEGER 666
 #define DEFAULT_TEXT "Geirmundur"
 
-Configuration::Configuration(
-    const QString& filepath,
-    QObject* parent) 
-  : QObject(parent), filepath_(filepath) {
+Configuration::Configuration(const QString& filepath, QObject* parent) :
+  Items(parent),
+  filepath_(filepath),
+  mode_(configuration::mode::normal) {
+  create();
 }
 
 Configuration::Configuration(QObject* parent) :
-  QObject(parent),
-  filepath_(GOS_CONFIGURATION_FILE_PATH) {
+  Items(parent),
+  filepath_(GOS_CONFIGURATION_FILE_PATH),
+  mode_(configuration::mode::normal) {
+  create();
 }
 
-QSettings* Configuration::read() {
-  if (!settings_) {
-    if (!create()) {
-      return nullptr;
+QSettings* Configuration::initialize(const bool& watcher) {
+  QSettings* result = nullptr;
+  //QString filepath = QDir::cleanPath(path_ + QDir::separator() + filename_);
+  settings_ = std::make_unique<QSettings>(filepath_, SettingsFormat);
+  if (settings_) {
+    setMode(configuration::mode::initializing);
+    result = read(false);
+    if (result != nullptr) {
+      if (watcher) {
+        watcher_ = std::make_unique<QFileSystemWatcher>(this);
+        if (watcher_) {
+          QObject::connect(
+            watcher_.get(),
+            &QFileSystemWatcher::fileChanged,
+            this,
+            &Configuration::onFileChanged);
+          watcher_->addPath(settings_->fileName());
+          qInfo() << "Watching Configuration from '"
+            << settings_->fileName() << "'";
+        } else {
+          qCritical() << "Out of memory when trying to create a "
+            "Qt File System Watcher";
+          result = nullptr;
+        }
+      } else {
+        qInfo() << "Reading Configuration from '"
+          << settings_->fileName() << "'";
+      }
+    } else {
+      qCritical() << "Failed to read configuration";
+      result = nullptr;
     }
+  } else {
+    qCritical() << "Out of memory when trying to create a Qt Setting";
+    result = nullptr;
   }
-  settings_->sync();
+  setMode(configuration::mode::normal);
+  return result;
+}
+
+QSettings* Configuration::read(const bool& sync) {
+  if (!settings_) {
+    return nullptr;
+  }
+  if (sync) {
+    settings_->sync();
+  }
 
   QVariant value;
 
   /* Timer configuration */
   settings_->beginGroup(GROUP_TIMER);
-  value = settings_->value(KEY_REFRESH_INTERVAL, DEFAULT_REFRESH_INTERVAL);
-  setRefreshInterval(value.toInt());
+  value = settings_->value(KEY_INTERVAL, DEFAULT_INTERVAL);
+  setInterval(value.toInt());
   settings_->endGroup();
 
   /* Experiment configuration */
@@ -61,109 +104,151 @@ QSettings* Configuration::read() {
 }
 
 QSettings* Configuration::write(const bool& sync) {
-  if (!settings_) {
-    if (!create()) {
-      return nullptr;
-    }
+  if (startWriting() == nullptr) {
+    return nullptr;
   }
 
-  /* Timer configuration */
+  writeTimers();
+  writeExperiment();
+
+  return completeWriting(sync);
+}
+
+void Configuration::create() {
+  fWriteExperiment_ = std::bind(&Configuration::writeExperiment, this);
+  fWriteTimers_ = std::bind(&Configuration::writeTimers, this);
+}
+
+/* Writing */
+QSettings* Configuration::startWriting() {
+  if (settings_) {
+    return settings_.get();
+  } else {
+    return nullptr;
+  }
+}
+void Configuration::writeTimers() {
   settings_->beginGroup(GROUP_TIMER);
-  settings_->setValue(KEY_REFRESH_INTERVAL, refreshInterval_);
+  settings_->setValue(KEY_INTERVAL, interval());
   settings_->endGroup();
-
-  /* Experiment configuration */
+}
+void Configuration::writeExperiment() {
   settings_->beginGroup(GROUP_EXPERIMENT);
-  settings_->setValue(KEY_BOOLEAN, boolean_);
-  settings_->setValue(KEY_REAL, real_);
-  settings_->setValue(KEY_INTEGER, integer_);
-  settings_->setValue(KEY_TEXT, text_);
+  settings_->setValue(KEY_BOOLEAN, boolean());
+  settings_->setValue(KEY_REAL, real());
+  settings_->setValue(KEY_REAL, integer());
+  settings_->setValue(KEY_REAL, text());
   settings_->endGroup();
-
+}
+QSettings* Configuration::completeWriting(const bool& sync) {
   if (sync) {
     settings_->sync();
   }
   return settings_.get();
 }
 
-bool Configuration::create() {
-  //QString filepath = QDir::cleanPath(path_ + QDir::separator() + filename_);
-  settings_.reset(new QSettings(filepath_, SettingsFormat));
-  if (settings_) {
-    return true;
-  } else {
-    qCritical() << "Out of memory when trying to create a Qt Setting";
-    return false;
+const configuration::mode& Configuration::mode() const {
+  return mode_;
+}
+void Configuration::setMode(const configuration::mode& mode) {
+  mode_ = mode;
+}
+
+void Configuration::handle(std::function<void()>& changed) {
+  switch (mode_) {
+  case configuration::mode::normal:
+    emit changed();
+    break;
+  case configuration::mode::write:
+  case configuration::mode::initializing:
+  default:
+    break;
+  }
+}
+
+void Configuration::handle(
+  std::function<void()> & changed,
+  std::function<void()> & write) {
+  switch (mode_) {
+  case configuration::mode::normal:
+    qDebug() << "Configuration handling mode 'normal'";
+    emit changed();
+    break;
+  case configuration::mode::write:
+    qDebug() << "Configuration handling mode 'write'";
+    if (startWriting()) {
+      write();
+      completeWriting(true);
+      qDebug() << "Configuration writing completed";
+    }
+    break;
+  case configuration::mode::initializing:
+  default:
+    break;
   }
 }
 
 /* Timer configuration */
-const int& Configuration::refreshInterval() const {
-  return refreshInterval_;
-}
-
-/* Experiment configuration */
-const bool& Configuration::boolean() const {
-  return boolean_;
-}
-const double& Configuration::real() const {
-  return real_;
-}
-const int& Configuration::integer() const {
-  return integer_;
-}
-const QString& Configuration::text() const {
-  return text_;
-}
-
-/* Timer configuration */
-void Configuration::setRefreshInterval(const int& value) {
-  if (refreshInterval_ != value) {
-    refreshInterval_ = value;
-    qDebug() << "Setting refresh interval to " << refreshInterval_;
-    emit refreshIntervalChanged();
+void Configuration::setInterval(const int& value) {
+  std::function<void()> changed =
+    std::bind(&Configuration::intervalChanged, this);
+  if (applyInterval(value)) {
+    qDebug() << "Setting refresh interval to " << interval_;
+    handle(changed, fWriteTimers_);
   }
 }
 
 /* Experiment configuration */
 void Configuration::setBoolean(const bool& value) {
-  if (boolean_ != value) {
-    boolean_ = value;
+  std::function<void()> changed =
+    std::bind(&Configuration::booleanChanged, this);
+  if (applyBoolean(value)) {
     qDebug() << "Setting boolean to " << boolean_;
-    emit booleanChanged();
+    handle(changed, fWriteExperiment_);
   }
 }
 void Configuration::setReal(const double& value) {
-  if (real_ != value) {
-    real_ = value;
+  std::function<void()> changed =
+    std::bind(&Configuration::realChanged, this);
+  if (applyReal(value)) {
     qDebug() << "Setting real to " << real_;
-    emit realChanged();
+    handle(changed, fWriteExperiment_);
   }
 }
 void Configuration::setInteger(const int& value) {
-  if (integer_ != value) {
-    integer_ = value;
+  std::function<void()> changed =
+    std::bind(&Configuration::integerChanged, this);
+  if (applyInteger(value)) {
     qDebug() << "Setting integer to " << integer_;
-    emit integerChanged();
+    handle(changed, fWriteExperiment_);
   }
 }
 void Configuration::setText(const QString& value) {
-  if (text_ != value) {
-    text_ = value;
+  std::function<void()> changed =
+    std::bind(&Configuration::textChanged, this);
+  if (applyText(value)) {
     qDebug() << "Setting text to '" << text_ << "'";
-    emit textChanged();
+    handle(changed, fWriteExperiment_);
   }
 }
 
-namespace initialize {
-bool configuration(Configuration& configuration) {
-  QSettings* settings = configuration.read();
-  if (settings != nullptr) {
-    qInfo() << "Read the configuration successfully";
-    return true;
-  } else {
-    qCritical() << "Failed to read the configuration";
-    return false;
+void Configuration::onFileChanged(const QString& path) {
+  switch (mode_) {
+  case configuration::mode::normal:
+    qDebug() << "Configuration file change and in 'read' mode";
+    read(true);
+    break;
+  case configuration::mode::write:
+    qDebug() << "Ignoring Configuration file change because in "
+      "'write' mode";
+    qDebug() << "Configuration Setting mode back to 'normal'";
+    setMode(configuration::mode::normal);
+    break;
+  case configuration::mode::initializing:
+    qDebug() << "Ignoring Configuration file change because in "
+      "'initializing' mode";
+    break;
+  default:
+    break;
   }
-}
 }

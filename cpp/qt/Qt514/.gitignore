@@ -71,6 +71,19 @@ Thumbs.db
 *.dll
 *.exe
 
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+x64/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# CMake
+CMakeSettings.json
+
 # Visual Studio CMake
 /.vs/
 /out/

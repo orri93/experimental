@@ -9,12 +9,18 @@ set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 set(gos_qt_experimental_target qtexperimental)
 
 list(APPEND gos_qt_experimental_source
+  "model/interval.h"
+  "model/interval.cpp"
+  "validation/float.h"
+  "validation/float.cpp"
   "qtexperimental.cpp"
   "configuration.cpp"
   "configuration.h"
   "resources.qrc"
   "backend.cpp"
-  "backend.h")
+  "backend.h"
+  "items.cpp"
+  "items.h")
 
 list(APPEND gos_qt_experimental_include
   ${CMAKE_CURRENT_SOURCE_DIR})
