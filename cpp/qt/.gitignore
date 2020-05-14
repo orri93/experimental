@@ -85,5 +85,5 @@ bld/
 CMakeSettings.json
 
 # Visual Studio CMake
-/.vs/
-/out/
+.vs/
+out/

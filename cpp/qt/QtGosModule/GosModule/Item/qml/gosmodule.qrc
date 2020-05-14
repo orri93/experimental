@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/item">
+    <file>ModbusConnection.qml</file>
+    <file>PidSettings.qml</file>
+  </qresource>
+</RCC>

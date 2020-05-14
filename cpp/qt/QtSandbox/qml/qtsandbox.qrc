@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>main.qml</file>
+        <file>ExperimentalPanel.qml</file>
+        <file>ExperimentalChart.qml</file>
+        <file>Sandbox.qml</file>
+        <file>SandboxGroupA.qml</file>
+        <file>SandboxItem.qml</file>
+        <file>SandboxPanel.qml</file>
+        <file>SandboxTabView.qml</file>
+        <file>SandboxDialog.qml</file>
+        <file>SandboxRange.qml</file>
+        <file>SandboxGroupB.qml</file>
+        <file>ExperimentalPanelRight.qml</file>
+        <file>RealTimeOutput.qml</file>
+        <file>SandboxTab.qml</file>
+        <file>DialogTiming.qml</file>
+        <file>ControlFilePath.qml</file>
+        <file>ControlFactor.qml</file>
+        <file>UseFactor.qml</file>
+        <file>ControlRealSpinBox.qml</file>
+        <file>SandboxRealSpinBox.qml</file>
+        <file>ControlNumber.qml</file>
+    </qresource>
+</RCC>
