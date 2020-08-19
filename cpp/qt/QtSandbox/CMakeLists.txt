@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(QtExperimental VERSION 1.0.0.0
-  DESCRIPTION "GOS Qt Experimental"
+project(QtSandbox VERSION 1.0.0.0
+  DESCRIPTION "GOS Qt Sandbox"
   LANGUAGES CXX)
 
 if (MSVC)
@@ -12,16 +12,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC OFF)
 
-set(gos_my_plugin_target myplugin)
-set(gos_my_plugin_dir
-    ${CMAKE_CURRENT_SOURCE_DIR}/MyPlugin)
-set(gos_qt_gos_module_target qtgosmodule)
-set(gos_qt_gos_module_dir
-  ${CMAKE_CURRENT_SOURCE_DIR}/QtGosModule/GosModule/Item)
-
-set(gos_my_example_target myexample)
-
-set(gos_qt_experimental_target qtexperimental)
+set(gos_qt_sandbox_target qtsandbox)
 
 find_package(Qt5 COMPONENTS REQUIRED
   QuickControls2
@@ -30,102 +21,72 @@ find_package(Qt5 COMPONENTS REQUIRED
   Core
   Qml)
 
-qt5_add_resources(APP_RESOURCES
-  ${CMAKE_CURRENT_LIST_DIR}/MyExample/qml/app.qrc)
+qt5_add_resources(gos_qt_sandbox_qt_resources
+  ${CMAKE_CURRENT_LIST_DIR}/qml/qtsandbox.qrc)
 
-qt5_add_resources(QT_514_RESOURCES
-  ${CMAKE_CURRENT_LIST_DIR}/Qt514/qml/resources.qrc)
+qt5_add_resources(gos_qt_sandbox_qt_assets_resources
+  ${CMAKE_CURRENT_LIST_DIR}/assets.qrc)
 
-list(APPEND gos_my_example_source
-  "MyExample/main.cpp"
-  ${APP_RESOURCES})
-list(APPEND gos_qt_experimental_source
-  ${QT_514_RESOURCES}
-  "Qt514/qtexperimental.cpp"
-  "Qt514/configuration.cpp"
-  "Qt514/configuration.h"
-  "Qt514/backend.cpp"
-  "Qt514/backend.h"
-  "Qt514/items.cpp"
-  "Qt514/items.h")
+list(APPEND gos_qt_sandbox_source
+  ${gos_qt_sandbox_qt_assets_resources}
+  ${gos_qt_sandbox_qt_resources}
+  "qtsandbox.cpp"
+  "configuration.cpp"
+  "configuration.h"
+  "restriction.cpp"
+  "restriction.h"
+  "accuracy.cpp"
+  "backend.cpp"
+  "format.cpp"
+  "accuracy.h"
+  "backend.h"
+  "range.cpp"
+  "format.h"
+  "range.h"
+  "ui.cpp"
+  "ui.h"
+)
 
-list(APPEND gos_my_example_include
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${gos_my_plugin_dir})
+list(APPEND gos_qt_sandbox_include
+  ${CMAKE_CURRENT_SOURCE_DIR})
 
-list(APPEND gos_qt_experimental_include
-  "${CMAKE_CURRENT_SOURCE_DIR}/Qt514"
-  ${gos_qt_gos_module_dir})
-
-list(APPEND gos_my_example_libraries
-  Qt5::Quick  
-  Qt5::Core
-  Qt5::Qml
-  ${gos_my_plugin_target})
-
-list(APPEND gos_qt_experimental_libraries
-  ${gos_qt_gos_module_target}
+list(APPEND gos_qt_sandbox_libraries
   Qt5::QuickControls2
   Qt5::Charts
-  Qt5::Quick  
+  Qt5::Quick
   Qt5::Core
   Qt5::Qml)
 
-add_executable(${gos_my_example_target}
-  ${gos_my_example_source})
+add_executable(${gos_qt_sandbox_target}
+  ${gos_qt_sandbox_source})
 
-add_executable(${gos_qt_experimental_target}
-  ${gos_qt_experimental_source})
+target_include_directories(${gos_qt_sandbox_target} PRIVATE
+  ${gos_qt_sandbox_include})
 
-target_include_directories(${gos_my_example_target} PRIVATE
-  ${gos_my_example_include})
+target_link_libraries(${gos_qt_sandbox_target} PRIVATE
+  ${gos_qt_sandbox_libraries})
 
-target_include_directories(${gos_qt_experimental_target} PRIVATE
-  ${gos_qt_experimental_include})
-
-target_link_libraries(${gos_my_example_target} PRIVATE
-  ${gos_my_example_libraries})
-
-target_link_libraries(${gos_qt_experimental_target} PRIVATE
-  ${gos_qt_experimental_libraries})
-
-target_compile_features(${gos_my_example_target} PRIVATE
-  cxx_auto_type
-  cxx_generic_lambdas)
-
-target_compile_features(${gos_qt_experimental_target} PRIVATE
+target_compile_features(${gos_qt_sandbox_target} PRIVATE
   cxx_auto_type
   cxx_generic_lambdas)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  target_compile_options(${gos_my_example_target} PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic)
-
-  target_compile_options(${gos_qt_experimental_target} PRIVATE
+  target_compile_options(${gos_qt_sandbox_target} PRIVATE
     -Wall
     -Wextra
     -Wpedantic)
 endif ()
-
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/MyPlugin)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/QtGosModule)
 
 #add_custom_command(TARGET ${gos_qt_experimental_target} POST_BUILD
 #  COMMAND ${CMAKE_COMMAND} -E copy_if_different
 #    ${CMAKE_CURRENT_SOURCE_DIR}/Configuration.ini
 #    $<TARGET_FILE_DIR:${gos_qt_experimental_target}>)
 
-install(TARGETS ${gos_my_example_target} DESTINATION bin)
-install(TARGETS ${gos_qt_experimental_target} DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Configuration.ini DESTINATION bin)
+install(TARGETS ${gos_qt_sandbox_target} DESTINATION bin)
+#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Configuration.ini DESTINATION bin)
 
 if (GOS_DEPLOY_PDB_FILES)
-  install(FILES "$<TARGET_PDB_FILE:${gos_my_example_target}>"
-    DESTINATION pdb
-    COMPONENT pdb)
-  install(FILES "$<TARGET_PDB_FILE:${gos_qt_experimental_target}>"
+  install(FILES "$<TARGET_PDB_FILE:${gos_qt_sandbox_target}>"
     DESTINATION pdb
     COMPONENT pdb)
 endif ()

@@ -1,0 +1,5 @@
+module Pid.Toolkit
+
+plugin pidtoolkitplugin
+
+Style 1.0 qrc:/pidtoolkit/ControlFactor.qml

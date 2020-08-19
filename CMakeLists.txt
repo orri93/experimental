@@ -12,6 +12,9 @@ option(CLANG_TIDY_FIX_ERRORS
 option(CLANG_TIDY_FIX "Perform fixes with Clang-Tidy" OFF)
 option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
+option(GOS_NN_EXPERIMENTAL "GOS Experimental for Neural Network" OFF)
+option(GOS_QT_EXPERIMENTAL "GOS Experimental for Qt" OFF)
+
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "
@@ -66,6 +69,15 @@ if(CLANG_TIDY)
     endif()
   endif()
 endif()
+
+if (GOS_NN_EXPERIMENTAL)
+  set(gos_nn_experimental_opennn_dir "${CMAKE_SOURCE_DIR}/extern/opennn")
+  set(gos_nn_experimental_opennn_library opennn)
+  list(APPEND gos_nn_experimental_opennn_include
+    "${gos_nn_experimental_opennn_dir}/opennn"
+    "${gos_nn_experimental_opennn_dir}")
+  add_subdirectory(extern/opennn)
+endif ()
 
 #set(Boost_USE_MULTITHREADED        ON)
 #set(Boost_USE_STATIC_RUNTIME      OFF)

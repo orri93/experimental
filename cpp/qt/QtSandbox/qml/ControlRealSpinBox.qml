@@ -1,72 +1,89 @@
-import QtQuick 2.1
-import QtQuick.Layouts 1.2
-import QtQuick.Controls 2.12
+import QtQuick 2.4
 
-SpinBox {
-  id: realSpinBox
+import qt.sandbox.models 1.0
 
-  property var numberObject: null
+ControlRealSpinBoxForm {
 
+  property var accuracyObject: null
   property real realValue: 0.0
-  property real multiplier: 1000.0
-  property int realDecimals: 3
 
-  editable: true
+  DoubleValidator {
+    id: doubleValidatorNone
+  }
 
-  function setRealUiNumber(number) {
-    if(number) {
-      numberObject = number;
-      setRealDecimals(numberObject.precision);
-      setRealFrom(numberObject.minimum);
-      setRealTo(numberObject.maximum);
-      setRealStepSize(numberObject.stepSize);
-      console.log("Set Real UI Number");
-      console.log("  Precision: " + numberObject.precision);
-      console.log("  From: " + numberObject.minimum);
-      console.log("  To: " + numberObject.maximum);
-      console.log("  Step Szie: " + numberObject.stepSize);
-      console.log("  Multiplier: " + realSpinBox.multiplier);
+  DoubleValidator {
+    id: doubleValidatorBoth
+    bottom: Math.min(from, to)
+    top: Math.max(from, to)
+  }
+
+  DoubleValidator {
+    id: doubleValidatorMinimum
+    bottom: Math.min(from, to)
+  }
+
+  DoubleValidator {
+    id: doubleValidatorMaximum
+    top: Math.max(from, to)
+  }
+
+  onAccuracyObjectChanged: {
+    if(accuracyObject) {
+      realPrecision = accuracyObject.precision;
+      realFrom = accuracyObject.range.from;
+      realTo = accuracyObject.range.to;
+      calculate(realPrecision);
+      resolveUserInterface();
     }
   }
 
-  function setRealValue(value) {
-    realSpinBox.value = realSpinBox.multiplier * value;
-  }
-
-  function setRealDecimals(decimals) {
-    realSpinBox.realDecimals = decimals;
-    realSpinBox.multiplier = Math.pow(10.0, realSpinBox.realDecimals);
-  }
-
-  function setRealFrom(from) {
-    realSpinBox.from = realSpinBox.multiplier * from;
-  }
-
-  function setRealTo(to) {
-    realSpinBox.to = realSpinBox.multiplier * to;
-  }
-
-  function setRealStepSize(stepSize) {
-    realSpinBox.stepSize = realSpinBox.multiplier * stepSize;
+  onRealValueChanged: {
+    refresh();
   }
 
   onValueChanged: {
-    if(realSpinBox.numberObject) {
-      realSpinBox.realValue = value / realSpinBox.multiplier;
+    if(accuracyObject) {
+      realValue = value / realMultiplier;
     }
   }
 
-  validator: DoubleValidator {
-      bottom: Math.min(realSpinBox.from, realSpinBox.to)
-      top:  Math.max(realSpinBox.from, realSpinBox.to)
-  }
-
   textFromValue: function(value, locale) {
-    return Number(value / realSpinBox.multiplier).toLocaleString(
-      locale, 'f', realSpinBox.realDecimals)
+    return Number(value / realMultiplier).toLocaleString(
+      locale, 'f', realPrecision)
   }
 
   valueFromText: function(text, locale) {
-    return realSpinBox.multiplier * Number.fromLocaleString(locale, text)
+    return realMultiplier * Number.fromLocaleString(locale, text)
   }
+
+  function refresh() {
+    if(accuracyObject) {
+      value = realMultiplier * realValue;
+    }
+  }
+
+  function calculate(precision) {
+    realMultiplier = Math.pow(10.0, realPrecision);
+    realStepSize = 1.0 / realMultiplier;
+    stepSize = realMultiplier * realStepSize;
+    from = realMultiplier * realFrom;
+    to = realMultiplier * realTo;
+    console.log("Setting Precision to " + precision +
+      " multiplier to " + realMultiplier +
+      " step size to " + realStepSize);
+  }
+
+  function resolveUserInterface() {
+    if(accuracyObject.restriction == Restriction.Both) {
+      validator = doubleValidatorBoth;
+    } else if(accuracyObject.restriction == Restriction.Minimum) {
+      validator = doubleValidatorMinimum;
+    } else if(accuracyObject.restriction == Restriction.Maximum) {
+      validator = doubleValidatorMaximum;
+    } else {
+      validator = doubleValidatorNone;
+    }
+  }
+
 }
+

@@ -1,11 +1,13 @@
 import QtQuick 2.0
 import QtCharts 2.1
 
+import assets 1.0
+
 ChartView {
   id: qtExperimentalChart
 
   animationOptions: ChartView.NoAnimation
-  theme: ChartView.ChartThemeDark
+  theme: Style.chartTheme
 
   property bool openGl: true
   property bool openGlSupported: true

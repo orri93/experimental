@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="/">
+    <file>qtquickcontrols2.conf</file>
+    <file>qmldir</file>
+  </qresource>
+
+  <qresource prefix="/pidtoolkit">
+    <file alias="Style.qml">qml/Style.qml</file>
+  </qresource>
+  
+  <qresource prefix="/pidtoolkit/component">
+    <file alias="Communication.qml">qml/component/Communication.qml</file>
+    <file alias="CommunicationForm.ui.qml">qml/component/CommunicationForm.ui.qml</file>
+  </qresource>
+
+</RCC>

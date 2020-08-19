@@ -18,8 +18,25 @@
         <file>ControlFilePath.qml</file>
         <file>ControlFactor.qml</file>
         <file>UseFactor.qml</file>
-        <file>ControlRealSpinBox.qml</file>
+        <file>ControlRealSpinBoxOld.qml</file>
         <file>SandboxRealSpinBox.qml</file>
         <file>ControlNumber.qml</file>
+        <file>ControlAccuracy.qml</file>
+        <file>ControlAccuracyForm.ui.qml</file>
+        <file>QuickUiExample.qml</file>
+        <file>QuickUiExampleForm.ui.qml</file>
+        <file>UiDialog.qml</file>
+        <file>UiTabView.qml</file>
+        <file>UiTab.qml</file>
+        <file>DialogUiOutput.qml</file>
+        <file>DialogUiOutputForm.ui.qml</file>
+        <file>ControlFormat.qml</file>
+        <file>ControlFormatForm.ui.qml</file>
+        <file>DialogUiPid.qml</file>
+        <file>DialogUiPidForm.ui.qml</file>
+        <file>DialogUiInput.qml</file>
+        <file>DialogUiInputForm.ui.qml</file>
+        <file>ControlRealSpinBox.qml</file>
+        <file>ControlRealSpinBoxForm.ui.qml</file>
     </qresource>
 </RCC>

@@ -1,0 +1,5 @@
+module Gos.Trying
+
+plugin trycmqmlplugin
+
+Style 1.0 qrc:/qml/Style.qml

@@ -25,9 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        qtsandbox.cpp
+  qtsandbox.cpp \
+  configuration.cpp \
+  restriction.cpp \
+  accuracy.cpp \
+  backend.cpp \
+  format.cpp \
+  range.cpp \
+  ui.cpp
 
-RESOURCES += qml/qtsandbox.qrc
+RESOURCES += assets.qrc \
+  qml/qtsandbox.qrc
 
 # Debugging files for Release builds
 # https://stackoverflow.com/questions/9234337/qt-no-map-pdb-files-generated-for-windows-release-builds
@@ -36,16 +44,25 @@ QMAKE_CFLAGS_RELEASE += /Zi
 QMAKE_LFLAGS_RELEASE +=/debug /opt:ref
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = $${PWD}
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =
+QML_DESIGNER_IMPORT_PATH = $${PWD}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-#HEADERS += \
+HEADERS += \
+  configuration.h \
+  restriction.h \
+  accuracy.h \
+  backend.h \
+  format.h \
+  range.h \
+  types.h \
+  ui.h
 
-#DISTFILES += \
+DISTFILES += \
+  configuration.ini
