@@ -13,3 +13,6 @@
 [submodule "extern/tahu"]
 	path = extern/tahu
 	url = https://github.com/eclipse/tahu.git
+[submodule "extern/nanopb"]
+	path = extern/nanopb
+	url = https://github.com/nanopb/nanopb.git

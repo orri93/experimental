@@ -7,6 +7,7 @@ list(APPEND gos_experimental_c_sparkplugb_include
   ${gos_spb_experimental_include})
 
 list(APPEND gos_experimental_c_sparkplugb_libraries
+  ${gos_spb_experimental_nanopb_library}
   ${gos_spb_experimental_tahu_library})
 
 #if (WIN32)
