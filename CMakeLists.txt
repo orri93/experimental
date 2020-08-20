@@ -13,7 +13,15 @@ option(CLANG_TIDY_FIX "Perform fixes with Clang-Tidy" OFF)
 option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
 option(GOS_NN_EXPERIMENTAL "GOS Experimental for Neural Network" OFF)
+option(GOS_SPB_EXPERIMENTAL "GOS Experimental for Sparkplug B" OFF)
 option(GOS_QT_EXPERIMENTAL "GOS Experimental for Qt" OFF)
+
+if (GOS_SPB_EXPERIMENTAL)
+  find_program(GOS_PROTOC_CMD protoc DOC "Path to the protoc command")
+  find_program(GOS_PROTOC_CMD python DOC "Path to the python command")
+  set(GOS_NANOPB_PB2_PATH "nanopb_pb2.py" CACHE FILEPATH "Path to the nanopb python script")
+  set(GOS_NANOPB_LIB_DIR "nanopb" CACHE PATH "Path to the nanopb library directory")
+endif ()
 
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 
@@ -79,6 +87,17 @@ if (GOS_NN_EXPERIMENTAL)
   add_subdirectory(extern/opennn)
 endif ()
 
+if (GOS_SPB_EXPERIMENTAL)
+  set(gos_spb_experimental_tahu_dir "${CMAKE_SOURCE_DIR}/extern/tahu")
+  set(gos_spb_experimental_tahu_client_c_include_dir
+    "${gos_spb_experimental_tahu_dir}/client_libraries/c/include")
+  set(gos_spb_experimental_tahu_client_c_source_dir
+    "${gos_spb_experimental_tahu_dir}/client_libraries/c/src")
+  set(gos_spb_experimental_tahu_library tahuspb)
+  list(APPEND gos_spb_experimental_include
+    ${gos_spb_experimental_tahu_client_c_include_dir})
+endif ()
+
 #set(Boost_USE_MULTITHREADED        ON)
 #set(Boost_USE_STATIC_RUNTIME      OFF)
 #if (BUILD_SHARED_LIBS)
@@ -116,7 +135,8 @@ endif ()
 
 #list(APPEND gos_experimental_include
 #  ${needed_boost_libraries})
-  
+ 
+add_subdirectory(c)
 add_subdirectory(cpp)
 
 message(STATUS "")

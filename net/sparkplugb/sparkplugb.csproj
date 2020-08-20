@@ -5,4 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\extern\tahu\client_libraries\c_sharp\src\SparkplugBCSharp.cs" Link="SparkplugBCSharp.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.13.0" />
+  </ItemGroup>
+
 </Project>
