@@ -83,7 +83,7 @@ endif ()
 if (GOS_SPB_EXPERIMENTAL)
   set(gos_spb_experimental_nanopb_dir "${CMAKE_SOURCE_DIR}/extern/nanopb")
   set(gos_spb_experimental_nanopb_library protobuf-nanopb-static)
-  set(gos_spb_experimental_nanopb_pb2_py "${CMAKE_BINARY_DIR}/extern/nanopb/nanopb_pb2.py")
+  set(gos_spb_experimental_nanopb_generator_py "${gos_spb_experimental_nanopb_dir}/generator/nanopb_generator.py")
   add_subdirectory(extern/nanopb)
   
   set(gos_spb_experimental_tahu_dir "${CMAKE_SOURCE_DIR}/extern/tahu")

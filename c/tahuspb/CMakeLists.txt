@@ -1,25 +1,27 @@
 set(gos_experimental_c_tahuspb_target ${gos_spb_experimental_tahu_library})
 
-find_program(GOS_PROTOC_CMD protoc DOC "Path to the protoc command" REQUIRED)
+# Location of the protoc command needs to be in PATH!
 
 find_package(Python REQUIRED)
+find_package(Protobuf REQUIRED)
 
 set(gos_experimental_c_tahus_proto_path ${gos_spb_experimental_tahu_dir})
 set(gos_experimental_c_tahus_proto_file "${gos_spb_experimental_tahu_dir}/sparkplug_b/sparkplug_b.proto")
-set(gos_experimental_c_tahus_proto_output "${CMAKE_BINARY_DIR}/tahu.pb")
+set(gos_experimental_c_tahus_proto_output "${CMAKE_CURRENT_BINARY_DIR}/tahu.pb")
 
 set(gos_experimental_c_tahus_nanopb_options "${gos_spb_experimental_tahu_dir}/client_libraries/c/tahu.options")
-set(gos_experimental_c_tahus_nanopb_output "${CMAKE_BINARY_DIR}/tahu.pb.c")
+set(gos_experimental_c_tahus_nanopb_output_dir "${CMAKE_CURRENT_BINARY_DIR}/sparkplug_b")
+set(gos_experimental_c_tahus_nanopb_output "${gos_experimental_c_tahus_nanopb_output_dir}/sparkplug_b.pb.c")
 
 add_custom_command(
   OUTPUT ${gos_experimental_c_tahus_proto_output}
-  COMMAND ${GOS_PROTOC_CMD} --proto_path="${gos_experimental_c_tahus_proto_path}" --descriptor_set_out="${gos_experimental_c_tahus_proto_output}" "${gos_experimental_c_tahus_proto_file}"
-  DEPENDS ${SOURCE_FILES} ${GOS_PROTOC_CMD} ${gos_experimental_c_tahus_proto_file}
+  COMMAND ${Protobuf_PROTOC_EXECUTABLE} --proto_path="${gos_experimental_c_tahus_proto_path}" --descriptor_set_out="${gos_experimental_c_tahus_proto_output}" "${gos_experimental_c_tahus_proto_file}"
+  DEPENDS ${SOURCE_FILES} ${Protobuf_PROTOC_EXECUTABLE} ${gos_experimental_c_tahus_proto_file}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_command(
   OUTPUT ${gos_experimental_c_tahus_nanopb_output}
-  COMMAND ${Python_EXECUTABLE} "${gos_spb_experimental_nanopb_pb2_py}" -f "${gos_experimental_c_tahus_nanopb_options}" "${gos_experimental_c_tahus_proto_output}"
+  COMMAND ${Python_EXECUTABLE} "${gos_spb_experimental_nanopb_generator_py}" -f "${gos_experimental_c_tahus_nanopb_options}" "${gos_experimental_c_tahus_proto_output}"
   DEPENDS ${gos_experimental_c_tahus_nanopb_options} ${gos_experimental_c_tahus_proto_output}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -28,7 +30,10 @@ list(APPEND gos_experimental_c_tahuspb_source
   tahu.c)
 
 list(APPEND gos_experimental_c_tahuspb_include
-  ${gos_experimental_include})
+  ${gos_experimental_c_tahus_nanopb_output_dir}
+  ${gos_spb_experimental_include}
+  ${gos_experimental_include}
+  ${CMAKE_CURRENT_BINARY_DIR})
 
 #if (WIN32)
 #  list(APPEND gos_experimental_c_tahuspb_libraries ws2_32)

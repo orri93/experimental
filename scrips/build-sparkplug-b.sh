@@ -88,10 +88,10 @@ echo "DIR is '$DIR'"
 
 # Silent pushd and popd
 silent_pushd () {
-    command pushd "$@" > /dev/null
+  command pushd "$@" > /dev/null
 }
 silent_popd () {
-    command popd "$@" > /dev/null
+  command popd "$@" > /dev/null
 }
 
 #GOS_ROOT_DIR=`readlink -f "$DIR/.."`
@@ -101,4 +101,6 @@ echo "--------------------------------------------------------------------------
 echo "Build script for the ${GOS_PROJECT_NAME} project"
 echo "${GOS_PROJECT_NAME} root directory is defined as ${GOS_ROOT_DIR}"
 
-
+echo "*** Generate proto buffer"
+GOS_PROTOC_GENERATE_PROTO_BUFFER_CMD="${GOS_PROTOC} --proto_path"
+${GOS_PROTOC} 
