@@ -16,3 +16,6 @@
 [submodule "extern/nanopb"]
 	path = extern/nanopb
 	url = https://github.com/nanopb/nanopb.git
+[submodule "extern/mosquitto"]
+	path = extern/mosquitto
+	url = https://github.com/eclipse/mosquitto.git

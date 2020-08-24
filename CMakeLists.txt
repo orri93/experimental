@@ -81,15 +81,27 @@ if (GOS_NN_EXPERIMENTAL)
 endif ()
 
 if (GOS_SPB_EXPERIMENTAL)
+  set(gos_spb_experimental_mosquitto_dir "${CMAKE_SOURCE_DIR}/extern/mosquitto")
+  set(gos_spb_experimental_mosquitto_lib_dir "${gos_spb_experimental_mosquitto_dir}/lib")
+  set(gos_spb_experimental_mosquitto_library libmosquitto_static)
+  add_subdirectory(extern/mosquitto)
+
   set(gos_spb_experimental_nanopb_dir "${CMAKE_SOURCE_DIR}/extern/nanopb")
   set(gos_spb_experimental_nanopb_library protobuf-nanopb-static)
   set(gos_spb_experimental_nanopb_generator_py "${gos_spb_experimental_nanopb_dir}/generator/nanopb_generator.py")
   add_subdirectory(extern/nanopb)
-  
+
   set(gos_spb_experimental_tahu_dir "${CMAKE_SOURCE_DIR}/extern/tahu")
-  set(gos_spb_experimental_tahu_library tahuspb)
-  list(APPEND gos_spb_experimental_include
+  set(gos_spb_experimental_c_tahuspb_binary_dir "${CMAKE_BINARY_DIR}/c/tahuspb")
+
+  set(gos_spb_experimental_tahu_c_library tahuspbc)
+  list(APPEND gos_spb_experimental_c_include
+    ${gos_spb_experimental_c_tahuspb_binary_dir}
+    ${gos_spb_experimental_mosquitto_lib_dir}
     ${gos_spb_experimental_nanopb_dir})
+
+  set(gos_spb_experimental_tahu_cpp_library tahuspbcpp)
+
 endif ()
 
 #set(Boost_USE_MULTITHREADED        ON)

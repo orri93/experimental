@@ -6,6 +6,12 @@
 
 #include <gos/experimental/tahu.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+static LARGE_INTEGER getFILETIMEoffset();
+static int clock_gettime_realtime_(struct timespec* tv);
+#endif
+
 // Global sequence variable
 uint64_t seq;
 
@@ -34,14 +40,14 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 
 		if (metric_wire_type == PB_WT_VARINT) {
 			DEBUG_PRINT(("\t\tMetric Wire type is PB_WT_VARINT\n"));
-			for (metric_field = org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
+			for (metric_field = (const pb_field_t*)org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
 				if (metric_field->tag == metric_tag && (((metric_field->type & PB_LTYPE_VARINT) == PB_LTYPE_VARINT) ||
 					((metric_field->type & PB_LTYPE_UVARINT) == PB_LTYPE_UVARINT))) {
 					DEBUG_PRINT(("\t\tWire type is PB_WT_VARINT\n"));
 					uint64_t dest;
 					status = pb_decode_varint(&substream, &dest);
 					if (status) {
-						DEBUG_PRINT(("\t\tVARINT - Success - new value: %ld\n", dest));
+						DEBUG_PRINT(("\t\tVARINT - Success - new value: %ld\n", (long)dest));
 						if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_alias_tag) {
 							metric->has_alias = true;
 							metric->alias = dest;
@@ -50,7 +56,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 							metric->timestamp = dest;
 						} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_datatype_tag) {
 							metric->has_datatype = true;
-							metric->datatype = dest;
+							metric->datatype = (uint32_t)dest;
 						} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_is_historical_tag) {
 							metric->has_is_historical = true;
 							metric->is_historical = dest;
@@ -62,7 +68,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 							metric->is_null = dest;
 						} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_int_value_tag) {
 							metric->which_value = org_eclipse_tahu_protobuf_Payload_Metric_int_value_tag;
-							metric->value.int_value = dest;
+							metric->value.int_value = (uint32_t)dest;
 						} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_long_value_tag) {
 							metric->which_value = org_eclipse_tahu_protobuf_Payload_Metric_long_value_tag;
 							metric->value.long_value = dest;
@@ -79,7 +85,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 					int64_t dest;
 					status = pb_decode_svarint(&substream, &dest);
 					if (status) {
-						DEBUG_PRINT(("\t\tVARINT - Success - new value: %ld\n", dest));
+						DEBUG_PRINT(("\t\tVARINT - Success - new value: %ld\n", (long)dest));
 					} else {
 						fprintf(stderr, "\t\tVARINT - Failed to decode variant!\n");
 						return false;
@@ -88,7 +94,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 			}
 		} else if (metric_wire_type == PB_WT_32BIT) {
 			DEBUG_PRINT(("\t\tMetric Wire type is PB_WT_32BIT\n"));
-			for (metric_field = org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
+			for (metric_field = (const pb_field_t *)org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
 				if (metric_field->tag == metric_tag && (((metric_field->type & PB_LTYPE_FIXED32) == PB_LTYPE_FIXED32))) {
 					DEBUG_PRINT(("\t\tWire type is PB_WT_32BIT\n"));
 					uint32_t dest;
@@ -106,13 +112,13 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 			}
 		} else if (metric_wire_type == PB_WT_64BIT) {
 			DEBUG_PRINT(("\t\tMetric Wire type is PB_WT_64BIT\n"));
-			for (metric_field = org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
+			for (metric_field = (const pb_field_t*)org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
 				if (metric_field->tag == metric_tag && (((metric_field->type & PB_LTYPE_FIXED64) == PB_LTYPE_FIXED64))) {
 					DEBUG_PRINT(("\t\tWire type is PB_WT_64BIT\n"));
 					uint64_t dest;
 					status = pb_decode_fixed64(&substream, &dest);
 					if (status) {
-						DEBUG_PRINT(("\t\t64BIT - Success - new value: %ld\n", dest));
+						DEBUG_PRINT(("\t\t64BIT - Success - new value: %ld\n", (long)dest));
 						double destination_double = *((double*)&dest);
 						DEBUG_PRINT(("\t\tDouble - Success - new value: %f\n", destination_double));
 						if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_double_value_tag) {
@@ -126,7 +132,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 		} else if (metric_wire_type == PB_WT_STRING) {
 			DEBUG_PRINT(("\t\tMetric Wire type is PB_WT_STRING\n"));
 
-			for (metric_field = org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
+			for (metric_field = (const pb_field_t *)org_eclipse_tahu_protobuf_Payload_Metric_fields; metric_field->tag != 0; metric_field++) {
 				if (metric_field->tag == metric_tag && ((metric_field->type & PB_LTYPE_SUBMESSAGE) == PB_LTYPE_SUBMESSAGE)) {
 					DEBUG_PRINT(("\t\tFound a PB_LTYPE_SUBMESSAGE\n"));
 				} else if (metric_field->tag == metric_tag &&
@@ -145,29 +151,37 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 						return false;
 					}
 
-					pb_byte_t dest[string_size[0] + 1];
-					status = pb_read(&substream, dest, string_size[0]);
-					if (status) {
-						dest[string_size[0]] = '\0';
+					pb_byte_t* dest = (pb_byte_t*)(malloc(((size_t)(string_size[0]) + 1) * sizeof(pb_byte_t)));
 
-						// This is either the metric name or string value
-						if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_name_tag) {
-							DEBUG_PRINT(("\t\tRead the Metric name! %s\n", dest));
-							metric->name = (char*)malloc((strlen(dest) + 1) * sizeof(char));
-							strcpy(metric->name, dest);
-						} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_string_value_tag) {
-							DEBUG_PRINT(("\t\tRead the Metric string_value! %s\n", dest));
-							metric->which_value = org_eclipse_tahu_protobuf_Payload_Metric_string_value_tag;
-							// JPL 04/05/17... I hope this gets FREE(string_value)'d somewhere
-							metric->value.string_value = (char*)malloc((strlen(dest) + 1) * sizeof(char));
-							strcpy(metric->value.string_value, dest);
-							// JPL 04/05/17... local memory?
-							//	metric->value.string_value = dest;
+					if (dest != NULL) {
+						status = pb_read(&substream, dest, string_size[0]);
+						if (status) {
+							dest[string_size[0]] = '\0';
+
+							// This is either the metric name or string value
+							if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_name_tag) {
+								DEBUG_PRINT(("\t\tRead the Metric name! %s\n", dest));
+								metric->name = (char*)malloc((strlen(dest) + 1) * sizeof(char));
+								strcpy(metric->name, dest);
+							} else if (metric_field->tag == org_eclipse_tahu_protobuf_Payload_Metric_string_value_tag) {
+								DEBUG_PRINT(("\t\tRead the Metric string_value! %s\n", dest));
+								metric->which_value = org_eclipse_tahu_protobuf_Payload_Metric_string_value_tag;
+								// JPL 04/05/17... I hope this gets FREE(string_value)'d somewhere
+								metric->value.string_value = (char*)malloc((strlen(dest) + 1) * sizeof(char));
+								strcpy(metric->value.string_value, dest);
+								// JPL 04/05/17... local memory?
+								//	metric->value.string_value = dest;
+							}
+							free(dest);
+						} else {
+							fprintf(stderr, "\t\tFailed to read the string...\n");
+							free(dest);
+							return false;
 						}
 					} else {
-						fprintf(stderr, "\t\tFailed to read the string...\n");
-						return false;
+						fprintf(stderr, "\t\tOut of memory when creating buffer for the string...\n");
 					}
+
 				} else if (metric_field->tag == metric_tag && ((metric_field->type & PB_LTYPE_BYTES) == PB_LTYPE_BYTES)) {
 					DEBUG_PRINT(("\t\tFound a PB_LTYPE_BYTES\n"));
 					//} else {
@@ -184,6 +198,7 @@ bool decode_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric, pb_istream_
 
 	// Close the substream
 	pb_close_string_substream(stream, &substream);
+	return true;
 }
 
 /*
@@ -368,6 +383,8 @@ bool add_property_to_set(org_eclipse_tahu_protobuf_Payload_PropertySet* property
 	propertyset->keys_count++;
 	propertyset->values_count++;
 	DEBUG_PRINT(("Size of values in PropertySet %d\n", propertyset->keys_count));
+	
+	return true;
 }
 
 /*
@@ -418,7 +435,7 @@ void add_simple_metric(org_eclipse_tahu_protobuf_Payload* payload,
 	payload->metrics[size - 1].has_timestamp = true;
 	payload->metrics[size - 1].timestamp = get_current_timestamp();
 	payload->metrics[size - 1].has_datatype = true;
-	payload->metrics[size - 1].datatype = datatype;
+	payload->metrics[size - 1].datatype = (uint32_t)datatype;
 	payload->metrics[size - 1].has_is_historical = is_historical;
 	if (is_historical) {
 		payload->metrics[size - 1].is_historical = is_historical;
@@ -560,14 +577,14 @@ bool decode_payload(org_eclipse_tahu_protobuf_Payload* payload, const void* bina
 		DEBUG_PRINT(("\tTag: %d\n", payload_tag));
 
 		if (payload_wire_type == PB_WT_VARINT) {
-			for (payload_field = org_eclipse_tahu_protobuf_Payload_fields; payload_field->tag != 0; payload_field++) {
+			for (payload_field = (const pb_field_t*)org_eclipse_tahu_protobuf_Payload_fields; payload_field->tag != 0; payload_field++) {
 				if (payload_field->tag == payload_tag && (((payload_field->type & PB_LTYPE_VARINT) == PB_LTYPE_VARINT) ||
 					((payload_field->type & PB_LTYPE_UVARINT) == PB_LTYPE_UVARINT))) {
 					DEBUG_PRINT(("\tWire type is PB_WT_VARINT\n"));
 					uint64_t dest;
 					status = pb_decode_varint(&stream, &dest);
 					if (status) {
-						DEBUG_PRINT(("\tVARINT - Success - new value: %ld\n", dest));
+						DEBUG_PRINT(("\tVARINT - Success - new value: %ld\n", (long)dest));
 					} else {
 						fprintf(stderr, "\tVARINT - Failed to decode variant!\n");
 						return false;
@@ -585,7 +602,7 @@ bool decode_payload(org_eclipse_tahu_protobuf_Payload* payload, const void* bina
 					int64_t dest;
 					status = pb_decode_svarint(&stream, &dest);
 					if (status) {
-						DEBUG_PRINT(("\tVARINT - Success - new value: %ld\n", dest));
+						DEBUG_PRINT(("\tVARINT - Success - new value: %ld\n", (long)dest));
 					} else {
 						fprintf(stderr, "\tVARINT - Failed to decode variant!\n");
 						return false;
@@ -596,12 +613,12 @@ bool decode_payload(org_eclipse_tahu_protobuf_Payload* payload, const void* bina
 			DEBUG_PRINT(("\tWire type is PB_WT_64BIT\n"));
 		} else if (payload_wire_type == PB_WT_STRING) {
 			DEBUG_PRINT(("\tWire type is PB_WT_STRING\n"));
-			for (payload_field = org_eclipse_tahu_protobuf_Payload_fields; payload_field->tag != 0; payload_field++) {
+			for (payload_field = (const pb_field_t*)org_eclipse_tahu_protobuf_Payload_fields; payload_field->tag != 0; payload_field++) {
 				if (payload_field->tag == payload_tag && ((payload_field->type & PB_LTYPE_SUBMESSAGE) == PB_LTYPE_SUBMESSAGE)) {
 					DEBUG_PRINT(("\tFound a PB_LTYPE_SUBMESSAGE\n"));
 
 					// This is a metric!
-					if (payload_field->ptr == NULL) {
+					if (payload_field->pField == NULL) {
 						fprintf(stderr, "Invalid field descriptor\n");
 						return false;
 					}
@@ -629,18 +646,24 @@ bool decode_payload(org_eclipse_tahu_protobuf_Payload* payload, const void* bina
 						return false;
 					}
 
-					pb_byte_t dest[string_size[0] + 1];
-					status = pb_read(&stream, dest, string_size[0]);
-					if (status) {
-						dest[string_size[0]] = '\0';
-						DEBUG_PRINT(("\t\tRead the UUID: %s\n", dest));
-						payload->uuid = (char*)malloc((strlen(dest) + 1) * sizeof(char));;
-						strcpy(payload->uuid, dest);
+					pb_byte_t* dest = (pb_byte_t*)(malloc((string_size[0] + 1) * sizeof(pb_byte_t)));
+					if (dest != NULL) {
+						status = pb_read(&stream, dest, string_size[0]);
+						if (status) {
+							dest[string_size[0]] = '\0';
+							DEBUG_PRINT(("\t\tRead the UUID: %s\n", dest));
+							payload->uuid = (char*)malloc((strlen(dest) + 1) * sizeof(char));;
+							strcpy(payload->uuid, dest);
+							free(dest);
+						} else {
+							fprintf(stderr, "\t\tFailed to read the UUID...\n");
+							free(dest);
+							return false;
+						}
 					} else {
-						fprintf(stderr, "\t\tFailed to read the UUID...\n");
+						fprintf(stderr, "\t\tOut of memory when creating buffer for the UUID...\n");
 						return false;
 					}
-
 
 				} else if (payload_field->tag == payload_tag && ((payload_field->type & PB_LTYPE_BYTES) == PB_LTYPE_BYTES)) {
 					DEBUG_PRINT(("\tFound a PB_LTYPE_BYTES\n"));
@@ -687,7 +710,7 @@ void free_payload(org_eclipse_tahu_protobuf_Payload* payload) {
 				free(payload->metrics[i].properties.keys[j]);
 
 				if (payload->metrics[i].properties.values[j].which_value ==
-					com_cirruslink_sparkplug_protobuf_Payload_PropertyValue_string_value_tag) {
+					org_eclipse_tahu_protobuf_Payload_PropertyValue_string_value_tag) {
 					if (payload->metrics[i].properties.values[j].value.string_value) {
 						free(payload->metrics[i].properties.values[j].value.string_value);
 					}
@@ -714,6 +737,8 @@ uint64_t get_current_timestamp() {
 	mach_port_deallocate(mach_task_self(), cclock);
 	ts.tv_sec = mts.tv_sec;
 	ts.tv_nsec = mts.tv_nsec;
+#elif defined(_WIN32)
+	clock_gettime_realtime_(&ts);
 #else
 	clock_gettime(CLOCK_REALTIME, &ts);
 #endif
@@ -757,11 +782,11 @@ void init_dataset(org_eclipse_tahu_protobuf_Payload_DataSet* dataset,
 	// Set the number of columns
 	dataset->has_num_of_columns = true;
 	dataset->num_of_columns = num_of_columns;
-	dataset->columns_count = num_of_columns;
+	dataset->columns_count = (pb_size_t)num_of_columns;
 
 	// Set up the column headers
 	dataset->columns = (char**)calloc(num_of_columns, sizeof(char*));
-	int i, j;
+	int i;
 	for (i = 0; i < num_of_columns; i++) {
 		fprintf(stdout, "column_keys[i]: %s\n", column_keys[i]);
 		dataset->columns[i] = (char*)malloc((strlen(column_keys[i]) + 1) * sizeof(char));
@@ -769,11 +794,11 @@ void init_dataset(org_eclipse_tahu_protobuf_Payload_DataSet* dataset,
 	}
 
 	// Set the datatypes of the columns
-	dataset->types_count = num_of_columns;
+	dataset->types_count = (pb_size_t)num_of_columns;
 	dataset->types = datatypes;
 
 	// Set the rows
-	dataset->rows_count = num_of_rows;
+	dataset->rows_count = (pb_size_t)num_of_rows;
 	dataset->rows = row_data;
 }
 
@@ -812,7 +837,7 @@ void init_metric(org_eclipse_tahu_protobuf_Payload_Metric* metric,
 		metric->timestamp = 0; //get_current_timestamp();
 	}
 	metric->has_datatype = true;
-	metric->datatype = datatype;
+	metric->datatype = (uint32_t)datatype;
 	metric->has_is_historical = is_historical;
 	if (is_historical) {
 		metric->is_historical = is_historical;
@@ -986,3 +1011,63 @@ void print_payload(org_eclipse_tahu_protobuf_Payload* payload) {
 		}
 	}
 }
+
+#ifdef _WIN32
+/* https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows */
+LARGE_INTEGER getFILETIMEoffset() {
+	SYSTEMTIME s;
+	FILETIME f;
+	LARGE_INTEGER t;
+
+	s.wYear = 1970;
+	s.wMonth = 1;
+	s.wDay = 1;
+	s.wHour = 0;
+	s.wMinute = 0;
+	s.wSecond = 0;
+	s.wMilliseconds = 0;
+	SystemTimeToFileTime(&s, &f);
+	t.QuadPart = f.dwHighDateTime;
+	t.QuadPart <<= 32;
+	t.QuadPart |= f.dwLowDateTime;
+	return (t);
+}
+
+int clock_gettime_realtime_(struct timespec* tv) {
+	LARGE_INTEGER           t;
+	FILETIME            f;
+	double                  microseconds;
+	static LARGE_INTEGER    offset;
+	static double           frequencyToMicroseconds;
+	static int              initialized = 0;
+	static BOOL             usePerformanceCounter = 0;
+
+	if (!initialized) {
+		LARGE_INTEGER performanceFrequency;
+		initialized = 1;
+		usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
+		if (usePerformanceCounter) {
+			QueryPerformanceCounter(&offset);
+			frequencyToMicroseconds = (double)performanceFrequency.QuadPart / 1000000.;
+		} else {
+			offset = getFILETIMEoffset();
+			frequencyToMicroseconds = 10.;
+		}
+	}
+	if (usePerformanceCounter) QueryPerformanceCounter(&t);
+	else {
+		GetSystemTimeAsFileTime(&f);
+		t.QuadPart = f.dwHighDateTime;
+		t.QuadPart <<= 32;
+		t.QuadPart |= f.dwLowDateTime;
+	}
+
+	t.QuadPart -= offset.QuadPart;
+	microseconds = (double)t.QuadPart / frequencyToMicroseconds;
+	t.QuadPart = (LONGLONG)microseconds;
+	tv->tv_sec = t.QuadPart / 1000000;
+	tv->tv_nsec = t.QuadPart % 1000000;
+	//tv->tv_usec = t.QuadPart % 1000000;
+	return (0);
+}
+#endif

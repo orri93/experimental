@@ -1,4 +1,4 @@
-set(gos_experimental_c_tahuspb_target ${gos_spb_experimental_tahu_library})
+set(gos_experimental_c_tahuspb_target ${gos_spb_experimental_tahu_c_library})
 
 # Location of the protoc command needs to be in PATH!
 
@@ -31,16 +31,15 @@ list(APPEND gos_experimental_c_tahuspb_source
 
 list(APPEND gos_experimental_c_tahuspb_include
   ${gos_experimental_c_tahus_nanopb_output_dir}
-  ${gos_spb_experimental_include}
-  ${gos_experimental_include}
-  ${CMAKE_CURRENT_BINARY_DIR})
+  ${gos_spb_experimental_c_include}
+  ${gos_experimental_include})
 
 #if (WIN32)
 #  list(APPEND gos_experimental_c_tahuspb_libraries ws2_32)
 #endif ()
 
-#list(APPEND gos_experimental_c_tahuspb_definitions
-#  NOMINMAX)
+list(APPEND gos_experimental_c_tahuspb_definitions
+  _CRT_SECURE_NO_WARNINGS)
 
 add_library(${gos_experimental_c_tahuspb_target}
   ${gos_experimental_c_tahuspb_source})
@@ -53,12 +52,13 @@ endif ()
 target_include_directories(${gos_experimental_c_tahuspb_target} PUBLIC
   ${gos_experimental_c_tahuspb_include})
 
-if(GOS_DEPLOY_PDB_FILES)
-  install(FILES "$<TARGET_PDB_FILE:${gos_experimental_c_tahuspb_target}>"
-    DESTINATION pdb
-    COMPONENT pdb)
-endif()
+if (gos_experimental_c_tahuspb_public_header)
+  set_target_properties(${gos_experimental_c_tahuspb_target}
+    PROPERTIES PUBLIC_HEADER
+    "${gos_experimental_c_tahuspb_public_header}")
+endif ()
 
 install(TARGETS ${gos_experimental_c_tahuspb_target}
-# CONFIGURATIONS etc
-  RUNTIME DESTINATION bin)
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include/c/tahuspb
+  ARCHIVE DESTINATION lib)

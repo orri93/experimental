@@ -4,11 +4,13 @@ list(APPEND gos_experimental_c_sparkplugb_source
   "sparkplugb.c")
 
 list(APPEND gos_experimental_c_sparkplugb_include
-  ${gos_spb_experimental_include})
+  ${gos_spb_experimental_c_include}
+  ${gos_experimental_include})
 
 list(APPEND gos_experimental_c_sparkplugb_libraries
+  ${gos_spb_experimental_mosquitto_library}
   ${gos_spb_experimental_nanopb_library}
-  ${gos_spb_experimental_tahu_library})
+  ${gos_spb_experimental_tahu_c_library})
 
 #if (WIN32)
 #  list(APPEND gos_experimental_c_sparkplugb_libraries ws2_32)
