@@ -16,6 +16,10 @@
 static void _gos_usleep_(unsigned int usec);
 #endif
 
+//#define GOS_EXPERIMENTAL_MQTT_HOST "localhost"
+//#define GOS_EXPERIMENTAL_MQTT_HOST "gosazuredeb"
+#define GOS_EXPERIMENTAL_MQTT_HOST "gospfsexi"
+
 /* Mosquitto Callbacks */
 static void gos_message_callback(struct mosquitto* mosq, void* userdata, const struct mosquitto_message* message);
 static void gos_connect_callback(struct mosquitto* mosq, void* userdata, int result);
@@ -51,8 +55,7 @@ int main(int argc, char** argv) {
   int rv = EXIT_SUCCESS;
 
   /* MQTT Parameters */
-  //char* host = "localhost";
-	char* host = "gosazuredeb";
+  char* host = GOS_EXPERIMENTAL_MQTT_HOST;
   int port = 1883;
   int keepalive = 60;
   bool clean_session = true;

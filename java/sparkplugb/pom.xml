@@ -11,12 +11,12 @@
     <artifactId>experimental</artifactId>
     <version>0.0.1</version>
   </parent>
-  
+
   <artifactId>experimental-sparkplugb</artifactId>
   <packaging>jar</packaging>
   <name>GOS experimental sparkplugb</name>
   <description>GOS experimental sparkplugb</description>
-  
+
   <properties>
     <start-class>gos.experimental.sparkplugb.route.Application</start-class>
   </properties>
@@ -24,6 +24,7 @@
 
   <dependencies>
 
+    <!-- Sparkplug B -->
     <dependency>
       <groupId>org.eclipse.tahu</groupId>
       <artifactId>tahu-java</artifactId>

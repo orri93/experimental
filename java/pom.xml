@@ -60,7 +60,7 @@
         <type>pom</type>
       </dependency>
       
-      <!-- We need to align the Hibernate versions -->
+      <!-- Hibernate -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-entitymanager</artifactId>
@@ -81,30 +81,42 @@
         <version>1.4.197</version>
       </dependency>
 
+      <!-- MQTT -->
       <dependency>
         <groupId>org.eclipse.paho</groupId>
         <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
         <version>1.2.0</version>
       </dependency>
       
+      <!-- Spark-plug B -->
       <dependency>
         <groupId>org.eclipse.tahu</groupId>
         <artifactId>tahu-java</artifactId>
         <version>0.5.8</version>
       </dependency>
+      
+      <!-- Google Proto Buffer -->
+      <!-- dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>3.13.0</version>
+      </dependency -->
 
+      <!-- YAML -->
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>1.23</version>
       </dependency>
 
+      <!-- JSON -->
       <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>20180813</version>
       </dependency>
 
+      <!-- Servlet -->
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
