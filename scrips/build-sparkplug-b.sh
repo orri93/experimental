@@ -103,4 +103,4 @@ echo "${GOS_PROJECT_NAME} root directory is defined as ${GOS_ROOT_DIR}"
 
 echo "*** Generate proto buffer"
 GOS_PROTOC_GENERATE_PROTO_BUFFER_CMD="${GOS_PROTOC} --proto_path"
-${GOS_PROTOC} 
+${GOS_PROTOC}
