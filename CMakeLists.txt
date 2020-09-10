@@ -14,7 +14,12 @@ option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
 option(GOS_NN_EXPERIMENTAL "GOS Experimental for Neural Network" OFF)
 option(GOS_SPB_EXPERIMENTAL "GOS Experimental for Sparkplug B" OFF)
+option(GOS_SDL_WEB_EXPERIMENTAL "GOS Experimental for SDL Web" OFF)
+option(GOS_SDL_EXPERIMENTAL "GOS Experimental for SDL" OFF)
 option(GOS_QT_EXPERIMENTAL "GOS Experimental for Qt" OFF)
+
+option(GOS_USE_GTEST_DISCOVER "Use CMake Google Test descovery for unit tests" OFF)
+option(GOS_USE_GTEST_PACKAGE "Use CMake GTest Package for unit tests" OFF)
 
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 
@@ -47,6 +52,12 @@ list(APPEND gos_experimental_library_public_headers
   "${CMAKE_CURRENT_BINARY_DIR}/include/gos/experimental/version.h")
 
 set(gos_experimental_library_target libgosexperimental)
+
+set(gos_c_library_target libgos)
+list(APPEND gos_c_library_public_header
+  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/line.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/color.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/mapping.h")
 
 if(CLANG_TIDY)
   find_program(CLANG_TIDY_EXE
@@ -85,7 +96,6 @@ if (GOS_SPB_EXPERIMENTAL)
   set(gos_spb_experimental_mosquitto_lib_dir "${gos_spb_experimental_mosquitto_dir}/lib")
   set(gos_spb_experimental_mosquitto_library libmosquitto_static)
   add_subdirectory(extern/mosquitto)
-
   set(gos_spb_experimental_nanopb_dir "${CMAKE_SOURCE_DIR}/extern/nanopb")
   set(gos_spb_experimental_nanopb_library protobuf-nanopb-static)
   set(gos_spb_experimental_nanopb_generator_py "${gos_spb_experimental_nanopb_dir}/generator/nanopb_generator.py")
@@ -144,6 +154,42 @@ endif ()
  
 add_subdirectory(c)
 add_subdirectory(cpp)
+
+if (BUILD_TESTS)
+  enable_testing()
+# set(gos_unit_testing_xml_output_dir )
+  if(GOS_USE_GTEST_PACKAGE)
+    find_package(GTest REQUIRED)
+  else ()
+    if (MSVC)
+      #if (GOS_FORCE_SHARED_CRT)
+        set(gtest_force_shared_crt ON CACHE BOOL "Use Shared CRT")
+      #endif ()
+    endif (MSVC)
+    if (GOS_EXPERIMENTAL_INSTRUCT_GOOGLE_TEST_PATH)
+      set(GOS_EXPERIMENTAL_GOOGLE_TEST_PATH
+        "${GOS_EXPERIMENTAL_INSTRUCT_GOOGLE_TEST_PATH}")
+    else ()
+      set(GOS_EXPERIMENTAL_GOOGLE_TEST_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/extern/googletest")
+      add_subdirectory(extern/googletest)
+    endif ()
+    set(gos_experimental_unit_testing_dir
+      "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    set(gos_experimental_unit_testing_gmock_include_dir
+      "${GOS_EXPERIMENTAL_GOOGLE_TEST_PATH}/googlemock/include")
+    set(gos_experimental_unit_testing_gtest_include_dir
+      "${GOS_EXPERIMENTAL_GOOGLE_TEST_PATH}/googletest/include")
+    list(APPEND gos_experimental_gtest_include
+      ${gos_experimental_unit_testing_gmock_include_dir}
+      ${gos_experimental_unit_testing_gtest_include_dir})
+    list(APPEND gos_experimental_gtest_libraries
+      gtest
+      gmock
+      gmock_main)
+  endif ()
+  add_subdirectory(tests)
+endif (BUILD_TESTS)
 
 message(STATUS "")
 message(STATUS "Geirmundur Orri Sigurdsson Experimental ${PROJECT_VERSION} BUILD SUMMARY")

@@ -19,3 +19,9 @@
 [submodule "extern/mosquitto"]
 	path = extern/mosquitto
 	url = https://github.com/eclipse/mosquitto.git
+[submodule "extern/RGBConverter"]
+	path = extern/RGBConverter
+	url = git@github.com:orri93/RGBConverter.git
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = https://github.com/google/googletest.git
