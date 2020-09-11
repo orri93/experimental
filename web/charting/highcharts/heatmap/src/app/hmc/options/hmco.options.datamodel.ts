@@ -11,8 +11,8 @@ import { PlotOptions } from './plot-options';
 export interface Hmco {
   chart?: Chart;
   tooltip?: EnabledOption;
-  boost?: Boost,
-  title?: TextOption,
+  boost?: Boost;
+  title?: TextOption;
   credits?: EnabledOption;
   exporting?: EnabledOption;
   xAxis?: XAxis;

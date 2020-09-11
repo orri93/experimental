@@ -1,3 +1,3 @@
 export interface EnabledOption {
-  enabled: boolean
+  enabled: boolean;
 }

@@ -1,3 +1,3 @@
 export interface TextOption {
-  text: string
+  text: string;
 }

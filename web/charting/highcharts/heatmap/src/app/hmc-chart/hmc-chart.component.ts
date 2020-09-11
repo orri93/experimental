@@ -10,7 +10,7 @@ import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular
 export class HmcChartComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor() { }
-  
+
   ngOnInit(): void {
   }
 
