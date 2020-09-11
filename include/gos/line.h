@@ -9,4 +9,9 @@
 
 #define GOS_LINE_FUN(x,m,b) ( (m) * (x) + (b) )
 
+typedef struct gos_line {
+  double m;
+  double b;
+} gos_line;
+
 #endif
