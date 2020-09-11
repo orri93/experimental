@@ -1,0 +1,200 @@
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--3-col">
+    <main class="mdl-layout__content">
+      <div class="mdl-grid value-mld-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+          <div
+            *ngIf="displayDepth[4] && displayEcd[4]"
+            class="mdl-grid value-mld-grid"
+          >
+            <div class="mdl-cell mdl-cell--4-col value-name-div">
+              <b>{{ displayToolNames[4] }}</b>
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayDepth[4] | number: "1.0-2" }}
+            </div>
+            <div
+              class="mdl-cell mdl-cell--1-col value-unit-div"
+              style="margin-left: 4px; margin-right: 12px;"
+            >
+              {{ depthUnitAbbr }}
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayEcd[4] | number: "1.0-4" }}
+            </div>
+            <div class="mdl-cell mdl-cell--1-col value-unit-div">
+              {{ ecdUnitAbbr }}
+            </div>
+          </div>
+          <div
+            *ngIf="
+              displayDepth[4] &&
+              displayEcd[4] &&
+              displayDepth[3] &&
+              displayEcd[3]
+            "
+            class="status-div"
+          >
+            <div
+              class="status-color-bar"
+              [style.backgroundColor]="tool4Tool5DeltaColor"
+            ></div>
+          </div>
+          <div
+            *ngIf="displayDepth[3] && displayEcd[3]"
+            class="mdl-grid value-mld-grid"
+          >
+            <div class="mdl-cell mdl-cell--4-col value-name-div">
+              <b>{{ displayToolNames[3] }}</b>
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayDepth[3] | number: "1.0-2" }}
+            </div>
+            <div
+              class="mdl-cell mdl-cell--1-col value-unit-div"
+              style="margin-left: 4px; margin-right: 12px;"
+            >
+              {{ depthUnitAbbr }}
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayEcd[3] | number: "1.0-4" }}
+            </div>
+            <div class="mdl-cell mdl-cell--1-col value-unit-div">
+              {{ ecdUnitAbbr }}
+            </div>
+          </div>
+          <div
+            *ngIf="
+              displayDepth[3] &&
+              displayEcd[3] &&
+              displayDepth[2] &&
+              displayEcd[2]
+            "
+            class="status-div"
+          >
+            <div
+              class="status-color-bar"
+              [style.backgroundColor]="tool3Tool4DeltaColor"
+            ></div>
+          </div>
+          <div
+            *ngIf="displayDepth[2] && displayEcd[2]"
+            class="mdl-grid value-mld-grid"
+          >
+            <div class="mdl-cell mdl-cell--4-col value-name-div">
+              <b>{{ displayToolNames[2] }}</b>
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayDepth[2] | number: "1.0-2" }}
+            </div>
+            <div
+              class="mdl-cell mdl-cell--1-col value-unit-div"
+              style="margin-left: 4px; margin-right: 12px;"
+            >
+              {{ depthUnitAbbr }}
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayEcd[2] | number: "1.0-4" }}
+            </div>
+            <div class="mdl-cell mdl-cell--1-col value-unit-div">
+              {{ ecdUnitAbbr }}
+            </div>
+          </div>
+          <div
+            *ngIf="
+              displayDepth[2] &&
+              displayEcd[2] &&
+              displayDepth[1] &&
+              displayEcd[1]
+            "
+            class="status-div"
+          >
+            <div
+              class="status-color-bar"
+              [style.backgroundColor]="tool2Tool3DeltaColor"
+            ></div>
+          </div>
+          <div
+            *ngIf="displayDepth[1] && displayEcd[1]"
+            class="mdl-grid value-mld-grid"
+          >
+            <div class="mdl-cell mdl-cell--4-col value-name-div">
+              <b>{{ displayToolNames[1] }}</b>
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayDepth[1] | number: "1.0-2" }}
+            </div>
+            <div
+              class="mdl-cell mdl-cell--1-col value-unit-div"
+              style="margin-left: 4px; margin-right: 12px;"
+            >
+              {{ depthUnitAbbr }}
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayEcd[1] | number: "1.0-4" }}
+            </div>
+            <div class="mdl-cell mdl-cell--1-col value-unit-div">
+              {{ ecdUnitAbbr }}
+            </div>
+          </div>
+          <div
+            *ngIf="
+              displayDepth[1] &&
+              displayEcd[1] &&
+              displayDepth[0] &&
+              displayEcd[0]
+            "
+            class="status-div"
+          >
+            <div
+              class="status-color-bar"
+              [style.backgroundColor]="tool1Tool2DeltaColor"
+            ></div>
+          </div>
+          <div
+            *ngIf="displayDepth[0] && displayEcd[0]"
+            class="mdl-grid value-mld-grid"
+          >
+            <div class="mdl-cell mdl-cell--4-col value-name-div">
+              <b>{{ displayToolNames[0] }}</b>
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayDepth[0] | number: "1.0-2" }}
+            </div>
+            <div
+              class="mdl-cell mdl-cell--1-col value-unit-div"
+              style="margin-left: 4px; margin-right: 12px;"
+            >
+              {{ depthUnitAbbr }}
+            </div>
+            <div class="mdl-cell mdl-cell--3-col value-div">
+              {{ displayEcd[0] | number: "1.0-4" }}
+            </div>
+            <div class="mdl-cell mdl-cell--1-col value-unit-div">
+              {{ ecdUnitAbbr }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="mdl-cell mdl-cell--9-col">
+    <!-- hmc-chart-component
+      #chart
+      [options]="heatmapChartOptions"
+      [dataWidth]="dataWidth"
+      [timeInterval]="timeInterval"
+      [toolCount]="toolCount"
+      [ecdLowerLimit]="ecdLowerLimit"
+      [ecdUpperLimit]="ecdUpperLimit"
+      [ecdDataBuffer]="ecdDataBuffer"
+      [endTimestamp]="endTimestamp"
+      [isRealtime]="isRealtime"
+    >
+    </ecd-heatmap-chart-component -->
+    <app-hmc-chart>
+      #chart
+      [options]="hmcOptions"
+    </app-hmc-chart>
+  </div>
+</div>
