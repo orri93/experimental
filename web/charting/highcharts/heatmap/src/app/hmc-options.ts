@@ -1,10 +1,10 @@
-import { Hmco } from './hmco.options.datamodel'
+import { Options } from './options';
 
-export const hmcoOptions: Hmco = {
+export const HmcOptions: Options = {
   chart: {
     animation: false,
     marginLeft: 118,
-    type: 'heatmap'
+    type: 'heatmap',
   },
   tooltip: {
     enabled: false,
@@ -26,7 +26,7 @@ export const hmcoOptions: Hmco = {
     type: 'datetime',
     tickLength: 10,
     minPadding: 0,
-    maxPadding: 0
+    maxPadding: 0,
   },
   yAxis: {
     type: 'linear',
@@ -37,7 +37,7 @@ export const hmcoOptions: Hmco = {
     tickWidth: 1,
     lineWidth: 1,
     startOnTick: false,
-    endOnTick: false
+    endOnTick: false,
   },
   colorAxis: {
     stops: [

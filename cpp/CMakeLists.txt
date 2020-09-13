@@ -1,4 +1,5 @@
-
+add_subdirectory(fastnoise)
+add_subdirectory(gosoutpp)
 
 if (GOS_NN_EXPERIMENTAL)
   add_subdirectory(nn)

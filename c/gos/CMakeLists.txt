@@ -1,8 +1,18 @@
 list(APPEND gos_c_library_source
-  color.c)
+  interpolate.c
+  geometry.c
+  perlin.c
+  signal.c
+  color.c
+  noise.c)
 
-#list(APPEND gos_c_library_definitions
-#  _CRT_SECURE_NO_WARNINGS)
+list(APPEND gos_c_library_definitions
+  GOS_PERLIN_FLOAT
+  GOS_PERLIN_DOUBLE
+  GOS_PERLIN_LERP_FUNCTION
+  _USE_MATH_DEFINES
+# _CRT_SECURE_NO_WARNINGS
+)
 
 list(APPEND gos_c_library_include
   ${gos_experimental_include})

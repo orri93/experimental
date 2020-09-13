@@ -55,9 +55,19 @@ set(gos_experimental_library_target libgosexperimental)
 
 set(gos_c_library_target libgos)
 list(APPEND gos_c_library_public_header
-  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/line.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/color.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/mapping.h")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/line.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/types.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/color.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/noise.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/perlin.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/signal.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/mapping.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/geometry.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/interpolate.h")
+
+set(gos_c_drilling_library_target libgosdrilling)
+list(APPEND gos_c_drilling_library_public_header
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/drilling/density.h")
 
 if(CLANG_TIDY)
   find_program(CLANG_TIDY_EXE
@@ -113,6 +123,12 @@ if (GOS_SPB_EXPERIMENTAL)
   set(gos_spb_experimental_tahu_cpp_library tahuspbcpp)
 
 endif ()
+
+set(gos_fast_noise_library_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/FastNoise")
+set(gos_fast_noise_library_target libfastnoise)
+list(APPEND gos_fast_noise_library_public_header
+  "${gos_fast_noise_library_directory}/FastNoise.h")
 
 #set(Boost_USE_MULTITHREADED        ON)
 #set(Boost_USE_STATIC_RUNTIME      OFF)

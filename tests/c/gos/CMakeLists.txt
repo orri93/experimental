@@ -6,7 +6,11 @@ set(gos_c_gos_test_target gosctest)
 set(gos_c_gos_test_name gosctest)
 
 list(APPEND gos_c_gos_test_source
-  color.cpp)
+  interpolate.cpp
+  geometry.cpp
+  signal.cpp
+  color.cpp
+  noise.cpp)
 
 #list(APPEND gos_c_gos_test_definitions
 #  _CRT_SECURE_NO_WARNINGS)

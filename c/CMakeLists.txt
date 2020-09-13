@@ -1,4 +1,7 @@
+add_subdirectory(drilling)
+
 add_subdirectory(gos)
+add_subdirectory(gosout)
 
 if (GOS_SDL_EXPERIMENTAL)
   add_subdirectory(sdl)

@@ -3,8 +3,8 @@ import * as moment from 'moment';
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { HmcChartComponent } from '../hmc-chart/hmc-chart.component';
-import { Hmco } from './options/hmco.options.datamodel';
-
+import { Options } from '../options';
+import { HmcOptions } from '../hmc-options';
 
 
 @Component({
@@ -15,7 +15,7 @@ import { Hmco } from './options/hmco.options.datamodel';
 export class HmcComponent implements OnInit {
   @ViewChild(HmcChartComponent) chart: HmcChartComponent;
 
-  public hmcOptions: Hmco;
+  public hmcOptions: Options;
   public toolCount: number;
   public tool1Tool2DeltaColor: string;
   public tool2Tool3DeltaColor: string;
@@ -30,7 +30,9 @@ export class HmcComponent implements OnInit {
   public displayDepth: number[];
   public displayEcd: number[];
 
-  constructor() { }
+  constructor() {
+    this.hmcOptions = HmcOptions;
+  }
 
   ngOnInit(): void {
   }
