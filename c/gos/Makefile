@@ -1,7 +1,7 @@
-# Places a static or shared (dynamic) library into ../lib
+# Places a static or shared (dynamic) library into ../../lib
 
 all: static
-	
+
 dynamic:
 	gcc -I../../include -fPIC -c geometry.c
 	gcc -I../../include -fPIC -c interpolate.c
