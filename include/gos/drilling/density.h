@@ -15,11 +15,24 @@ typedef struct gos_drilling_density {
 extern "C" {
 #endif
 
+bool gos_exp_drilling_density_initialize(
+  int toolcount,
+  int datapointcount,
+  int majorcount);
+
+gos_drilling_density* gos_exp_drilling_density_ecd_get(int tool);
+
 bool gos_exp_drilling_density_generate(
   gos_drilling_density* ecd,
   gos_generation_1d* densitygeneration,
   gos_generation_1d* depthgeneration,
   int major);
+
+void gos_exp_drilling_density_shutdown();
+
+const char* gos_exp_drilling_message();
+const char* gos_exp_drilling_message_length(int* length);
+
 
 #ifdef __cplusplus
 }

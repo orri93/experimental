@@ -16,9 +16,10 @@
 
 static int first(int argc, char** argv);
 static int second(int argc, char** argv);
+static int third(int argc, char** argv);
 
 int main(int argc, char** argv) {
-  return second(argc, argv);
+  return third(argc, argv);
 }
 
 int first(int argc, char** argv) {
@@ -175,6 +176,46 @@ exit_second_function:
       tool[i].depth = NULL;
     }
   }
+
+  return mainres;
+}
+
+int third(int argc, char** argv) {
+  int i, j, mainres = EXIT_SUCCESS;
+
+  gos_drilling_density* ecd;
+
+  double* density;
+  double* depth;
+
+  bool result;
+
+  result = gos_exp_drilling_density_initialize(
+    GOS_DRILLING_TOOL_COUNT,
+    GOS_DRILLING_DATA_POINT_COUNT,
+    GOS_DRILLING_MAJOR_COUNT);
+
+  if (result) {
+    /* Output data */
+    for (i = 0; i < GOS_DRILLING_DATA_POINT_COUNT; i++) {
+      printf("%d", i);
+      for (j = 0; j < GOS_DRILLING_TOOL_COUNT; j++) {
+        ecd = gos_exp_drilling_density_ecd_get(j);
+        density = ecd->density;
+        depth = ecd->depth;
+        printf(" %f %f", depth[i], density[i]);
+      }
+      printf("\n");
+    }
+  } else {
+    fprintf(
+      stderr,
+      "Failed to initialize drilling density: %s",
+      gos_exp_drilling_message());
+    mainres = EXIT_FAILURE;
+  }
+
+  gos_exp_drilling_density_shutdown();
 
   return mainres;
 }
