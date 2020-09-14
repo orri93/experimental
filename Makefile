@@ -7,3 +7,7 @@ dynamic:
 static:
 	cd c; make static
 	cd go; make all
+
+clean:
+	cd c; make clean
+	cd go; make clean

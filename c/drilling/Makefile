@@ -14,3 +14,6 @@ static:
 	ranlib libgosdrilling.a
 	mv -f libgosdrilling.a ../../lib
 	rm -f density.o
+
+clean:
+	rm -f ../../lib/libgosdrilling.so ../../lib/libgosdrilling.a

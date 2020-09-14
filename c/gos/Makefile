@@ -20,3 +20,6 @@ static:
 	ranlib libgos.a
 	mv -f libgos.a ../../lib
 	rm -f geometry.o interpolate.o noise.o signal.o
+
+clean:
+	rm -f ../../lib/libgos.so ../../lib/libgos.a
