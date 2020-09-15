@@ -15,34 +15,25 @@ darkUnicaTheme(Highcharts);
 })
 export class SimpleChartComponent implements OnInit {
 
-  Highcharts: typeof Highcharts = Highcharts; // required
+  Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {
-    series: [{
-      data: [1, 2, 3, 4],
-      type: 'line'
-    }],
     boost: {
       enabled: true
     }
-  }; // required
-  // optional function, defaults to null chartCallback: Highcharts.ChartCallbackFunction = function (chart) { } 
-  updateFlag: boolean = false; // optional boolean
-  oneToOneFlag: boolean = true; // optional boolean, defaults to false
-  runOutsideAngular: boolean = false; // optional boolean, defaults to false
-
-  constructor() { }
-
-  ngOnInit(): void {
+  };
+  chartCallback: Highcharts.ChartCallbackFunction = function (chart) {
     HighchartsData.Highcharts.getJSON(
       'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
       function(jsondata) {
         this.chartOptions.series = [{
-          type: 'area',
-          name: 'USD to EUR',
-          data: jsondata
+          data: jsondata,
+          type: 'line'
         }];
-      }
-    )
+      })   
   }
+
+  constructor() {}
+
+  ngOnInit(): void {}
 
 }
