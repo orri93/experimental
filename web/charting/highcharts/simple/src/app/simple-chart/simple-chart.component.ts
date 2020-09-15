@@ -35,12 +35,12 @@ export class SimpleChartComponent implements OnInit {
     series: [
       {
         name: "s1",
-        data: [[1, 1], [1, 2], [3, 3]],
+        data: [],
         type: 'scatter'
       },
       {
         name: "s2",
-        data: [[0, 0], [5, 4], [7, 8]],
+        data: [],
         type: 'scatter'
       }
     ],
@@ -55,7 +55,15 @@ export class SimpleChartComponent implements OnInit {
     this.getApiResponse(apiLink).then(
       result => {
         console.log("Getting Data from API " + apiLink + ": " + result);
-        this.chartOptions.series[0]['data'] = result;
+        const s1r = result['s1'];
+        console.log("S1 result: " + s1r);
+        const s2r = result['s2'];
+        console.log("S2 result: " + s2r);
+        const s1data = [];
+        const s2data = [];
+        this.chartOptions.series[0]['data'] = s1r;
+        this.chartOptions.series[1]['data'] = s2r;
+        Highcharts.chart('container', this.chartOptions);
       },
       reason => {
         console.log("Error getting API response for " + apiLink + ": " + reason);
