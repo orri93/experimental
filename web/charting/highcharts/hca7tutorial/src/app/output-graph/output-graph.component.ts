@@ -53,12 +53,12 @@ export class OutputGraphComponent implements OnInit {
       {
         name: 'Normal',
         turboThreshold: 500000,
-        data: [[new Date('2018-01-25 18:38:31').getTime(), 2]]
+        data: []
       },
       {
         name: 'Abnormal',
         turboThreshold: 500000,
-        data: [[new Date('2018-02-05 18:38:31').getTime(), 7]]
+        data: []
       }
     ]
   }
@@ -70,25 +70,37 @@ export class OutputGraphComponent implements OnInit {
   ngOnInit(): void {
 
     // Set 10 seconds interval to update data again and again
-    const source = interval(10000);
+    //const source = interval(10000);
 
     // Sample API
     const apiLink = '/assets/data.json';
 
-    this.subscription = source.subscribe(val => this.getApiResponse(apiLink).then(
+    this.getApiResponse(apiLink).then(
       data => {
-        const update_normal_data = [];
+        const sd = data['sd'];
+        const updated_normal_data = [];
+        const updated_abnormal_data = [];
+        sd.forEach(row => {
+          const temp_row = [
+            new Date(row.timestamp).getTime(),
+            row.value
+          ];
+          row.normal === 1 ? updated_normal_data.push(temp_row) : updated_abnormal_data.push(temp_row);
+        });
+        this.options.series[0]['data'] = updated_normal_data;
+        this.options.series[1]['data'] = updated_abnormal_data;
+        Highcharts.chart('container', this.options);
+      },
+      error => {
+        console.log('Something went wrong.');
       }
-    ));
-
-    Highcharts.chart('container', this.options);
+    );
   }
 
   getApiResponse(url) {
-    return this.http.get(url, {})
-      .toPromise().then(res => {
-        return res;
-      });
+    return this.http.get(url, {}).toPromise().then(res => {
+      return res;
+    });
   }
 
 }
