@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 
+import Boost from 'highcharts/modules/boost';
 import darkUnicaTheme from 'highcharts/themes/dark-unica'; 
 import Heatmap from 'highcharts/modules/heatmap';
 
+Boost(Highcharts);
 darkUnicaTheme(Highcharts);
 Heatmap(Highcharts);
 
@@ -47,16 +49,7 @@ export class HeatmapComponent implements OnInit {
       verticalAlign: 'top',
       y: 25,
       symbolHeight: 280
-    },
-
-    series: [
-      {
-        name: '1 million heatmap points',
-        borderWidth: 1,
-        type: 'heatmap',
-        data: []
-      }
-    ]
+    }
   }
 
   constructor() {
@@ -71,13 +64,14 @@ export class HeatmapComponent implements OnInit {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
-  initData(pointsAmount: number) {
+  initData(pointsAmount: number): any[] {
     this.data = [];
     for(let i: number = 0; i < pointsAmount; i++) {
-      for(let j: number = 0; j < pointsAmount; i++) {
-        this.data.push([i, j, this.getRandomInt(0, 3)]);
+      for(let j: number = 0; j < pointsAmount; j++) {
+        this.data.push([i, j, this.getRandomInt(0, 10)]);
       }
     }
+    return this.data;
   }
 
   adjustData(points: any[], plotWidth: number, plotHeight: number): any[] {
@@ -96,18 +90,18 @@ export class HeatmapComponent implements OnInit {
     }
   }
 
-  chartCallback(ch: Highcharts.Chart) {
+  populateHeatmap() {
+    console.log("Populate Heatmap");
 
-    console.log("Chart callback Plot width and height: " + ch.plotWidth + " , " + ch.plotHeight);
+    this.initData(NUMBER_OF_POINTS);
 
-    heatmapComponent.initData(NUMBER_OF_POINTS);
-    let adjustedData: any[] = this.adjustData(
-      this.data,
-      ch.plotWidth,
-      ch.plotHeight);
-    
-    ch.series[0].data = adjustedData;
-    
+    this.chartOptions.series = [{
+      name: '1 million heatmap points',
+      borderWidth: 1,
+      type: 'heatmap',
+      data: this.data
+    }];
+
+    Highcharts.chart("container2", this.chartOptions);
   }
-
 }
