@@ -181,7 +181,7 @@ exit_second_function:
 }
 
 int third(int argc, char** argv) {
-  int i, j, mainres = EXIT_SUCCESS;
+  int i, j, c, f, t, mainres = EXIT_SUCCESS;
 
   gos_drilling_density* ecd;
 
@@ -190,32 +190,70 @@ int third(int argc, char** argv) {
 
   bool result;
 
-  result = gos_exp_drilling_density_initialize(
-    GOS_DRILLING_TOOL_COUNT,
-    GOS_DRILLING_DATA_POINT_COUNT,
-    GOS_DRILLING_MAJOR_COUNT);
+  if (argc > 1) {
 
-  if (result) {
-    /* Output data */
-    for (i = 0; i < GOS_DRILLING_DATA_POINT_COUNT; i++) {
-      printf("%d", i);
-      for (j = 0; j < GOS_DRILLING_TOOL_COUNT; j++) {
-        ecd = gos_exp_drilling_density_ecd_get(j);
-        density = ecd->density;
-        depth = ecd->depth;
-        printf(" %f %f", depth[i], density[i]);
-      }
-      printf("\n");
+    c = atoi(argv[1]);
+
+    switch (c) {
+    case 1:
+      f = 0;
+      t = GOS_DRILLING_DATA_POINT_COUNT / 2;
+      break;
+    case 2:
+      f = GOS_DRILLING_DATA_POINT_COUNT / 2;
+      t = GOS_DRILLING_DATA_POINT_COUNT;
+      break;
+    default:
+      fprintf(
+        stderr,
+        "%d is not acceptable command. Acceptable command is 1 or 2.",
+        c);
+      return EXIT_FAILURE;
     }
+
+    result = gos_exp_drilling_density_initialize(
+      GOS_DRILLING_TOOL_COUNT,
+      GOS_DRILLING_DATA_POINT_COUNT,
+      GOS_DRILLING_MAJOR_COUNT);
+
+    /* JSON header */
+    printf("{\n");
+
+    for (i = 0; i < GOS_DRILLING_TOOL_COUNT; i++) {
+      printf("  \"tool%d\": [\n", i);
+    }
+
+    if (result) {
+      /* Output data */
+      for (i = 0; i < GOS_DRILLING_DATA_POINT_COUNT; i++) {
+        printf("%d", i);
+        for (j = 0; j < GOS_DRILLING_TOOL_COUNT; j++) {
+          ecd = gos_exp_drilling_density_ecd_get(j);
+          density = ecd->density;
+          depth = ecd->depth;
+          printf(" %f %f", depth[i], density[i]);
+        }
+        printf("\n");
+      }
+    } else {
+      fprintf(
+        stderr,
+        "Failed to initialize drilling density: %s",
+        gos_exp_drilling_message());
+      mainres = EXIT_FAILURE;
+    }
+
+    gos_exp_drilling_density_shutdown();
+
   } else {
+
     fprintf(
       stderr,
-      "Failed to initialize drilling density: %s",
-      gos_exp_drilling_message());
-    mainres = EXIT_FAILURE;
-  }
+      "Command is missing. Acceptable command is 1 or 2.");
 
-  gos_exp_drilling_density_shutdown();
+    return EXIT_FAILURE;
+
+  }
 
   return mainres;
 }
