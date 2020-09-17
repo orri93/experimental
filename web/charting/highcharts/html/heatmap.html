@@ -27,19 +27,22 @@
       <h1>HighCharts Heatmap HTML Experiment</h1>
     </div>
 
-    <div id="container" style="height: 400px; min-width: 310px; max-width: 800px; margin: 0 auto"></div>
+    <div id="container" style="height: 400px; min-width: 310px; max-width: 600px; margin: 0 auto"></div>
 
     <script type="application/javascript">
 
-      var NUMBER_OF_POINTS = 1000;
-      var MAXIMUM_COLOR_AXIS = 128;
-      var MAXIMUM_COLOR_NEW_LINE = 32;
+      var NUMBER_OF_ROWS = 400;
+      var NUMBER_OF_COLUMNS = 600;
+      var MINIMUM_COLOR_INIT = 0;
+      var MINIMUM_COLOR_LINE = 0;
+      var MAXIMUM_COLOR_INIT = 128;
+      var MAXIMUM_COLOR_LINE = 32;
       var TIMER_INTERVAL = 1000;
 
-      const data = [];
+      var data = [];
       var myTimer;
       var series;
-      var x = NUMBER_OF_POINTS;
+      var atcol = 0;
 
       function getRandomInt(min, max) {
         min = Math.ceil(min);
@@ -49,12 +52,14 @@
       }
 
       // Init data points (number of points as an argument)
-      var initData = function(pointsAmount) {
-        var dim = pointsAmount;
-
-        for (i = 0; i < dim; i += 1)
-          for (j = 0; j < dim; j += 1)
-            data.push([i, j, getRandomInt(0, MAXIMUM_COLOR_AXIS)])
+      var initData = function(cols, rows) {
+        data = [];
+        for (i = 0; i < cols; i++) {
+          for (j = 0; j < rows; j++) {
+            data.push([i, j, getRandomInt(MINIMUM_COLOR_INIT, MAXIMUM_COLOR_INIT)])
+          }
+        }
+        atcol = cols;
       }
 
       // Adjusting initial data to actual plot size
@@ -73,7 +78,6 @@
           return points
         }
         return data
-
       }
 
       var chart = Highcharts.chart('container', {
@@ -151,24 +155,18 @@
         }]
 
       }, function(ch) { // Callback when chart loaded
-
         ch.callback = function() {
-          var chart = ch,
-            plotWidth = chart.plotSizeX,
-            plotHeight = chart.plotSizeY,
-            adjustedData;
+          var chart = ch, plotWidth = chart.plotSizeX, plotHeight = chart.plotSizeY, adjustedData;
 
-          initData(NUMBER_OF_POINTS)
-          adjustedData = adjustData(data, plotWidth, plotHeight)
+          initData(NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+          adjustedData = adjustData(data, plotWidth, plotHeight);
 
           chart.series[0].update({
             data: adjustedData,
           });
           chart.setTitle({text:"Number of points : " + chart.series[0].data.length});
         }
-
         ch.callback()
-
       });
 
       function start() {
@@ -182,13 +180,13 @@
       }
 
       function myTimerElapsed() {
-        var arr = [];
-        arr.push(x++, Math.random() * 500, getRandomInt(0, MAXIMUM_COLOR_NEW_LINE));
-        const newData = arr;
-        console.log(newData);
-        chart.series[0].addPoint(newData, false, false);
-        //series.addPoint(newData, false, false);
+        for (j = 0; j < NUMBER_OF_ROWS; j++) {
+          var p = [atcol, j, getRandomInt(MINIMUM_COLOR_LINE, MAXIMUM_COLOR_LINE)];
+          chart.series[0].addPoint(p, false, false);
+        }
+        atcol++;
         chart.redraw(true);
+        
         //console.log("New point added: " + newData);
         chart.setTitle({text:"Number of points: " + chart.series[0].data.length});
       }
