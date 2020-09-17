@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { interval, Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
+
+import { WasmService } from './../wasm.service';
+
 
 @Component({
   selector: 'app-sandbox',
@@ -11,9 +14,14 @@ export class SandboxComponent implements OnInit {
 
   subscription: Subscription;
 
+  wasmService: WasmService;
+
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+
+    let obs: Observable<number> = this.wasmService.fibonacci(99);
+
     // Sample API
     const apiLink: string = '/assets/data.json';
 
