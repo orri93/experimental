@@ -70,6 +70,11 @@ module.exports = {
       patterns: [
         { from: './assets/**/*', to: './lcjsjsexperiment/assets', flatten: true, noErrorOnMissing: true }
       ]
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: './favicon.ico', to: './favicon.ico' }
+      ]
     })
   ]
 }
