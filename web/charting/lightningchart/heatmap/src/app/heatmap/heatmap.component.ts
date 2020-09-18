@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { lightningChart, PalettedFill, ChartXY, Themes, Point } from '@arction/lcjs';
+import { interval, Subscription } from 'rxjs';
 import { HeatmapService } from './../heatmap.service';
 import { DataService } from './../data.service';
 
@@ -33,6 +34,7 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
   chart: ChartXY;
   start: Point;
   end: Point;
+  timer: Subscription;
 
   private createRandom(resx: number, resy: number): void {
     this.data = this.dataService.dataGenerator(resx, resy, MINIMUM_Z, MAXIMUM_Z);
@@ -70,6 +72,33 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
     });
     this.heatmap.invalidateValuesOnly(this.data);
     this.heatmap.setFillStyle(fill);
+  }
+
+  startRealTime(): void {
+    console.log("Start Real Time button clicked.");
+    if(this.timer == null || this.timer.closed) {
+      this.timer = interval(1000).subscribe(( x => {
+        this.onTimer();
+      }));
+      console.log("Starting timer subscription.");
+    } else {
+      console.log("Timer subscription already started.");
+    }
+  }
+
+  stopRealTime(): void {
+    console.log("Stop Real Time button clicked.");
+    if(this.timer.closed) {
+      console.log("Timer already closed.");
+    } else {
+      console.log("Unsubscribe the timer.");
+      this.timer.unsubscribe();
+    }
+  }
+
+  onTimer(): void {
+    console.log("Timer");
+    //const dataline = 
   }
 
   ngOnDestroy() {

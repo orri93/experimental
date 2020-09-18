@@ -16,7 +16,7 @@ const WATER_DROP_SIZE_WIDTH = 600.0;
 const WATER_DROP_SIZE_HEIGHT = 600.0;
 
 const WATER_DROP_INTERPOLATED_PALLET = true;
-const WATER_DROP_PIXELATE = false;
+const WATER_DROP_PIXELATE = true;
 
 @Component({
   selector: 'app-water-drop',
