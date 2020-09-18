@@ -1,11 +1,14 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { lightningChart, PalettedFill, ChartXY, Themes, Point } from '@arction/lcjs';
+import { lightningChart, IntensityGridSeries, PalettedFill, ChartXY, Themes, Point } from '@arction/lcjs';
 import { interval, Subscription } from 'rxjs';
 import { HeatmapService } from './../heatmap.service';
 import { DataService } from './../data.service';
 
 const MINIMUM_Z = 0.0;
 const MAXIMUM_Z = 64.0;
+
+const REAL_TIME_MINIMUM_Z = 0.0;
+const REAL_TIME_MAXIMUM_Z = 32.0;
 
 const FIRST_X = 0.0;
 const FIRST_Y = 0.0;
@@ -19,6 +22,8 @@ const RES_Y = 400.0;
 const SIZE_WIDTH = 600.0;
 const SIZE_HEIGHT = 400.0;
 
+const TIMER_INTERVAL = 100.0;
+
 const INTERPOLATED_PALLET = true;
 const PIXELATE = false;
 
@@ -30,11 +35,12 @@ const PIXELATE = false;
 export class HeatmapComponent implements OnDestroy, AfterViewInit {
 
   data: any[];
-  heatmap: any;
+  heatmap: IntensityGridSeries;
   chart: ChartXY;
   start: Point;
   end: Point;
   timer: Subscription;
+  xat: number = 0.0;
 
   private createRandom(resx: number, resy: number): void {
     this.data = this.dataService.dataGenerator(resx, resy, MINIMUM_Z, MAXIMUM_Z);
@@ -72,12 +78,13 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
     });
     this.heatmap.invalidateValuesOnly(this.data);
     this.heatmap.setFillStyle(fill);
+    this.xat = RES_X;
   }
 
   startRealTime(): void {
     console.log("Start Real Time button clicked.");
     if(this.timer == null || this.timer.closed) {
-      this.timer = interval(1000).subscribe(( x => {
+      this.timer = interval(TIMER_INTERVAL).subscribe(( x => {
         this.onTimer();
       }));
       console.log("Starting timer subscription.");
@@ -97,8 +104,15 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
   }
 
   onTimer(): void {
-    console.log("Timer");
-    //const dataline = 
+    let columns = this.data[0].length;
+    console.log("Timer column count: " + columns);
+    let rows = this.data.length;
+    //for(let row = 0; row < rows; row++) {
+    //  this.data[row][this.xat] = this.dataService.getRandomInteger(REAL_TIME_MINIMUM_Z, REAL_TIME_MAXIMUM_Z);
+    //}
+    //this.heatmap.addColumn
+    //this.xat++;
+    this.heatmap.addColumn(2, 'value', [[10, 20], [50, 68]]);
   }
 
   ngOnDestroy() {

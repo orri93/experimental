@@ -7,7 +7,7 @@ export class DataService {
 
   constructor() { }
 
-  private getRandomInteger(minimum: number, maximum: number): number {
+  getRandomInteger(minimum: number, maximum: number): number {
     minimum = Math.ceil(minimum);
     maximum = Math.floor(maximum);
     // The maximum is exclusive and the minimum is inclusive
