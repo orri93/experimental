@@ -14,7 +14,7 @@ export class WaterDropGeneratorService {
    * @param volatility Volatility.
    * @returns wave height at given point.
    */
-  CalculateWavesAtPoint(x: number, z: number, volatility: number): number {
+  private calculateWavesAtPoint(x: number, z: number, volatility: number): number {
     let resultValue: number = 0;
     const iOscillatorCount = this.oscillators.length;
     for (let i = 0; i < iOscillatorCount; i++) {
@@ -37,7 +37,7 @@ export class WaterDropGeneratorService {
    * @param offsetLevel Offset level
    * @param volatility Volatility, set larger number to generate more waves for each drop
    */
-  WaterDropGenerator(
+  waterDropGenerator(
     sizeX: number,
     sizeZ: number,
     xPositionsNormalized: number[],
@@ -68,7 +68,7 @@ export class WaterDropGeneratorService {
     for (let row = 0, z = 0; row < sizeZ; row++, z += stepZ) {
       for (let col = 0, x = 0; col < sizeX; col++, x += stepX) {
         result[col][row] =
-          this.CalculateWavesAtPoint(x, z, volatility) +
+          this.calculateWavesAtPoint(x, z, volatility) +
           offsetLevel;
       }
     }
