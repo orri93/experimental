@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/modules/boost.js"></script>
+    <title>HighCharts Heatmap</title>
+  </head>
+  <body>
+
+    <div class="main_page">
+      <h1>HighCharts Heatmap HTML Experiment</h1>
+    </div>
+
+    <div id="container" style="height: 400px; min-width: 310px; max-width: 600px; margin: 0 auto"></div>
+
+    <script type="application/javascript">
+
+      var NUMBER_OF_ROWS = 400;
+      var NUMBER_OF_COLUMNS = 600;
+      var MINIMUM_COLOR_INIT = 0;
+      var MINIMUM_COLOR_LINE = 0;
+      var MAXIMUM_COLOR_INIT = 128;
+      var MAXIMUM_COLOR_LINE = 32;
+      var TIMER_INTERVAL = 1000;
+
+      var data = [];
+      var myTimer;
+      var series;
+      var atcol = 0;
+
+      function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        //The maximum is exclusive and the minimum is inclusive
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
+      // Init data points (number of points as an argument)
+      var initData = function(cols, rows) {
+        data = [];
+        for (i = 0; i < cols; i++) {
+          for (j = 0; j < rows; j++) {
+            data.push([i, j, getRandomInt(MINIMUM_COLOR_INIT, MAXIMUM_COLOR_INIT)])
+          }
+        }
+        atcol = cols;
+      }
+
+      // Adjusting initial data to actual plot size
+      const adjustData = function(points, plotWidth, plotHeight) {
+        let availablePoints = plotWidth * plotHeight,
+          pointsAmount = points.length,
+          pointsCounter = Math.floor(points.length / availablePoints),
+          data = [];
+
+        // Adjust when there are more points in data, than available pixels
+        if (pointsAmount > availablePoints) {
+          for (var i = 0; i < pointsAmount; i += pointsCounter) {
+            data.push(points[i])
+          }
+        } else {
+          return points
+        }
+        return data
+      }
+
+      var chart = Highcharts.chart('container', {
+        chart: {
+          type: 'heatmap',
+          zoomType: 'xy',
+          events: {
+            selection: function(e) { // Fire event when some range is selected
+
+              if (!e.resetSelection) { // If no reset button clicked
+                const chart = this,
+
+                  // Get actual extremes and plot dimensions
+                  xExtremes = {
+                    min: Math.round(e.xAxis[0].min),
+                    max: Math.round(e.xAxis[0].max)
+                  },
+                  yExtremes = {
+                    min: Math.round(e.yAxis[0].min),
+                    max: Math.round(e.yAxis[0].max)
+                  },
+                  selectedData = [],
+                  plotWidth = chart.plotSizeX,
+                  plotHeight = chart.plotSizeY;
+
+                // Filter points basing on actual range
+                data.forEach(elem => {
+                  if (elem[0] >= xExtremes.min && elem[0] <= xExtremes.max &&
+                    elem[1] >= yExtremes.min && elem[1] <= yExtremes.max) {
+                    selectedData.push(elem)
+                  }
+                })
+
+                // Update chart series
+                chart.series[0].update({
+                  data: adjustData(selectedData, plotWidth, plotHeight)
+                })
+              } else {
+                // Run callback when Reset Zoom button triggered
+                this.callback()
+              }
+            }
+          }
+        },
+        
+        boost: {
+          useGPUTranslations: true,
+          usePreallocated: true
+        },
+
+        title: {
+          text: 'Sales per employee per weekday'
+        },
+
+        colorAxis: {
+          min: 0,
+          minColor: '#000000',
+          maxColor: Highcharts.getOptions().colors[0]
+        },
+
+        legend: {
+          align: 'right',
+          layout: 'vertical',
+          margin: 0,
+          verticalAlign: 'top',
+          y: 25,
+          symbolHeight: 280
+        },
+
+        series: [{
+          name: '1 million heatmap points',
+          borderWidth: 1,
+          seriesThreshold: 1,
+          turboThreshold: 0
+        }]
+
+      }, function(ch) { // Callback when chart loaded
+        ch.callback = function() {
+          var chart = ch, plotWidth = chart.plotSizeX, plotHeight = chart.plotSizeY, adjustedData;
+
+          initData(NUMBER_OF_COLUMNS, NUMBER_OF_ROWS);
+          adjustedData = adjustData(data, plotWidth, plotHeight);
+
+          chart.series[0].update({
+            data: adjustedData,
+          });
+          chart.setTitle({text:"Number of points : " + chart.series[0].data.length});
+        }
+        ch.callback()
+      });
+
+      function start() {
+        console.log("Start");
+        myTimer = setInterval(myTimerElapsed, TIMER_INTERVAL);
+      }
+
+      function stop() {
+        console.log("Stop");
+        clearInterval(myTimer);
+      }
+
+      function myTimerElapsed() {
+        for (j = 0; j < NUMBER_OF_ROWS; j++) {
+          var p = [atcol, j, getRandomInt(MINIMUM_COLOR_LINE, MAXIMUM_COLOR_LINE)];
+          chart.series[0].addPoint(p, false, false);
+        }
+        atcol++;
+        chart.redraw(true);
+        
+        //console.log("New point added: " + newData);
+        chart.setTitle({text:"Number of points: " + chart.series[0].data.length});
+      }
+
+      function populate() {
+        console.log("Populate");
+      }
+    </script>
+
+    <!-- button onclick="populate()">Populate</button -->
+    <button onClick="start()">Start</button>
+    <button onClick="stop()">Stop</button>
+
+  </body>
+</html>
