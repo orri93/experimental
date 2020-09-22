@@ -14,13 +14,12 @@ export class SandboxComponent implements OnInit {
 
   subscription: Subscription;
 
-  wasmService: WasmService;
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private wasmService: WasmService) { }
 
   ngOnInit(): void {
 
-    let obs: Observable<number> = this.wasmService.fibonacci(99);
+    let fibres: number = this.wasmService.fibonacci(99);
+    console.log("F(99) = " + fibres);
 
     // Sample API
     const apiLink: string = '/assets/data.json';

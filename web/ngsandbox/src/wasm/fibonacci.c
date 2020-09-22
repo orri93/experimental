@@ -8,10 +8,10 @@
  * Compile
  *
  * Windows 10
- * > emcc wasm\fibonacci.c -Os -s WASM=1 -s MODULARIZE=1 -o wasm\fibonacci.js
+ * > emcc src\wasm\fibonacci.c -Os -s WASM=1 -s MODULARIZE=1 -o src\wasm\fibonacci.js
  * 
  * Linux
- * $ emcc wasm/fibonacci.c -Os -s WASM=1 -s MODULARIZE=1 -o wasm/fibonacci.js
+ * $ emcc src/wasm/fibonacci.c -Os -s WASM=1 -s MODULARIZE=1 -o src/wasm/fibonacci.js
  * 
  */
 

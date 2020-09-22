@@ -1,49 +1,39 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { mergeMap } from "rxjs/operators";
+import { environment } from "../environments/environment";
 
-import * as Module from './../assets/fibonacci.js';
-import "!!file-loader?name=wasm/fibonacci.wasm!../assets/fibonacci.wasm";
+export type FibonacciFunction = (num: number) => number;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class WasmService {
 
-  module: any;
+  loaded: boolean;
 
-  wasmReady = new BehaviorSubject<boolean>(false);
+  fibonacciFunction: FibonacciFunction;
 
-  constructor() {
-    this.instantiateWasm("assets/fibonacci.wasm");
+  constructor(private http: HttpClient) {
+    // Load "pure" WebAssembly, i.e. without any Emscripten API needed to work with it
+    let wasmurl: string = `${environment.wasmAssetsPath}/fibonacci.wasm`;
+    this.instantiateWasm(wasmurl, {}).then((result) => {
+      const wasmInstance = result.instance;
+      this.fibonacciFunction = wasmInstance.exports.fibonacci as FibonacciFunction;
+      this.loaded = true;
+    });
   }
 
-  private async instantiateWasm(url:string) {
-    // fetch the wasm file
-    const wasmFile = await fetch(url);
-
-    // convert it into a binary array
-    const buffer = await wasmFile.arrayBuffer();
-    const binary = new Uint8Array(buffer);
-
-    // create module arguments
-    // including the wasm-file
-    const moduleArgs = {
-      wasmBinary: binary,
-      onRuntimeInitialized: () => {
-        this.wasmReady.next(true);
-      }
-    };
-
-    // instantiate the module
-    this.module = Module(moduleArgs);
+  private instantiateWasm(
+    url: string,
+    imports?: WebAssembly.Imports
+  ): Promise<WebAssembly.WebAssemblyInstantiatedSource> {
+    // emcc -Os src/app/wasm/fibonacci/fibonacci.c -o src/assets/wasm/fibonacci.wasm --no-entry
+    return this.http
+      .get(url, { responseType: "arraybuffer" })
+      .pipe(mergeMap((bytes) => WebAssembly.instantiate(bytes, imports)))
+      .toPromise();
   }
 
-  public fibonacci(input: number): Observable<number> {
-    return this.wasmReady.pipe(filter(value => value === true)).pipe(
-      map(() => {
-        return this.module._fibonacci(input);
-      })
-    );
+  public fibonacci(num: number): number {
+    return this.fibonacciFunction(num);
   }
 }
