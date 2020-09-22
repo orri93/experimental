@@ -1,0 +1,4 @@
+# WebAssembly
+/*.js
+/*.wasm
+/*.html

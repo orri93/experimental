@@ -40,7 +40,7 @@ export class SebastianService {
   }
 
   fibonacciWASM(number: number) {
-    import('./../wasm/fibonacci.wasm').then((module) => {
+    import('./wasm/fibonacci.wasm').then((module) => {
       console.group('WASM');
       console.time('time');
       const wasmFib = module._fibonacci(number);
