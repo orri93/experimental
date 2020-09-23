@@ -1,0 +1,22 @@
+body {
+  background-color: darkslategray;
+}
+h1 {
+  color: lightgoldenrodyellow;
+}
+p {
+  color: white;
+}
+
+.performance-load-result {
+  color: white;
+}
+
+.performance-timer-result {
+  color: lightcyan;
+}
+
+.hc-container {
+  height: 400px;
+  width: 600px;
+}

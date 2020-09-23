@@ -14,12 +14,12 @@ export class DataService {
     return Math.floor(Math.random() * (maximum - minimum)) + minimum;
   }
 
-  createLine(x: number, count: number, minimum: number, maximum: number): any[] {
-    let dataline: any[] = [];
-    for(let i: number = 0; i < count; i++) {
-      dataline.push([x, i, this.getRandomInteger(minimum, maximum)]);
+  createLine(rows: number, minimum: number, maximum: number): any[] {
+    const result = Array.from(Array(rows)).map(() => Array(1))
+    for(let row = 0; row < rows; row++) {
+      result[row][0] = this.getRandomInteger(minimum, maximum);
     }
-    return dataline;
+    return result;
   }
 
   dataGenerator(columns: number, rows: number, minimum: number, maximum: number): any[] {

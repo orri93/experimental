@@ -19,19 +19,16 @@
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://code.highcharts.com/modules/heatmap.js"></script>
     <script src="https://code.highcharts.com/modules/boost.js"></script>
+    <link rel="stylesheet" href="hchm.css">
     <title>Heatmap</title>
   </head>
   <body>
 
-    <div class="main_page">
-      <h1>HighCharts Heatmap HTML Experiment</h1>
-    </div>
+    <h1>HighCharts Heatmap HTML Experiment</h1>
 
-    <div id="container" style="height: 400px; min-width: 310px; max-width: 600px; margin: 0 auto"></div>
+    <div id="container" class="hc-container"></div>
 
-    <p>
-      <div id="performance-load-result"></div>
-    </p>
+    <div class="performance-load-result" id="performance-load-result-id"></div>
 
     <script type="application/javascript">
 
@@ -39,9 +36,9 @@
       var NUMBER_OF_COLUMNS = 600;
       var MINIMUM_COLOR_INIT = 0;
       var MINIMUM_COLOR_LINE = 0;
-      var MAXIMUM_COLOR_INIT = 128;
-      var MAXIMUM_COLOR_LINE = 32;
-      var TIMER_INTERVAL = 1000;
+      var MAXIMUM_COLOR_INIT = 100;
+      var MAXIMUM_COLOR_LINE = 50;
+      var TIMER_INTERVAL = 100;
 
       var data = [];
       var myTimer;
@@ -104,73 +101,94 @@
 
       var chart = Highcharts.chart('container', {
         chart: {
-          type: 'heatmap',
-          zoomType: 'xy',
-          events: {
-            selection: function(e) { // Fire event when some range is selected
-
-              if (!e.resetSelection) { // If no reset button clicked
-                const chart = this,
-
-                  // Get actual extremes and plot dimensions
-                  xExtremes = {
-                    min: Math.round(e.xAxis[0].min),
-                    max: Math.round(e.xAxis[0].max)
-                  },
-                  yExtremes = {
-                    min: Math.round(e.yAxis[0].min),
-                    max: Math.round(e.yAxis[0].max)
-                  },
-                  selectedData = [],
-                  plotWidth = chart.plotSizeX,
-                  plotHeight = chart.plotSizeY;
-
-                // Filter points basing on actual range
-                data.forEach(elem => {
-                  if (elem[0] >= xExtremes.min && elem[0] <= xExtremes.max &&
-                    elem[1] >= yExtremes.min && elem[1] <= yExtremes.max) {
-                    selectedData.push(elem)
-                  }
-                })
-
-                // Update chart series
-                chart.series[0].update({
-                  data: adjustData(selectedData, plotWidth, plotHeight)
-                })
-              } else {
-                // Run callback when Reset Zoom button triggered
-                this.callback()
-              }
-            }
-          }
+          animation: false,
+          type: 'heatmap'
         },
-        
+        tooltip: {
+          enabled: false
+        },
         boost: {
-          useGPUTranslations: true,
-          usePreallocated: true
+          /* Enable or disable boost on a chart.
+           * Defaults to true. */
+          enabled: true,
+
+          /* If set to true, the whole chart will be boosted if one of the
+           * series crosses its threshold, and all the series can be boosted.
+           * Defaults to true. */
+          allowForce: false,  /* EFD setting */
+
+          /* Set the series threshold for when the boost should kick
+           * in globally.
+           * Setting to e.g. 20 will cause the whole chart to enter boost mode
+           * if there are 20 or more series active. When the chart is in boost
+           * mode, every series in it will be rendered to a common canvas. This
+           * offers a significant speed improvment in charts with a very high
+           * amount of series.
+           * Defaults to null. */
+          seriesThreshold: null,
+
+          /* Enable or disable GPU translations. GPU translations are faster
+           * than doing the translation in JavaScript.
+           * This option may cause rendering issues with certain datasets.
+           * Namely, if your dataset has large numbers with small increments
+           * (such as timestamps), it won't work correctly. This is due to
+           * floating point precission.
+           * Defaults to false. */
+          useGPUTranslations: true, /* EFD setting */
+
+          /* Enable or disable pre-allocation of vertex buffers.
+           * Enabling this will make it so that the binary data arrays required
+           * for storing the series data will be allocated prior to
+           * transforming the data to a WebGL-compatible format.
+           * Defaults to false. */
+          usePreallocated: false
         },
 
         title: {
-          text: 'Sales per employee per weekday'
+          text: 'Random Data'
+        },
+
+        credits: {
+          enabled: false
+        },
+        exporting: {
+          enabled: false
+        },
+
+        xAxis: {
+          minPadding: 0,
+          maxPadding: 0
+        },
+        yAxis: {
+          minPadding: 0,
+          maxPadding: 0
         },
 
         colorAxis: {
-          min: 0,
-          minColor: '#000000',
-          maxColor: Highcharts.getOptions().colors[0]
+          stops: [
+            [0.00, '#07049b'],  // Dark blue
+            [0.30, '#02f7f3'],  // Cyan
+            [0.35, '#09f725'],  // Green
+            [0.50, '#f4ec04'],  // yellow
+            [0.70, '#f79d01'],  // Orange
+            [1.00, '#8c0101']   // Dark red
+          ],
+          reversed: false,
+          startOnTick: false,
+          endOnTick: false,
+          maxPadding: 0,
         },
 
         legend: {
-          align: 'right',
-          layout: 'vertical',
-          margin: 0,
-          verticalAlign: 'top',
-          y: 25,
-          symbolHeight: 280
+           align: 'right',
+           verticalAlign: 'middle',
+           layout: 'vertical',
+           y: 5,
+           symbolHeight: 195
         },
 
         series: [{
-          name: '1 million heatmap points',
+          name: 'Random Data Points',
           borderWidth: 1,
           seriesThreshold: 1,
           turboThreshold: 0
@@ -188,12 +206,11 @@
           chart.series[0].update({
             data: adjustedData,
           });
-          chart.setTitle({text:"Number of points : " + chart.series[0].data.length});
 
           performance.mark(markerNameLoadCompleted);
           performance.measure(measureLoad, markerNameLoadStart, markerNameLoadCompleted);
 
-          var performanceDivElement = document.getElementById("performance-load-result");
+          var performanceDivElement = document.getElementById("performance-load-result-id");
           var entries = performance.getEntriesByType("measure");
           var firstentry = entries[0];
 
@@ -201,6 +218,8 @@
 
           performance.clearMarks();
           performance.clearMeasures();
+
+          console.log("Number of points: " + chart.series[0].data.length);
         }
         ch.callback()
       });
@@ -218,19 +237,39 @@
       function myTimerElapsed() {
         performance.mark(markerNameTimerStart);
 
+        var a  = [];
         for (j = 0; j < NUMBER_OF_ROWS; j++) {
-          var p = [atcol, j, getRandomInt(MINIMUM_COLOR_LINE, MAXIMUM_COLOR_LINE)];
-          chart.series[0].addPoint(p, false, false);
+          var p = [
+            atcol,                                                // X
+            j,                                                    // Y
+            getRandomInt(MINIMUM_COLOR_LINE, MAXIMUM_COLOR_LINE)  // Z
+          ];
+          /*
+           * Add the point with Shift
+           * A point is shifted off the start of the series as one is appended
+           * to the end.
+           * https://api.highcharts.com/class-reference/Highcharts.Series#addPoint
+           */
+          chart.series[0].addPoint(
+            /* The point options 
+             * If options is a single number,
+             * a point with that y value is appended to the series. */
+            p,
+            false,  /* Redraw */
+            true    /* Shift */
+            );
         }
         atcol++;
         chart.redraw(true);
-        
-        chart.setTitle({text:"Number of points: " + chart.series[0].data.length});
 
         performance.mark(markerNameTimerCompleted);
-        performance.measure(measureTimer, markerNameTimerStart, markerNameTimerCompleted);
+        performance.measure(
+          measureTimer,
+          markerNameTimerStart,
+          markerNameTimerCompleted);
 
-        var performanceTimerDivElement = document.getElementById("performance-timer-result");
+        var performanceTimerDivElement =
+          document.getElementById("performance-timer-result-id");
         var entriesTimer = performance.getEntriesByType("measure");
         var firstTimerEntry = entriesTimer[0];
 
@@ -239,21 +278,27 @@
         timerSum += timerDuration;
         var average = timerSum / timerCount;
 
-        performanceTimerDivElement.innerHTML = "Timer. Last: " + timerDuration + " ms, Average: " + average + " ms, Count: " + timerCount;
+        performanceTimerDivElement.innerHTML =
+          "Timer. Last: " + timerDuration +
+          " ms, Average: " + average +
+          " ms, Count: " + timerCount;
 
         performance.clearMarks();
         performance.clearMeasures();
+
+        console.log("Number of points: " + chart.series[0].data.length);
       }
 
     </script>
 
-    <!-- button onclick="populate()">Populate</button -->
-    <button onClick="start()">Start</button>
-    <button onClick="stop()">Stop</button>
-
     <p>
-      <div id="performance-timer-result"></div>
+      <button onClick="start()">Start</button>
+      <button onClick="stop()">Stop</button>
     </p>
+
+    <div
+      class="performance-timer-result"
+      id="performance-timer-result-id"></div>
 
   </body>
 </html>

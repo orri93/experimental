@@ -1,14 +1,30 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { lightningChart, IntensityGridSeries, PalettedFill, ChartXY, Themes, Point } from '@arction/lcjs';
+import {
+  Axis,
+  Point,
+  ChartXY, 
+  ChartXYOptions,
+  lightningChart,
+  IntensityGridSeries,
+  AxisTickStrategies,
+  DateTimeTickStrategy,
+  NumericTickStrategy,
+  TickStrategyStyler,
+  TickStrategyParameters,
+  EngineOptions,
+  PalettedFill,
+  emptyLine,
+  emptyTick,
+  emptyFill, } from '@arction/lcjs';
 import { interval, Subscription } from 'rxjs';
 import { HeatmapService } from './../heatmap.service';
 import { DataService } from './../data.service';
 
 const MINIMUM_Z = 0.0;
-const MAXIMUM_Z = 64.0;
+const MAXIMUM_Z = 100.0;
 
 const REAL_TIME_MINIMUM_Z = 0.0;
-const REAL_TIME_MAXIMUM_Z = 32.0;
+const REAL_TIME_MAXIMUM_Z = 50.0;
 
 const FIRST_X = 0.0;
 const FIRST_Y = 0.0;
@@ -43,18 +59,34 @@ const MEASURE_TIMER = "timer-measure";
 export class HeatmapComponent implements OnDestroy, AfterViewInit {
 
   data: any[];
-  heatmap: IntensityGridSeries;
   chart: ChartXY;
+  axisx: Axis;
+  chartOptions: EngineOptions & ChartXYOptions;
+  heatmap: IntensityGridSeries;
   start: Point;
   end: Point;
+
+  xatfrom: number = 0.0;
+  xatto: number = 0.0;
+
   timer: Subscription;
-  xat: number = 0.0;
 
   timerCount = 0.0;
   timerSum = 0.0;
 
   private createRandom(resx: number, resy: number): void {
     this.data = this.dataService.dataGenerator(resx, resy, MINIMUM_Z, MAXIMUM_Z);
+  }
+
+  /* See Audio Visualizer Showcase */
+  private hideAxis(axis: Axis, start: number, end: number): void {
+    axis
+      .setNibStyle(emptyLine)
+      .setTickStrategy(AxisTickStrategies.Empty)
+      .setStrokeStyle(emptyLine)
+      .setTitleMargin(1)
+      .setTitleFillStyle(emptyFill)
+      .setInterval(this.xatfrom, this.xatto);
   }
 
   constructor(private heatmapService: HeatmapService, private dataService: DataService) {
@@ -67,15 +99,9 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
 
     const fill: PalettedFill = this.heatmapService.getFill(INTERPOLATED_PALLET);
 
-    // Create chartXY
-    this.chart = lightningChart().ChartXY(
-      {
-        container: "lcjsc",
-        theme: Themes.dark,
-        height: SIZE_HEIGHT,
-        width: SIZE_WIDTH
-      });
-
+    this.chartOptions = this.heatmapService.createChartOptions(SIZE_HEIGHT, SIZE_WIDTH);
+    this.chart = lightningChart().ChartXY(this.chartOptions);
+    
     // Set chart title
     this.chart.setTitle('Random Data');
 
@@ -84,18 +110,28 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
     this.heatmap = this.chart.addHeatmapSeries({
       rows: RES_Y,
       columns: RES_X,
+      pixelate: PIXELATE,
       start: this.start,
-      end: this.end,
-      pixelate: PIXELATE
+      end: this.end
     });
     this.heatmap.invalidateValuesOnly(this.data);
     this.heatmap.setFillStyle(fill);
-    this.xat = RES_X;
+
+    this.xatfrom = 0.0;
+    this.xatto = RES_X;
+
+    /* Hide the default axis */
+    this.hideAxis(this.chart.getDefaultAxisX(), this.xatfrom, this.xatto);
+    this.axisx = this.chart.addAxisX();
+    this.axisx.setInterval(this.xatfrom, this.xatto, false, false);
+
+    /* Disable animtions */
+    this.chart.getDefaultAxisY().setAnimationScroll(false);
 
     performance.mark(MARKER_NAME_LOAD_COMPLETED);
     performance.measure(MEASURE_LOAD, MARKER_NAME_LOAD_START, MARKER_NAME_LOAD_COMPLETED);
 
-    var performanceDivElement = document.getElementById("performance-load-result");
+    var performanceDivElement = document.getElementById("performance-load-result-id");
     var entries = performance.getEntriesByType("measure");
     var firstentry = entries[0];
 
@@ -130,16 +166,16 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
   onTimer(): void {
     performance.mark(MARKER_NAME_TIMER_START);
 
-    let columns = this.data[0].length;
-    console.log("Timer column count: " + columns);
-    let rows = this.data.length;
-
-    this.heatmap.addColumn(2, 'value', [[10, 20], [50, 68]]);
-
+    let dataline = this.dataService.createLine(RES_Y, REAL_TIME_MINIMUM_Z, REAL_TIME_MAXIMUM_Z);
+    this.xatfrom++;
+    this.xatto++;
+    this.axisx.setInterval(this.xatfrom, this.xatto, false, false);    
+    this.heatmap.addColumn(1, 'value', [dataline]);
+    
     performance.mark(MARKER_NAME_TIMER_COMPLETED);
     performance.measure(MEASURE_TIMER, MARKER_NAME_TIMER_START, MARKER_NAME_TIMER_COMPLETED);
 
-    var performanceTimerDivElement = document.getElementById("performance-timer-result");
+    var performanceTimerDivElement = document.getElementById("performance-timer-result-id");
     var entriesTimer = performance.getEntriesByType("measure");
     var firstTimerEntry = entriesTimer[0];
 
