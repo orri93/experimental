@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+      Pure HTML Web Assembly SDL Example
+
+      Compile with ccall
+      emcc -o fibonacci.js fibonacci.c -O3 -s WASM=1 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall']"
+
+      The Python server can be used to test it
+        python2 -m SimpleHTTPServer 8000
+      or
+        python3 -m http.server
+      then browse to
+        http://localhost:8000/index.html
+
+ -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Web Assembly SDL HTML</title>
+  </head>
+  <body>
+
+    <h1>Web Assembly SDL HTML Experiment</h1>
+
+    <div id='spinner'></div>
+    <div id="status">Downloading...</div>
+
+    <div>
+      <progress value="0" max="100" id="progress"></progress>
+    </div>
+
+    <div>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <button id="click-me-button">Click Me</button><br /><br />
+
+    <h2>Output</h2>
+    <textarea id="output"></textarea>
+
+    <h2>Function Output</h2>
+    <textarea id="function-output"></textarea>
+
+    <script type="application/javascript">
+
+    var statusElement = document.getElementById('status');
+    var progressElement = document.getElementById('progress');
+    var spinnerElement = document.getElementById('spinner');
+    var buttonElement = document.getElementById('click-me-button');
+
+    var Module = {
+      preRun: [],
+      postRun: [],
+      print: (function() {
+        var element = document.getElementById('output');
+        if (element) {
+          /* Clear browser cache */
+          element.value = '';
+        }
+
+        return function(text) {
+          if(arguments.length > 1) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+          }
+          console.log(text);
+          if(element) {
+            element.value += text + "\n";
+            /* Focus on bottom */
+            element.scrollTop = element.scrollHeight;
+          }
+        }
+      })(),
+      printErr: function(text) {
+        if(arguments.length > 1) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          console.error(text);
+        }
+      },
+      canvas: (function() {
+        var canvas = document.getElementById('canvas');
+
+        canvas.addEventListener("webglcontextlost", function(e) {
+          alert('WebGL context lost. You will need to reload the page.');
+          e.preventDefault();
+        }, false);
+
+        return canvas;
+      })(),
+      setStatus: function(text) {
+        if (!Module.setStatus.last) {
+          Module.setStatus.last = { time: Date.now(), text: '' };
+        }
+        if (text === Module.setStatus.last.text) {
+          return;
+        }
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        /* if this is a progress update, skip it if too soon */
+        if (m && now - Module.setStatus.last.time < 30) {
+          return;
+        }
+        Module.setStatus.last.time = now;
+        Module.setStatus.last.text = text;
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2])*100;
+          progressElement.max = parseInt(m[4])*100;
+          progressElement.hidden = false;
+          spinnerElement.hidden = false;
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+          if (!text) spinnerElement.style.display = 'none';
+        }
+        statusElement.innerHTML = text;
+      },
+      totalDependencies: 0,
+      monitorRunDependencies: function(left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... ('
+          + (this.totalDependencies-left)
+          + '/' + this.totalDependencies
+          + ')' : 'All downloads complete.');
+      }
+    };
+
+    Module.setStatus('Downloading...');
+
+    buttonElement.addEventListener('click', function() {
+      var functionOutputElement = document.getElementById('function-output');
+      var result = Module.ccall(
+        'fibonaccil', // Function name
+        'number',     // Return type
+        ['number'],   // Argument types
+        [28]          // Arguments
+      );
+      var resultText = "Fibonacci result: " + result;
+      console.log(resultText);
+      if(functionOutputElement) {
+        functionOutputElement.value = resultText;
+      }
+    });
+
+    </script>
+    <script async type="text/javascript" src="fibonacci.js"></script>
+
+  </body>
+</html>

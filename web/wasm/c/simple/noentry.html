@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+      Pure HTML Web Assembly SDL Example
+
+      Compile with no entry
+      emcc -Os fibonacci.c -o noentry.wasm --no-entry
+
+      WebAssembly.instantiate()
+      https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiate
+
+      The Python server can be used to test it
+        python2 -m SimpleHTTPServer 8000
+      or
+        python3 -m http.server
+      then browse to
+        http://localhost:8000/index.html
+
+ -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Web Assembly SDL HTML</title>
+  </head>
+  <body>
+
+    <h1>Web Assembly SDL HTML Experiment</h1>
+
+    <button id="click-me-button">Click Me</button><br /><br />
+
+    <h2>Function Output</h2>
+    <textarea id="function-output"></textarea>
+
+    <script type="application/javascript">
+
+    var buttonElement = document.getElementById('click-me-button');
+
+    var instanceExports = undefined;
+    var fibres = 0;
+
+    var importObject = {
+      imports: {
+        imported_func: function(arg) {
+          console.log(arg);
+        }
+      }
+    };
+
+    if(instanceExports) {
+      console.log("Instance exports are incorrectly defined");
+    }
+
+    fetch('noentry.wasm').then(
+      response => response.arrayBuffer()
+    ).then(
+      bytes => WebAssembly.instantiate(bytes, importObject)
+    ).then( result => {
+      console.log("Fetch result");
+      result.instance.exports._initialize();
+      fibres = result.instance.exports.fibonaccil(28);
+      console.log("Fetch Fibonacci result: " + fibres);
+      instanceExports = result.instance.exports
+    });
+
+    buttonElement.addEventListener('click', function() {
+      var resultText = "Fibonacci result: ";
+      if(instanceExports) {
+        console.log("Instance exports are defined");
+        var fr = instanceExports.fibonaccil(32);
+        resultText += fr;
+      } else {
+         resultText += fibres;
+      }
+      console.log(resultText);
+      var functionOutputElement = document.getElementById('function-output');
+      if(functionOutputElement) {
+        functionOutputElement.value = resultText;
+      }
+    });
+
+    </script>
+
+  </body>
+</html>
