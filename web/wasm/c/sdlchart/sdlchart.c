@@ -1,6 +1,8 @@
 /*
  *
  * Copyright 2020 Geirmundur Orri Sigurdsson. All right reserved.
+ * 
+ * Compile
  *
  */
 
