@@ -12,9 +12,15 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "keywords": ["Angular", "WebAssembly", "JavaScript"],
+  "keywords": [
+    "Angular",
+    "WebAssembly",
+    "JavaScript"
+  ],
   "private": true,
-  "author": { "name": "Geirmundur Orri Sigurdsson" },
+  "author": {
+    "name": "Geirmundur Orri Sigurdsson"
+  },
   "dependencies": {
     "@angular/animations": "~10.1.0",
     "@angular/common": "~10.1.0",

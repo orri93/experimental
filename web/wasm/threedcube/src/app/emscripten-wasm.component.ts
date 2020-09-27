@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive } from "@angular/core";
-import { loadScript } from "./../tools";
-import { environment } from "../../environments/environment";
-import wasmCacheBusting from "../../wasm-cache-busting.json";
+import { loadScript } from "./tools";
+import { environment } from "./../environments/environment";
+import wasmCacheBusting from "../wasm-cache-busting.json";
 
 type EmscriptenModuleDecorator<M extends EmscriptenModule> = (module: M) => void;
 
@@ -12,7 +12,10 @@ export abstract class EmscriptenWasmComponent<M extends EmscriptenModule = Emscr
   private resolvedModule: M;
   protected moduleDecorator: EmscriptenModuleDecorator<M>;
 
-  protected constructor(private moduleExportName: string, private wasmJavaScriptLoader: string) {}
+  protected constructor(
+    private moduleExportName: string,
+    private wasmJavaScriptLoader: string
+  ) { }
 
   get module(): M {
     return this.resolvedModule;
