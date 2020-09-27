@@ -1,6 +1,8 @@
 {
   "name": "threedcube",
   "version": "0.0.0",
+  "description": "3D Cube Angular to demonstrate integration with WebAssembly",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,7 +12,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
+  "keywords": ["Angular", "WebAssembly", "JavaScript"],
   "private": true,
+  "author": { "name": "Geirmundur Orri Sigurdsson" },
   "dependencies": {
     "@angular/animations": "~10.1.0",
     "@angular/common": "~10.1.0",
