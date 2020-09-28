@@ -4,20 +4,35 @@
  * 
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
 #include <emscripten.h>
 
 #include <SDL/SDL.h>
 
-static int randomn(int maximum);
-static Uint32 cubec(SDL_PixelFormat* format, int x, int y);
-static Uint32 cubeca(SDL_PixelFormat* format, int x, int y, int a);
+#include <gos/color.h>
+
+#define GOS_COLOR_GRADIENT_STOPS 6
+#define GOS_COLOR_GRADIENT_COLOR_COUNT 50
+#define GOS_COLOR_GRADIENT_COUNT (GOS_COLOR_GRADIENT_STOPS - 1) * GOS_COLOR_GRADIENT_COLOR_COUNT
+
+static gos_color_rgb _cstops[GOS_COLOR_GRADIENT_STOPS];
+static gos_color_rgb** _cgradient = NULL;
+
+static bool initialize();
+static void shutdown();
+
+static Uint32 to_sdl_color(SDL_PixelFormat* format, gos_color_rgb* rgb);
+
 static void setpixel(SDL_Surface* surface, int x, int y, int width, Uint32 pixel);
 static int sdlex(int width, int height);
 
 int main(int argc, char** argv) {
+
+  int i, mainresult = EXIT_SUCCESS;
 
   int width = 600;
   int height = 400;
@@ -29,19 +44,79 @@ int main(int argc, char** argv) {
     height = atoi(argv[2]);
   }
 
-  return sdlex(width, height);
+  if(initialize()) {
+    mainresult = sdlex(width, height);
+  } else {
+    mainresult = EXIT_FAILURE;
+  }
+
+  shutdown();
+
+  return mainresult;
 }
 
-int randomn(int maximum) {
-  return (int)(((long)maximum * (long)rand()) / RAND_MAX);
+bool initialize() {
+  gos_color_rgb** gradat;
+  gos_color_rgb* rgbat;
+  int i;
+
+  rgbat = _cstops;
+  gos_color_assign_rgb32(rgbat++, 0x07049b);  /* Dark blue */
+  gos_color_assign_rgb32(rgbat++, 0x02f7f3);  /* Cyan */
+  gos_color_assign_rgb32(rgbat++, 0x09f725);  /* Green */
+  gos_color_assign_rgb32(rgbat++, 0xf4ec04);  /* Yellow */
+  gos_color_assign_rgb32(rgbat++, 0xf79d01);  /* Orange */
+  gos_color_assign_rgb32(rgbat++, 0x8c0101);  /* Dark red */
+  
+  _cgradient = (gos_color_rgb**)calloc(
+    GOS_COLOR_GRADIENT_COUNT,
+    sizeof(gos_color_rgb*));
+  if(_cgradient != NULL) {
+    for(i = 0; i < GOS_COLOR_GRADIENT_COUNT; i++) {
+      _cgradient[i] = (gos_color_rgb*)calloc(1, sizeof(gos_color_rgb));
+      if(_cgradient[i] == NULL) {
+        return false;
+      }
+    }
+
+    rgbat = _cstops;
+    gradat = _cgradient;
+    for(i = 0; i < GOS_COLOR_GRADIENT_STOPS - 1; i++) {
+      gos_color_perceptual_steps(
+        gradat,
+        rgbat,
+        rgbat + 1,
+        GOS_COLOR_GAMMA,
+        GOS_COLOR_GRADIENT_COLOR_COUNT);
+      gradat += GOS_COLOR_GRADIENT_COLOR_COUNT;
+      rgbat++;
+    }
+    return true;
+  } else {
+    return false;
+  }
 }
 
-Uint32 cubec(SDL_PixelFormat* format, int x, int y) {
-  return cubeca(format, x, y, (x + y) % 255);
+void shutdown() {
+  int i;
+  if(_cgradient != NULL) {
+    for(i = 0; i < GOS_COLOR_GRADIENT_COUNT; i++) {
+      if(_cgradient[i] != NULL) {
+        free(_cgradient[i]);
+        _cgradient[i] = NULL;
+      }
+    }
+    free(_cgradient);
+    _cgradient = NULL;
+  }
 }
 
-Uint32 cubeca(SDL_PixelFormat* format, int x, int y, int a) {
-  return SDL_MapRGBA(format, x, y, 255 - x, a);
+Uint32 to_sdl_color(SDL_PixelFormat* format, gos_color_rgb* rgb) {
+  return SDL_MapRGB(
+    format,
+    (Uint8)(rgb->r),
+    (Uint8)(rgb->g),
+    (Uint8)(rgb->b));
 }
 
 void setpixel(SDL_Surface* surface, int x, int y, int width, Uint32 pixel) {
@@ -49,31 +124,19 @@ void setpixel(SDL_Surface* surface, int x, int y, int width, Uint32 pixel) {
 }
 
 int sdlex(int width, int height) {
-  int r, g, b, n, m;
+  int ci;
   Uint32 pixel;
   SDL_Init(SDL_INIT_VIDEO);
   SDL_Surface* screen = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE);
 
-  n = m = 0;
-
   if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
+
   /* i is height and j is width */
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
-      //r = randomn(255);
-      //g = randomn(255);
-      //b = randomn(255);
-      //pixel = SDL_MapRGB(screen->format, r, g, b);
-      pixel = cubec(screen->format, n, m);
+      ci = GOS_COLOR_GRADIENT_COUNT * j / width;
+      pixel = to_sdl_color(screen->format, _cgradient[ci]);
       setpixel(screen, j, i, width, pixel);
-      n++;
-      if(n >= 256) {
-        n = 0;
-      }
-    }
-    m++;
-    if(m >= 256) {
-      m = 0;
     }
   }
   if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
