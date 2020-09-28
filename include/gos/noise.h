@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+int gos_noise_random_maximum_integer(int maximum);
+
 double gos_noise_white(int seed, int x, int y);
 
 #ifdef __cplusplus
