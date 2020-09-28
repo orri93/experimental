@@ -1,4 +1,10 @@
-/* Code modified from http://www.lousodrome.net/opengl/ */
+/*
+ * Code modified from http://www.lousodrome.net/opengl/
+ * 
+ * Compilation
+ * emcc -Os src/app/three-dee-cube/soil/libSOIL.bc src/app/three-dee-cube/3d-cube.c -o src/assets/wasm/3d-cube.js -s LEGACY_GL_EMULATION=1 -Isrc/app/three-dee-cube/soil -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']" -s FORCE_FILESYSTEM=1 -s MODULARIZE=1 -s EXPORT_NAME="Cube3dModule"
+ * 
+ */
 
 #include <stdlib.h>
 #include <stdio.h>

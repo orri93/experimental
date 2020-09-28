@@ -5,11 +5,15 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from './app.component';
 import { ThreeDeeCubeComponent } from './three-dee-cube/three-dee-cube.component';
+import { SdlCubeComponent } from './sdl-cube/sdl-cube.component';
+import { SdlChartComponent } from './sdl-chart/sdl-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ThreeDeeCubeComponent
+    ThreeDeeCubeComponent,
+    SdlCubeComponent,
+    SdlChartComponent
   ],
   imports: [
     BrowserModule,

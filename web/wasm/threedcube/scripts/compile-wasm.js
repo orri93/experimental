@@ -21,9 +21,9 @@ const ensureWasmOutputDirExists = () => {
 const compileWasmSources = () => {
   console.log("Compiling wasm sources...");
 
-  const wasmDir = path.resolve(rootDir, "src/app/wasm");
-  for (let item of fs.readdirSync(wasmDir)) {
-    const itemPath = path.join(wasmDir, item);
+  const appDir = path.resolve(rootDir, "src/app");
+  for (let item of fs.readdirSync(appDir)) {
+    const itemPath = path.join(appDir, item);
     if (!fs.lstatSync(itemPath).isDirectory()) {
       continue;
     }
