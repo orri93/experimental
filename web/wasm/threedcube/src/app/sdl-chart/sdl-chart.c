@@ -14,6 +14,7 @@
 #include <SDL/SDL.h>
 
 #include <gos/color.h>
+#include <gos/noise.h>
 
 #define GOS_COLOR_GRADIENT_STOPS 6
 #define GOS_COLOR_GRADIENT_COLOR_COUNT 50
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
   return mainresult;
 }
 
-bool initialize() {
+bool initialize(int width, int height) {
   gos_color_rgb** gradat;
   gos_color_rgb* rgbat;
   int i;
@@ -125,21 +126,29 @@ void setpixel(SDL_Surface* surface, int x, int y, int width, Uint32 pixel) {
 
 int sdlex(int width, int height) {
   int ci;
+  double noise;
   Uint32 pixel;
   SDL_Init(SDL_INIT_VIDEO);
   SDL_Surface* screen = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE);
 
-  if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
+  if (SDL_MUSTLOCK(screen)) {
+    SDL_LockSurface(screen);
+  }
 
   /* i is height and j is width */
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
+      noise = gos_noise_white(GOS_NOISE_DEFAULT_SEED, i, j);
       ci = GOS_COLOR_GRADIENT_COUNT * j / width;
+
       pixel = to_sdl_color(screen->format, _cgradient[ci]);
       setpixel(screen, j, i, width, pixel);
     }
   }
-  if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
+
+  if (SDL_MUSTLOCK(screen)) {
+    SDL_UnlockSurface(screen);
+  }
   SDL_Flip(screen);
 
   SDL_Quit();
