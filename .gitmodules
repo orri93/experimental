@@ -28,3 +28,9 @@
 [submodule "extern/FastNoise"]
 	path = extern/FastNoise
 	url = https://github.com/Auburn/FastNoise.git
+[submodule "extern/gosc"]
+	path = extern/gosc
+	url = https://github.com/orri93/gosc.git
+[submodule "web/wasm/chart/extern/gosc"]
+	path = web/wasm/chart/extern/gosc
+	url = https://github.com/orri93/gosc.git

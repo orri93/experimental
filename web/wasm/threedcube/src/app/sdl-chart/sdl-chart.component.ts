@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { EmscriptenWasmComponent } from "../emscripten-wasm.component";
 
@@ -13,7 +13,7 @@ const requestFullscreen =
   templateUrl: './sdl-chart.component.html',
   styleUrls: ['./sdl-chart.component.css']
 })
-export class SdlChartComponent extends EmscriptenWasmComponent {
+export class SdlChartComponent extends EmscriptenWasmComponent implements OnDestroy {
   @ViewChild("canvas") canvas: ElementRef;
   error: string;
   supportsFullscreen: boolean;
@@ -38,6 +38,12 @@ export class SdlChartComponent extends EmscriptenWasmComponent {
   toggleFullscreen() {
     if (requestFullscreen) {
       requestFullscreen.bind(this.canvas.nativeElement)();
+    }
+  }
+
+  ngOnDestroy() {
+    if(this.module) {
+      this.module.ccall("shutdown", "void", [], []);
     }
   }
 }
