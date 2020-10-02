@@ -28,11 +28,13 @@ set(gos_chart_library_target goschart)
 include(extern/gosc/cmake/gosc.cmake)
 
 if (BUILD_WITH_EMSCRIPTEN)
-  set(gos_wasm_chart_library_library_target goschartwasm)
+  set(gos_wasm_chart_target goschartwasm)
+  set(gos_wasm_chart_library_target goschartlibwasm)
   set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten
     CACHE STRING "Emscripten path")
   set(CMAKE_TOOLCHAIN_FILE
     ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
+  set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
 endif ()
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "

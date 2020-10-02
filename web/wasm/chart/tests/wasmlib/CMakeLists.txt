@@ -18,8 +18,6 @@ list(APPEND gos_chart_test_include
 add_executable(${gos_chart_test_target}
   ${gos_chart_test_source})
 
-add_dependencies(${gos_chart_test_target} gosc)
-
 if (gos_chart_test_definitions)
   target_compile_definitions(${gos_chart_test_target} PUBLIC
     ${gos_chart_test_definitions})

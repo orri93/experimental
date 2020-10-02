@@ -38,7 +38,7 @@ if (SDL_FOUND)
 
   target_link_libraries(${gos_chart_target}
     ${gos_chart_libraries}
-    gosc)
+    ${gosc_target})
 
   if(GOS_DEPLOY_PDB_FILES)
     install(FILES "$<TARGET_PDB_FILE:${gos_chart_target}>"
@@ -52,20 +52,30 @@ if (SDL_FOUND)
 endif (SDL_FOUND)
 
 if (BUILD_WITH_EMSCRIPTEN)
+  get_target_property(gos_chart_library_wasm ${gos_chart_library_target}
+    RESOURCE)
   set(EMCC_ARGS
-    -I${gosc_include_directories} -I${gos_chart_wasm_source_include}
-    -O3)
+    -I${gos_chart_wasm_source_include} -I${gos_c_library_include}
+    -Os
+    -s MODULARIZE=1
+    -s EXPORT_NAME="ChartModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
   list(APPEND gos_chart_wasm_source heatmap.c draw.c)
   list(TRANSFORM gos_chart_wasm_source
     PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
   add_custom_command(
-    OUTPUT goschart.wasm
-    COMMAND emcc ${gos_chart_wasm_source} ${EMCC_ARGS} -o goschart.wasm
+    #OUTPUT goschart.js
+    #BYPRODUCTS goschart.wasm
+    TARGET ${gos_chart_target} POST_BUILD
+    COMMAND emcc ${gos_chart_wasm_source} ${gosc_wasm_library} ${gos_chart_library_wasm} ${EMCC_ARGS} -o goschart.js
     DEPENDS
+      #${gosc_wasm_library}
+      #${gos_chart_library_wasm}
       ${gos_chart_wasm_source}
     COMMENT "Building GOS Chart Web Assembly"
-    VERBATIM)
-  add_custom_target(${gos_wasm_chart_library_library_target}
-    ALL DEPENDS libgoschart.bc)
+    #VERBATIM
+  )
+  #add_custom_target(${gos_wasm_chart_target} ALL DEPENDS goschart.js)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/goschart.js" DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/goschart.wasm" DESTINATION lib)
 endif ()
