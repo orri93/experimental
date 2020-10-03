@@ -34,3 +34,6 @@
 [submodule "web/wasm/chart/extern/gosc"]
 	path = web/wasm/chart/extern/gosc
 	url = https://github.com/orri93/gosc.git
+[submodule "web/charting/wasm/sdlheatmap/extern/gosc"]
+	path = web/charting/wasm/sdlheatmap/extern/gosc
+	url = https://github.com/orri93/gosc.git
