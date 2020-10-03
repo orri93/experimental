@@ -20,8 +20,15 @@ void gos_draw_setpixel(
 
 bool gos_draw_initialize(SDL_Surface** surface, int width, int height);
 
+void gos_draw_shift_d1d1(SDL_Surface* surface);
+
 Uint32 gos_draw_to_pixel(SDL_PixelFormat* format, gos_rgb* rgb);
 
+void gos_draw_vector_d1(
+  SDL_Surface* surface,
+  gos_vector* vector,
+  gos_rgb_gradient* gradient,
+  int inxed);
 void gos_draw_matrix(
   SDL_Surface* surface,
   gos_matrix* matrix,

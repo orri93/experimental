@@ -55,3 +55,6 @@ out/
 
 # Build
 /build/
+
+# Cache
+src/wasm-cache-busting.json

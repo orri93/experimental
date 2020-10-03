@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "wasm": "node scripts/wasm-cache-busting.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
