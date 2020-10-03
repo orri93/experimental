@@ -26,6 +26,8 @@ set(gos_chart_target chart)
 set(gos_chart_library_target goschart)
 
 include(extern/gosc/cmake/gosc.cmake)
+include(CheckLibraryExists)
+CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
 
 if (BUILD_WITH_EMSCRIPTEN)
   set(gos_wasm_chart_target goschartwasm)

@@ -26,6 +26,10 @@ if (GOS_SDL_MAIN)
     ${SDLMAIN_LIBRARY})
 endif (GOS_SDL_MAIN)
 
+if (HAVE_LIB_M)
+  list(APPEND gos_chart_libraries m)
+endif (HAVE_LIB_M)
+
 add_executable(${gos_chart_target}
   ${gos_chart_source})
 
