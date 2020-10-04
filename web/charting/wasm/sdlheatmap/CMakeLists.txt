@@ -37,6 +37,7 @@ if (BUILD_WITH_EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE
     ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
   set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
+  set(gos_assets_wasm_sdl_heatmap_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/wasm")
 endif ()
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "
@@ -57,10 +58,9 @@ string(TIMESTAMP GOS_CURRENT_YEAR "%Y" UTC)
 set(GOS_COMPANYNAME "Geirmundur Orri Sigurdsson")
 set(GOS_LEGALCOPYRIGHT "Copyright (C) ${GOS_CURRENT_YEAR} ${GOS_COMPANYNAME}")
 
-list(APPEND gos_wasm_sdl_heatmap_library_public_header
-  "${CMAKE_CURRENT_BINARY_DIR}/include/gos/version.h")
-list(APPEND gos_wasm_sdl_heatmap_library_public_header
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/chart.h")
+list(APPEND gos_sdl_heatmap_library_public_header
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/chart.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/gos/draw.h")
 
 if(CLANG_TIDY)
   find_program(CLANG_TIDY_EXE
