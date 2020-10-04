@@ -37,7 +37,8 @@ if (BUILD_WITH_EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE
     ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
   set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
-  set(gos_assets_wasm_sdl_heatmap_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/wasm")
+  set(gos_assets_wasm_sdl_heatmap_dir
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/wasm")
 endif ()
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "

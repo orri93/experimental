@@ -77,22 +77,12 @@ if (BUILD_WITH_EMSCRIPTEN)
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/gossdlheatmap.wasm"
     DESTINATION lib)
-  set(gos_assets_wasm_sdl_heatmap_target gosassetswasmsdlheatmap)
-  set(gos_assets_wasm_sdl_heatmap_output
-    "${gos_assets_wasm_sdl_heatmap_dir}/gossdlheatmap.js"
-    "${gos_assets_wasm_sdl_heatmap_dir}/gossdlheatmap.wasm")
   add_custom_command(
-    OUTPUT ${gos_assets_wasm_sdl_heatmap_output}
+    TARGET ${gos_sdl_heatmap_library_target} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/gossdlheatmap.js" "${gos_assets_wasm_sdl_heatmap_dir}/gossdlheatmap.js"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/gossdlheatmap.wasm" "${gos_assets_wasm_sdl_heatmap_dir}/gossdlheatmap.wasm"
-    DEPENDS
-      "${CMAKE_CURRENT_BINARY_DIR}/gossdlheatmap.js"
-      "${CMAKE_CURRENT_BINARY_DIR}/gossdlheatmap.wasm"
+    DEPENDS gossdlheatmap.js gossdlheatmap.wasm
     COMMENT "Coping GOS SDL Heatmap Web Assembly")
-  add_custom_target(${gos_assets_wasm_sdl_heatmap_target} DEPENDS
-    ${gos_assets_wasm_sdl_heatmap_output})
-  add_dependencies(${gos_assets_wasm_sdl_heatmap_target}
-    ${gos_sdl_heatmap_library_target})
 endif ()
 
 if(GOS_DEPLOY_PDB_FILES)
