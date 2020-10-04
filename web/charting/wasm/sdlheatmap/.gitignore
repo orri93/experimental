@@ -44,3 +44,17 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Visual Studio
+CMakeSettings.json
+out/
+.vs/
+
+# Visual Studio Code
+.vscode/
+
+# Build
+/build/
+
+# Cache
+src/wasm-cache-busting.json
