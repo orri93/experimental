@@ -19,6 +19,7 @@ import {
 import { interval, Subscription } from 'rxjs';
 import { HeatmapService } from './../heatmap.service';
 import { DataService } from './../data.service';
+import { AppConfiguration } from '../app.configuration';
 
 const MINIMUM_Z = 0.0;
 const MAXIMUM_Z = 100.0;
@@ -38,8 +39,6 @@ const RES_Y = 400.0;
 const SIZE_WIDTH = 600.0;
 const SIZE_HEIGHT = 400.0;
 
-const TIMER_INTERVAL = 100.0;
-
 const INTERPOLATED_PALLET = true;
 const PIXELATE = false;
 
@@ -50,6 +49,10 @@ const MEASURE_LOAD = "load-measure";
 const MARKER_NAME_TIMER_START = "timer-start";
 const MARKER_NAME_TIMER_COMPLETED = "timer-completed";
 const MEASURE_TIMER = "timer-measure";
+
+const MARKER_NAME_INTERVAL_START = "interval-start";
+const MARKER_NAME_INTERVAL_COMPLETED = "interval-completed";
+const MEASURE_INTERVAL = "interval-measure";
 
 @Component({
   selector: 'app-heatmap',
@@ -73,6 +76,11 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
 
   timerCount = 0.0;
   timerSum = 0.0;
+
+  intervalCount = 0.0;
+  intervalSum = 0.0;
+
+  firstInterval = true;
 
   private createRandom(resx: number, resy: number): void {
     this.data = this.dataService.dataGenerator(resx, resy, MINIMUM_Z, MAXIMUM_Z);
@@ -142,9 +150,11 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
   }
 
   startRealTime(): void {
-    console.log("Start Real Time button clicked.");
+    let timerInterval = AppConfiguration.settings.timerInterval;
+    console.log(`Start button clicked with timer interval as ${timerInterval}`);
     if(this.timer == null || this.timer.closed) {
-      this.timer = interval(TIMER_INTERVAL).subscribe(( x => {
+      this.firstInterval = true;
+      this.timer = interval(timerInterval).subscribe(( x => {
         this.onTimer();
       }));
       console.log("Starting timer subscription.");
@@ -164,7 +174,29 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
   }
 
   onTimer(): void {
+    if(!this.firstInterval) {
+      performance.mark(MARKER_NAME_INTERVAL_COMPLETED);
+      performance.measure(MEASURE_INTERVAL, MARKER_NAME_INTERVAL_START, MARKER_NAME_INTERVAL_COMPLETED);
+      let performanceIntervalDivElement = document.getElementById("performance-interval-result-id");
+      var entriesInterval = performance.getEntriesByType("measure");
+      var firstIntervalEntry = entriesInterval[0];
+
+      var intervalDuration = firstIntervalEntry.duration;
+      this.intervalCount++;
+      this.intervalSum += intervalDuration;
+      var averageInterval = this.intervalSum / this.intervalCount;
+
+      performanceIntervalDivElement.innerHTML = "Interval. Last: " + intervalDuration + " ms, Average: " + averageInterval + " ms, Count: " + this.intervalCount;
+
+      performance.clearMarks();
+      performance.clearMeasures();
+    } else {
+      console.log("First interval");
+      this.firstInterval = false;
+    }
+
     performance.mark(MARKER_NAME_TIMER_START);
+    performance.mark(MARKER_NAME_INTERVAL_START);
 
     let dataline = this.dataService.createLine(RES_Y, REAL_TIME_MINIMUM_Z, REAL_TIME_MAXIMUM_Z);
     this.xatfrom++;
@@ -186,7 +218,6 @@ export class HeatmapComponent implements OnDestroy, AfterViewInit {
 
     performanceTimerDivElement.innerHTML = "Timer. Last: " + timerDuration + " ms, Average: " + average + " ms, Count: " + this.timerCount;
 
-    performance.clearMarks();
     performance.clearMeasures();
   }
 

@@ -5,20 +5,27 @@ project(GosChartSdlHeatmap
   DESCRIPTION "Geirmundur Orri Sigurdsson SDL Heatmap Chart Experiment"
   LANGUAGES C CXX)
 
+# Build Options
 option(BUILD_TESTS "Build tests" OFF)
 option(BUILD_WITH_EMSCRIPTEN "Build a Web Assembly Library with emscripten" ON)
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
+# Tidy Options
 option(CLANG_TIDY_FIX_ERRORS
   "Perform fixes with Clang-Tidy even if compilation errors were found" OFF)
 option(CLANG_TIDY_FIX "Perform fixes with Clang-Tidy" OFF)
 option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
+# GOS Options
 option(GOS_SDL_MAIN "Use SDL Main" OFF)
-
 option(GOS_DEPLOY_PDB_FILES "Deploy PDB files" OFF)
+option(GOS_EM_ASSERTIONS "EMCC ASSERTIONS" OFF)
 
-option(GOS_USE_GTEST_DISCOVER "Use CMake Google Test descovery for unit tests" OFF)
-option(GOS_USE_GTEST_PACKAGE "Use CMake GTest Package for unit tests" OFF)
+# GOS Test Options
+option(GOS_USE_GTEST_DISCOVER
+  "Use CMake Google Test descovery for unit tests" OFF)
+option(GOS_USE_GTEST_PACKAGE
+  "Use CMake GTest Package for unit tests" OFF)
 
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 

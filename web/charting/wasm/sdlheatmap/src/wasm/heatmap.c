@@ -17,8 +17,8 @@
 
 #define GOS_HEATMAP_MESSAGE_SIZE 1024
 
-#define GOS_HEATMAP_DEMO_WIDTH 1200
-#define GOS_HEATMAP_DEMO_HEIGHT 800
+#define GOS_HEATMAP_DEMO_WIDTH 600
+#define GOS_HEATMAP_DEMO_HEIGHT 400
 
 static SDL_Surface* _surface = NULL;
 static gos_rgb_gradient _gradient = { NULL, 0 };

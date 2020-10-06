@@ -1,0 +1,16 @@
+.performance-load-result {
+  color: white;
+}
+
+.performance-timer-result {
+  color: lightcyan;
+}
+
+.performance-interval-result {
+  color: lightcyan;
+}
+
+.col-lg-12 {
+  margin-top: 0.5em;
+}
+

@@ -56,10 +56,16 @@ if (gos_sdl_heatmap_library_public_header)
 endif ()
 
 if (BUILD_WITH_EMSCRIPTEN)
+  if (GOS_EM_ASSERTIONS)
+    set(em_assertions 1)
+  else ()
+    set(em_assertions 0)
+  endif ()
   set(EMCC_ARGS
     -I${gos_sdl_heatmap_source_include} -I${gos_c_library_include}
     -O3
     -s MODULARIZE=1
+    -s ASSERTIONS=${em_assertions}
     -s EXPORT_NAME="SdlHeatmapModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
   list(APPEND gos_sdl_heatmap_wasm_library_source ${gos_sdl_heatmap_source})
