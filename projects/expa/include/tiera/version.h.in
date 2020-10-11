@@ -1,0 +1,22 @@
+#ifndef TIER_A_C_VERSION_H_
+#define TIER_A_C_VERSION_H_
+
+/* The major version, (1, if %PROJECT_VERSION is 1.2.3.4) */
+#define TIER_A_VERSION_MAJOR (@PROJECT_VERSION_MAJOR@)
+
+/* The minor version (2, if %PROJECT_VERSION is 1.2.3.4) */
+#define TIER_A_VERSION_MINOR (@PROJECT_VERSION_MINOR@)
+
+/* The patch version (3, if %PROJECT_VERSION is 1.2.3.4) */
+#define TIER_A_VERSION_PATCH (@PROJECT_VERSION_PATCH@)
+
+/* The build version (4, if %PROJECT_VERSION is 1.2.3.4) */
+#define TIER_A_VERSION_BUILD (@PROJECT_VERSION_TWEAK@)
+
+/* The full version, like 1.2.3.4 */
+#define TIER_A_VERSION         @PROJECT_VERSION@
+
+/* The full version, in string form (suited for string concatenation) */
+#define TIER_A_VERSION_STRING "@PROJECT_VERSION@"
+
+#endif

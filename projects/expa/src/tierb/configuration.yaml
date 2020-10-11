@@ -1,0 +1,10 @@
+# configuration
+logging:
+  path: multi-b.log
+service:
+  binding:
+    address:
+    port: 8880
+  path: /multi/b
+hub:
+  interval: 100
