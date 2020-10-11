@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "expa"
+    }
+  },
+  "defaultProject": "expa",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -11,14 +11,16 @@ import (
 )
 
 var yamlConfigurationFile = flag.String("config", "configuration.yaml", "configuration")
+var webPath = flag.String("web", "dist/expa", "web path")
 
 func main() {
 	flag.Parse()
 
+	fmt.Println("Reading configuration from '" + *yamlConfigurationFile + "'")
 	configuration.Initialize(*yamlConfigurationFile)
 
 	logFilePath := configuration.Instance.Logging.Path
-	fmt.Println("Using " + logFilePath + " as log file")
+	fmt.Println("Using '" + logFilePath + "' as log file")
 
 	flag := os.O_RDWR | os.O_CREATE | os.O_APPEND
 	logFile, err := os.OpenFile(logFilePath, flag, 0666)

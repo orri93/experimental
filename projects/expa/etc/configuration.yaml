@@ -1,0 +1,10 @@
+# configuration
+logging:
+  path: tier-b.log
+service:
+  binding:
+    address:
+    port: 8880
+  path: /tierb
+hub:
+  interval: 100

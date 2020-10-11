@@ -31,7 +31,7 @@ set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 
 set(gos_tier_a_library_target tiera)
 list(APPEND gos_tier_a_library_public_header
-  "${CMAKE_CURRENT_BINARY_DIR}/include/tiera/versioni.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/tiera/version.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/tiera/tiera.h")
 
 configure_file(
