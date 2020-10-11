@@ -1,0 +1,13 @@
+# configuration
+logging:
+  path: multi.log
+rest:
+  binding:
+    address:
+    port: 8880
+  path: /multi/a
+socket:
+  binding:
+    address: 0.0.0.0
+    port: 8881
+  delay: 100
