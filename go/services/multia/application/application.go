@@ -37,7 +37,7 @@ func (a *Application) setRouters() {
 	a.Get("/vector/{id}", a.handleRequest(handler.GetVector))
 }
 
-// WebSocket wraps the router for a Web
+// Web wraps the router for a Web
 func (a *Application) Web(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	path = configuration.Instance.Rest.Path + path
 	log.Println("Adding '" + path + "' as Web path")
