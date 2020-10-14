@@ -10,10 +10,9 @@ die() {
 show_help() {
 cat << EOF
 Usage: ${0##*/} [-h] [-nc]
-Initialize the ${GOS_PROJECT_NAME}
+Start the ${GOS_PROJECT_NAME}
 
      -h --help       display this help and exit
-     -c --clean
      -v              verbose mode. Can be used multiple times for increased
                      verbosity.
 EOF
@@ -74,31 +73,17 @@ silent_popd () {
 GOS_ROOT_DIR=`realpath "$DIR/.."`
 
 echo "---------------------------------------------------------------------------"
-echo "Initialize script for the ${GOS_PROJECT_NAME}"
+echo "Start script for the ${GOS_PROJECT_NAME}"
 echo "${GOS_PROJECT_NAME} root directory is defined as ${GOS_ROOT_DIR}"
 
 
 echo "Entering ${GOS_ROOT_DIR}"
 silent_pushd ${GOS_ROOT_DIR}
 
-echo "*** node install"
-GOS_NODE_INIT_CMD="npm install"
-echo "${GOS_NODE_INIT_CMD}"
-${GOS_NODE_INIT_CMD}
-
-echo "*** go get"
-GOS_GO_GET_CMD="go get gopkg.in/yaml.v3"
-echo "${GOS_GO_GET_CMD}"
-${GOS_GO_GET_CMD}
-GOS_GO_GET_CMD="go get github.com/gorilla/mux"
-echo "${GOS_GO_GET_CMD}"
-${GOS_GO_GET_CMD}
-GOS_GO_GET_CMD="go get github.com/gorilla/websocket"
-echo "${GOS_GO_GET_CMD}"
-${GOS_GO_GET_CMD}
-GOS_GO_GET_CMD="go get github.com/gorilla/csrf"
-echo "${GOS_GO_GET_CMD}"
-${GOS_GO_GET_CMD}
+echo "*** Start the Go service"
+GOS_START_CMD="${GOS_ROOT_DIR}/bin/tierb --config ${GOS_ROOT_DIR}/etc/configuration.yaml --web ${GOS_ROOT_DIR}/dist/expa"
+echo "${GOS_START_CMD}"
+${GOS_START_CMD}
 
 echo "Leaving ${GOS_ROOT_DIR}"
 silent_popd

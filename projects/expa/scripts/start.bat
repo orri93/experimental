@@ -14,7 +14,7 @@ ECHO %GOS_PROJECT_NAME% root directory is defined as %GOS_ROOT_DIR%
 ECHO Entering %GOS_ROOT_DIR%
 PUSHD "%GOS_ROOT_DIR%"
 
-ECHO *** Start the 
+ECHO *** Start the Go service
 SET GOS_START_CMD="%GOS_ROOT_DIR%\bin\tierb.exe" --config "%GOS_ROOT_DIR%\etc\configuration.yaml" --web "%GOS_ROOT_DIR%\dist\expa"
 ECHO %GOS_START_CMD%
 %GOS_START_CMD%
