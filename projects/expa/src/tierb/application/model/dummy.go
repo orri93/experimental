@@ -3,15 +3,16 @@ package model
 import "math/rand"
 
 const matrixDummyVectorCount int = 32
-const vectorDummyNumberCount int = 3
+const vectorDummyPointCount int = 3
 
 // CreateDummyMatrix function creates a dummy matrix
 func CreateDummyMatrix() *Matrix {
 	matrix := Matrix{Vectors: make([]Vector, matrixDummyVectorCount)}
 	for i := 0; i < matrixDummyVectorCount; i++ {
-		matrix.Vectors[i].Values = make([]float64, vectorDummyNumberCount)
-		for j := 0; j < vectorDummyNumberCount; j++ {
-			matrix.Vectors[i].Values[j] = rand.Float64()
+		matrix.Vectors[i].Points = make([]Point, vectorDummyPointCount)
+		for j := 0; j < vectorDummyPointCount; j++ {
+			matrix.Vectors[i].Points[j].X = rand.Float64()
+			matrix.Vectors[i].Points[j].Y = rand.Float64()
 		}
 	}
 	return &matrix
@@ -19,9 +20,10 @@ func CreateDummyMatrix() *Matrix {
 
 // CreateDummyVector function creates a vector
 func CreateDummyVector() *Vector {
-	vector := Vector{Values: make([]float64, vectorDummyNumberCount)}
-	for i := 0; i < vectorDummyNumberCount; i++ {
-		vector.Values[i] = rand.Float64()
+	vector := Vector{Points: make([]Point, vectorDummyPointCount)}
+	for i := 0; i < vectorDummyPointCount; i++ {
+		vector.Points[i].X = rand.Float64()
+		vector.Points[i].Y = rand.Float64()
 	}
 	return &vector
 }
