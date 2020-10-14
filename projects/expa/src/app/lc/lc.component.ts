@@ -19,8 +19,10 @@ import {
   emptyTick,
   emptyFill, } from '@arction/lcjs';
 import { AppConfiguration } from './../app.configuration';
-import { LcService } from './../lc.service';
+import { HttpClientDataService } from './../http-client-data.service';
 import { DummyService } from './../dummy.service';
+import { LcDataService } from './../lc-data.service';
+import { LcService } from './../lc.service';
 
 
 const MINIMUM_Z = 0.0;
@@ -83,7 +85,10 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     .setInterval(start, end);
   }
   
-  constructor(private lcService: LcService, private dummyService: DummyService) {
+  constructor(
+    private lcService: LcService,
+    private dummyService: DummyService,
+    private dataService: HttpClientDataService) {
     console.log("Construct the LC Component");
     this.start = { x: FIRST_X, y: FIRST_Y };
     this.end = {x: LAST_X, y: LAST_Y };
@@ -121,6 +126,18 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     /* Disable animation */
     this.chart.getDefaultAxisY().setAnimationScroll(false);
   }
+
+  showMatrix() {
+    console.log("Show Matrix Button Clicked");
+
+    this.dataService.getMatrix(RES_X).subscribe(m => {
+      console.log("Got Matrix");
+
+      this.data = LcDataService.dataGenerator(RES_X, RES_Y, m);
+
+      this.heatMap.invalidateValuesOnly(this.data);
+    });
+  } 
 
   ngOnDestroy(): void {
     // "dispose" should be called when the component is unmounted to free all the resources used by the chart

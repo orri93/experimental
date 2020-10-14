@@ -7,9 +7,9 @@ export class DummyService {
   constructor() { }
 
   getMatrix(): Matrix {
-    return { vectors: [
-      { points: [ { x: 1.0, y: 1.5 } ,{ x: 2.0, y: 2.5 }, { x: 3.0, y: 3.5 } ] },
-      { points: [ { x: 10.0, y: 15.0 } ,{ x: 20.0, y: 25.0 }, { x: 30.0, y: 35.0 } ] }
+    return { v: [
+      { p: [ { x: 1.0, y: 1.5 } ,{ x: 2.0, y: 2.5 }, { x: 3.0, y: 3.5 } ] },
+      { p: [ { x: 10.0, y: 15.0 } ,{ x: 20.0, y: 25.0 }, { x: 30.0, y: 35.0 } ] }
      ] };
   }
 

@@ -1,6 +1,7 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
+#include <float.h>
 
 #include <gos/types.h>
 #include <gos/noise.h>
@@ -35,8 +36,10 @@ bool gos_tier_a_initialize(
   double datastep = 8.0;
   double datavar = 1.0;
 
-  depth.from = 300.0;
-  depth.to = 900.0;
+  double depthspace = 100.0;
+
+  depth.from = 50.0;
+  depth.to = 100.0;
 
   datageneration.noise = 0.01;
   depthgeneration.noise = 0.01;
@@ -55,8 +58,8 @@ bool gos_tier_a_initialize(
           datageneration.range.from = datastart - datavar + datastep * i;
           datageneration.range.to = datastart + datavar + datastep * i;
 
-          depthgeneration.range.from = depth.from + 32.0 * i;
-          depthgeneration.range.to = depth.to + 32.0 * i;
+          depthgeneration.range.from = depth.from + depthspace * i;
+          depthgeneration.range.to = depth.to + depthspace * i;
 
           *datastat = (gos_tier_a_d*)malloc(
             sizeof(gos_tier_a_d));
@@ -144,6 +147,7 @@ bool gos_tier_a_generate(
 
   int div, i, j, n, e;
 
+  double dat, dep;
   double depth, depthdistance, depthstep;
   double y0, y1, y2, y3;
   double mu, ms;
@@ -153,6 +157,11 @@ bool gos_tier_a_generate(
 
   assert(data != NULL);
   assert(major < data->count);
+
+  data->data_range.from = DBL_MAX;
+  data->data_range.to = -DBL_MAX;
+  data->depth_range.from = DBL_MAX;
+  data->depth_range.to = -DBL_MAX;
 
   depth = depthgeneration->range.from;
   depthdistance = gos_geometry_distance_1d(&(depthgeneration->range));
@@ -180,12 +189,26 @@ bool gos_tier_a_generate(
       for (j = 0; j < div && n < data->count; j++) {
         assert(n < data->count);
         assert(mu < 1.0);
-        data->data[n] = gos_interpolate_cubic_catmull_rom(y0, y1, y2, y3, mu);
-        data->data[n] += datageneration->noise *
+        dat = gos_interpolate_cubic_catmull_rom(y0, y1, y2, y3, mu) +
+          datageneration->noise *
           gos_noise_white(GOS_NOISE_DEFAULT_SEED, i, j);
-        data->depth[n] = depth;
-        data->depth[n] += depthgeneration->noise *
+        if(dat < data->data_range.from) {
+          data->data_range.from = dat;
+        }
+        if(dat > data->data_range.to) {
+          data->data_range.to = dat;
+        } 
+        data->data[n] += dat;
+
+        dep = depth + depthgeneration->noise *
           gos_noise_white(GOS_NOISE_DEFAULT_SEED, i, j);
+        if(dep < data->depth_range.from) {
+          data->depth_range.from = dep;
+        }
+        if(dep > data->depth_range.to) {
+          data->depth_range.to = dep;
+        }
+        data->depth[n] = dep;
         depth += depthstep;
         mu += ms;
         n++;
@@ -248,6 +271,64 @@ bool gos_tier_a_get_depth(double* value, int tool, int index) {
     return false;
   }
 }
+
+bool gos_tier_a_get_data_range(double* from, double* to) {
+  int i;
+  gos_tier_a_d* tp;
+  *from = DBL_MAX;
+  *to = -DBL_MAX;
+  if(_gos_tier_a_data_arr != NULL){
+    for(i = 0; i < _gos_tier_a_tool_count; i++) {
+      tp = gos_tier_a_get(i);
+      if(tp != NULL) {
+        if(tp->data_range.from < *from) {
+          *from = tp->data_range.from;
+        }
+        if(tp->data_range.to > *to) {
+          *to = tp->data_range.to;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    _gos_tier_a_message_length = snprintf(
+      _gos_tier_a_message,
+      GOS_TIER_A_MESSAGE_SIZE,
+      "The data array is undefined");
+    return false;
+  }
+}
+
+bool gos_tier_a_get_depth_range(double* from, double* to) {
+  int i;
+  gos_tier_a_d* tp;
+  *from = DBL_MAX;
+  *to = -DBL_MAX;
+  if(_gos_tier_a_data_arr != NULL){
+    for(i = 0; i < _gos_tier_a_tool_count; i++) {
+      tp = gos_tier_a_get(i);
+      if(tp != NULL) {
+        if(tp->data_range.from < *from) {
+          *from = tp->data_range.from;
+        }
+        if(tp->data_range.to > *to) {
+          *to = tp->data_range.to;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    _gos_tier_a_message_length = snprintf(
+      _gos_tier_a_message,
+      GOS_TIER_A_MESSAGE_SIZE,
+      "The data array is undefined");
+    return false;
+  }
+} 
 
 const char* gos_tier_a_message() {
   return (const char*)_gos_tier_a_message;

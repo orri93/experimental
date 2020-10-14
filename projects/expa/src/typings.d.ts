@@ -60,9 +60,9 @@ interface Point {
 }
 
 interface Vector {
-  points: Point[];
+  p: Point[];
 }
 
 interface Matrix {
-  vectors: Vector[];
+  v: Vector[];
 }

@@ -6,8 +6,6 @@
     </p>
 
     <div class="demo-contents">
-      <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
-
       <div class="row">
         <div class="col-lg-6">
           <div #show></div>
@@ -23,6 +21,8 @@
         </div>
       </div>
     </div>
+
+    <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
 
   </div>
 </section>

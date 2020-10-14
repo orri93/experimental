@@ -16,16 +16,16 @@ export class HttpClientDataService extends DataService {
   }
 
   getMatrix(count: number): Observable<Matrix> {
-    const restPath = `${environment.restPath}/matrix`;
+    const restPath = `${environment.restPath}/matrix/${count}`;
     const httHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
     const options = {
       headers: httHeaders,
-      withCredentials: true
-      //params: new HttpParams().set('Authorization', 'test')
+      withCredentials: true,
+      //params: new HttpParams().set('count', count.toString())
     };
     return this.http.get<Matrix>(restPath, options).pipe(
       retry(3), // retry a failed request up to 3 times
-      catchError(this.handleError<Matrix>('getMatrix', {vectors: []})));
+      catchError(this.handleError<Matrix>('getMatrix', {v: []})));
   }
 
   getVector(): Observable<Vector> {
@@ -38,7 +38,7 @@ export class HttpClientDataService extends DataService {
     };
     return this.http.get<Matrix>(restPath, options).pipe(
       retry(3), // retry a failed request up to 3 times
-      catchError(this.handleError<Vector>('getVector', {points: []})));
+      catchError(this.handleError<Vector>('getVector', {p: []})));
   }
 
   /**
