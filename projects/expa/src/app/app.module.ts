@@ -37,14 +37,10 @@ export function initializeApp(appConfiguration: AppConfiguration) {
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
+    //HttpClientInMemoryWebApiModule.forRoot(
       //InMemoryDataService,
-      InMemoryDataOverrideService,
-      {
-        dataEncapsulation: false,
-        passThruUnknownUrl: true
-      }
-    )
+      //InMemoryDataOverrideService,
+      //{ dataEncapsulation: false, passThruUnknownUrl: true } )
   ],
   providers: [
     //DataService,

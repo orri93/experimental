@@ -4,6 +4,6 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export abstract class DataService {
 
-  abstract getMatrix(): Observable<Matrix>;
+  abstract getMatrix(count: number): Observable<Matrix>;
   abstract getVector(): Observable<Vector>;
 }

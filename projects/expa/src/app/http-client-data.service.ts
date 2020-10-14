@@ -15,7 +15,7 @@ export class HttpClientDataService extends DataService {
     super();
   }
 
-  getMatrix(): Observable<Matrix> {
+  getMatrix(count: number): Observable<Matrix> {
     const restPath = `${environment.restPath}/matrix`;
     const httHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
     const options = {

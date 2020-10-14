@@ -19,7 +19,7 @@ export class ExperimentalComponent implements OnInit {
   showMatrix(): void {
     console.log("Show Matrix Button Clicked");
 
-    this.dataService.getMatrix().subscribe(m => {
+    this.dataService.getMatrix(100).subscribe(m => {
       console.log(`Got Matrix: ${JSON.stringify(m)}`);
 
       let div = <HTMLDivElement>this.show.nativeElement;
