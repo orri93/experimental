@@ -198,7 +198,7 @@ bool gos_tier_a_generate(
         if(dat > data->data_range.to) {
           data->data_range.to = dat;
         } 
-        data->data[n] += dat;
+        data->data[n] = dat;
 
         dep = depth + depthgeneration->noise *
           gos_noise_white(GOS_NOISE_DEFAULT_SEED, i, j);
