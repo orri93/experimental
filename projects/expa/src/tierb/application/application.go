@@ -62,5 +62,5 @@ func (a *Application) setRouters(webpath string) {
 		assets.AddChildFolder("wasm/", `^.+\.(js|wasm)$`)
 		a.Handler.Web(web)
 	}
-	a.Handler.Get("data/matrix", rest.HandleMatrixRequest)
+	a.Handler.Get("data/matrix/{count}", rest.HandleMatrixRequest)
 }

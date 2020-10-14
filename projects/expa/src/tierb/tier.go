@@ -14,6 +14,7 @@ import (
 	"unsafe"
 
 	"./application"
+	"./application/model"
 	"./configuration"
 )
 
@@ -21,10 +22,9 @@ var yamlConfigurationFile = flag.String("config", "configuration.yaml", "configu
 var webPath = flag.String("web", "", "web path")
 
 var logFile *os.File
-var model model.Model
 
 // initialize the data model
-func initialize(toolcount uint32, datapointcount uint32, majorcount uint32) {
+func initialize(count uint32, dataPointCount uint32, majorCount uint32) {
 	flag.Parse()
 
 	fmt.Println("Reading configuration from '" + *yamlConfigurationFile + "'")
@@ -44,14 +44,34 @@ func initialize(toolcount uint32, datapointcount uint32, majorcount uint32) {
 
 	log.Println("Starting Experiment A Tier Service")
 
-	tc := C.int(toolcount)
-	dpc := C.int(datapointcount)
-	mc := C.int(majorcount)
-	cresult := C.gos_tier_a_initialize(tc, dpc, mc)
-	result := bool(cresult)
+	tc := C.int(count)
+	dpc := C.int(dataPointCount)
+	mc := C.int(majorCount)
+	cResult := C.gos_tier_a_initialize(tc, dpc, mc)
+	result := bool(cResult)
 	if result {
-		model.Model.Initialize(toolcount, datapointcount)
+		model.Initialize(count, dataPointCount)
 		log.Println("Simulated data initialized")
+
+		cd := C.double(0.0)
+		cv := C.double(0.0)
+		for i := uint32(0); i < dataPointCount; i++ {
+			for j := uint32(0); j < count; j++ {
+				ci := C.int(i)
+				cj := C.int(j)
+				cResult = C.gos_tier_a_get_depth(&cd, cj, ci)
+				ra := bool(cResult)
+				cResult = C.gos_tier_a_get_data(&cv, cj, ci)
+				rb := bool(cResult)
+				if ra && rb {
+					depth := float64(cd)
+					value := float64(cv)
+					model.Data.Set(i, j, depth, value)
+				}
+			} 
+		}
+		C.gos_tier_a_shutdown()
+	  log.Println("Simulated data cleared")
 	} else {
 		cMessageLength := C.int(0)
 		var cMessage *C.char
@@ -63,9 +83,7 @@ func initialize(toolcount uint32, datapointcount uint32, majorcount uint32) {
 
 // shutdown the data model
 func shutdown() {
-	C.gos_tier_a_shutdown()
-	log.Println("Simulated data cleared")
-
+	log.Println("Close log file")
 	logFile.Close()
 }
 

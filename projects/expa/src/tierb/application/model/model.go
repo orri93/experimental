@@ -8,10 +8,10 @@ type Point struct {
 
 // Vector structure export
 type Vector struct {
-	Points []Point `json:"points"`
+	Points []Point `json:"p"`
 }
 
 // Matrix structure export
 type Matrix struct {
-	Vectors []Vector `json:"vectors"`
+	Vectors []Vector `json:"v"`
 }
