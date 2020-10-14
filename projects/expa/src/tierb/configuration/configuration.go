@@ -23,6 +23,7 @@ type Logging struct {
 // Service structure export
 type Service struct {
 	Binding *Binding `yaml:"binding"`
+	Cross   *Cross   `yaml:"cross"`
 	Path    string   `yaml:"path"`
 }
 
@@ -37,6 +38,12 @@ type Binding struct {
 	Port    uint16 `yaml:"port"`
 }
 
+// Cross structure export
+type Cross struct {
+	Key     string   `yaml:"key"`
+	Trusted []string `yaml:"trusted"`
+}
+
 // Instance export
 var Instance Configuration
 
@@ -44,7 +51,7 @@ var Instance Configuration
 func Initialize(filename string) {
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Printf("Failed to open the configuration file: %v", err)
+		log.Fatalf("Failed to open the configuration file: %v", err)
 	}
 	err = yaml.Unmarshal(yamlFile, &Instance)
 	if err != nil {

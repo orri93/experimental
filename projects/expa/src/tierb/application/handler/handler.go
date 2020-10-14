@@ -1,11 +1,13 @@
 package handler
 
 import (
-	"../../configuration"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"../../configuration"
+	"./web"
 )
 
 // Handler has router
@@ -18,11 +20,9 @@ func (h *Handler) Initialize() {
 	h.Router = mux.NewRouter()
 }
 
-// Web wraps the router for a Web
-func (h *Handler) Web(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	path = configuration.Instance.Service.Path + path
-	log.Println("Adding '" + path + "' as Web path")
-	h.Router.HandleFunc(path, f)
+// Web wraps the router for a Web File
+func (h *Handler) Web(web *web.Web) {
+	web.CreateRoutes(h.Router)
 }
 
 // WebSocket wraps the router for a WebSocket
@@ -66,14 +66,4 @@ func (h *Handler) Execute() {
 	welcome := "Starting to service " + host + " with root path as " + configuration.Instance.Service.Path
 	log.Println(welcome)
 	log.Fatal(http.ListenAndServe(host, h.Router))
-}
-
-// RequestHandlerFunction the Request Handler Function export
-type RequestHandlerFunction func(w http.ResponseWriter, r *http.Request)
-
-// HandleRequest
-func (h *Handler) HandleRequest(handler RequestHandlerFunction) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		handler(w, r)
-	}
 }

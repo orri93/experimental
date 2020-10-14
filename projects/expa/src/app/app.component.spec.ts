@@ -20,16 +20,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'expa'`, () => {
+  it(`should have as title 'Geirmundur Orri Sigurdsson Experiment Project A'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('expa');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('expa app is running!');
+    expect(app.title).toEqual('Geirmundur Orri Sigurdsson Experiment Project A');
   });
 });

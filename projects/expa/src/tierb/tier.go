@@ -1,17 +1,18 @@
 package main
 
 import (
-	"./application"
-	"./configuration"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
+
+	"./application"
+	"./configuration"
 )
 
 var yamlConfigurationFile = flag.String("config", "configuration.yaml", "configuration")
-var webPath = flag.String("web", "dist/expa", "web path")
+var webPath = flag.String("web", "", "web path")
 
 func main() {
 	flag.Parse()
@@ -35,6 +36,6 @@ func main() {
 	log.Println("Starting Experiment A Tier Service")
 
 	application := &application.Application{}
-	application.Initialize()
+	application.Initialize(*webPath)
 	application.Execute()
 }

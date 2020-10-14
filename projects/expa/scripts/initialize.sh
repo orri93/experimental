@@ -63,11 +63,23 @@ if [ "$DIR" != "$RDIR" ]; then
 fi
 echo "DIR is '$DIR'"
 
+# Silent pushd and popd
+silent_pushd () {
+    command pushd "$@" > /dev/null
+}
+silent_popd () {
+    command popd "$@" > /dev/null
+}
+
 GOS_ROOT_DIR=`realpath "$DIR/.."`
 
 echo "---------------------------------------------------------------------------"
 echo "Initialize script for the ${GOS_PROJECT_NAME}"
 echo "${GOS_PROJECT_NAME} root directory is defined as ${GOS_ROOT_DIR}"
+
+
+echo "Entering ${GOS_ROOT_DIR}"
+silent_pushd ${GOS_ROOT_DIR}
 
 echo "*** node install"
 GOS_NODE_INIT_CMD="npm install"
@@ -84,5 +96,12 @@ ${GOS_GO_GET_CMD}
 GOS_GO_GET_CMD="go get github.com/gorilla/websocket"
 echo "${GOS_GO_GET_CMD}"
 ${GOS_GO_GET_CMD}
+GOS_GO_GET_CMD="go get github.com/gorilla/csrf"
+echo "${GOS_GO_GET_CMD}"
+${GOS_GO_GET_CMD}
+
+echo "Leaving ${GOS_ROOT_DIR}"
+silent_popd
 
 echo "---------------------------------------------------------------------------"
+

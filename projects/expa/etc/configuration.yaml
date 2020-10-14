@@ -5,6 +5,9 @@ service:
   binding:
     address:
     port: 8880
-  path: /tierb
+  cross:
+    key: 12345678901234567890123456789012
+    trusted:
+  path: /
 hub:
   interval: 100

@@ -1,0 +1,15 @@
+.exp-a {
+  background-color: #18bc9c;
+}
+
+.exp-a .lead {
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.exp-a a:focus,
+.exp-a a:active,
+.exp-a a:hover {
+  color: #fff;
+}
+

@@ -50,4 +50,11 @@ Thumbs.db
 out/
 
 # Build
+/artifacts/
 /build/
+
+# Cache
+src/wasm-cache-busting.json
+
+# Logging
+tier-b.log

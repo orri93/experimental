@@ -17,6 +17,7 @@ option(CLANG_TIDY_FIX "Perform fixes with Clang-Tidy" OFF)
 option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
 # GOS Options
+option(GOS_SDL_TARGET "Generate SDL Desktop targets" OFF)
 option(GOS_SDL_MAIN "Use SDL Main" OFF)
 option(GOS_DEPLOY_PDB_FILES "Deploy PDB files" OFF)
 option(GOS_EM_ASSERTIONS "EMCC ASSERTIONS" OFF)
@@ -38,6 +39,9 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/tiera/version.h.in"
   "include/tiera/version.h"
   @ONLY)
+
+set(gos_expa_heatmap_library_target heatmap)
+set(gos_expa_heatmap_target sdlhm)
 
 set(gos_expa_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(gos_expa_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
@@ -89,6 +93,10 @@ if(CLANG_TIDY)
     endif()
   endif()
 endif()
+
+if (GOS_SDL_TARGET)
+  find_package(SDL REQUIRED)
+endif ()
 
 add_subdirectory(extern/gosc)
 gosc_get_properties()

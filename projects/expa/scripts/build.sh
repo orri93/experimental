@@ -163,9 +163,12 @@ echo "Entering ${GOS_ROOT_DIR}"
 silent_pushd ${GOS_ROOT_DIR}
 
 echo "*** Build Angular Web"
-ng build --prod
+GOS_NG_BUILD_CMD="ng build --prod"
+echo "${GOS_NG_BUILD_CMD}"
+${GOS_NG_BUILD_CMD}
 
 echo "*** Build Go Tier"
+echo "make"
 make
 
 echo "Leaving ${GOS_ROOT_DIR}"
