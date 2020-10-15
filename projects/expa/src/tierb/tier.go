@@ -68,10 +68,24 @@ func initialize(count uint32, dataPointCount uint32, majorCount uint32) {
 					value := float64(cv)
 					model.Data.Set(i, j, depth, value)
 				}
-			} 
+			}
 		}
+
+		xFrom, xTo := C.double(0.0), C.double(0.0)
+		yFrom, yTo := C.double(0.0), C.double(0.0)
+		cResult = C.gos_tier_a_get_depth_range(&xFrom, &xTo)
+		ra := bool(cResult)
+		cResult = C.gos_tier_a_get_data_range(&yFrom, &yTo)
+		rb := bool(cResult)
+		if ra && rb {
+			model.Data.Matrix.Ranges.X.F = float64(xFrom)
+			model.Data.Matrix.Ranges.X.T = float64(xTo)
+			model.Data.Matrix.Ranges.Y.F = float64(yFrom)
+			model.Data.Matrix.Ranges.Y.T = float64(yTo)
+		}
+
 		C.gos_tier_a_shutdown()
-	  log.Println("Simulated data cleared")
+		log.Println("Simulated data cleared")
 	} else {
 		cMessageLength := C.int(0)
 		var cMessage *C.char

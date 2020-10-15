@@ -6,6 +6,7 @@ import {
   DashboardOptions,
   ChartXYOptions,
   ColorRGBA,
+  Color,
   LUTStep,
   LUT } from '@arction/lcjs';
 
@@ -82,5 +83,10 @@ export class LcService {
     } else {
       return this.fill;
     }
+  }
+
+  public static createStep(range: DataRange, ratio: number, color: Color): LUTStep {
+    let value: number = range.f + ratio * (range.t - range.f);
+    return { value: value, color: color }; 
   }
 }

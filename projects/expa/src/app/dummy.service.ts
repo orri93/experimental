@@ -10,7 +10,7 @@ export class DummyService {
     return { v: [
       { p: [ { x: 1.0, y: 1.5 } ,{ x: 2.0, y: 2.5 }, { x: 3.0, y: 3.5 } ] },
       { p: [ { x: 10.0, y: 15.0 } ,{ x: 20.0, y: 25.0 }, { x: 30.0, y: 35.0 } ] }
-     ] };
+     ], r: { x: { f: 1.0, t: 30.0 }, y: { f: 1.5, t: 35.0 } } };
   }
 
   getRandomInteger(minimum: number, maximum: number): number {

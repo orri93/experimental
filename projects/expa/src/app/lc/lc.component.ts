@@ -1,9 +1,11 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import {
+  LUT,
   Axis,
   Point,
   Matrix,
+  LUTStep,
   ChartXY,
   ChartXYOptions,
   lightningChart,
@@ -15,6 +17,7 @@ import {
   TickStrategyParameters,
   EngineOptions,
   PalettedFill,
+  ColorRGBA,
   emptyLine,
   emptyTick,
   emptyFill, } from '@arction/lcjs';
@@ -42,9 +45,6 @@ const RES_Y = 400.0;
 
 const SIZE_WIDTH = 680.0;
 const SIZE_HEIGHT = 440.0;
-
-const INTERPOLATED_PALLET = true;
-const PIXELATE = false;
 
 @Component({
   selector: 'app-lc',
@@ -95,7 +95,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const fill: PalettedFill = this.lcService.getFill(INTERPOLATED_PALLET);
+    const lcConfig: LcConfiguration = AppConfiguration.settings.lc;
+    const fill: PalettedFill = this.lcService.getFill(lcConfig.interpolate);
 
     this.chartOptions = this.lcService.createChartOptions(SIZE_HEIGHT, SIZE_WIDTH);
     this.chart = lightningChart().ChartXY(this.chartOptions);
@@ -108,7 +109,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     this.heatMap = this.chart.addHeatmapSeries({
       rows: RES_Y,
       columns: RES_X,
-      pixelate: PIXELATE,
+      pixelate: lcConfig.pixelate,
       start: this.start,
       end: this.end
     });
@@ -128,6 +129,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   }
 
   showMatrix() {
+    const lcConfig: LcConfiguration = AppConfiguration.settings.lc;
+
     console.log("Show Matrix Button Clicked");
 
     this.dataService.getMatrix(RES_X).subscribe(m => {
@@ -135,7 +138,30 @@ export class LcComponent implements OnDestroy, AfterViewInit {
 
       this.data = LcDataService.dataGenerator(RES_X, RES_Y, m);
 
+      let ranges: DataRanges = m.r;
+
+      const ratioStep: number = 1.0 / 6.0;
+      let ratio = 0.0;
+
+      let steps: LUTStep[] = [];
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0x07, 0x04, 0x9b))); /* Dark blue */
+      ratio += ratioStep;
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0x02, 0xf7, 0xf3))); /* Cyan      */
+      ratio += ratioStep;
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0x09, 0xf7, 0x25))); /* Green     */
+      ratio += ratioStep;
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0xf4, 0xec, 0x04))); /* Yellow    */
+      ratio += ratioStep;
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0xf7, 0x9d, 0x01))); /* Orange    */
+      ratio += ratioStep;
+      steps.push(LcService.createStep(ranges.y, ratio, ColorRGBA(0x8c, 0x01, 0x01))); /* Dark red  */
+      
+      let fill: PalettedFill = new PalettedFill( { lut: new LUT( {
+        steps: steps, interpolate: lcConfig.interpolate
+        } ) } );
+
       this.heatMap.invalidateValuesOnly(this.data);
+      this.heatMap.setFillStyle(fill);
     });
   } 
 

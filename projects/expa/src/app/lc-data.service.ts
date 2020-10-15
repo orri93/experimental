@@ -4,8 +4,6 @@ import { InterpolateService } from './interpolate.service';
 @Injectable({ providedIn: 'root' })
 export class LcDataService {
 
-  constructor() { }
-
   public static vectorIndex(vector: Vector, row: number): number {
     for(let i = 0; i < vector.p.length - 1; i++) {
       if(row >= vector.p[i].x && row <= vector.p[i + 1].x) {

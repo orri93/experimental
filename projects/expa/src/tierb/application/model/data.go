@@ -1,5 +1,7 @@
 package model
 
+import "math"
+
 // Model structure export
 type Model struct {
 	Matrix         Matrix `json:"matrix"`
@@ -59,13 +61,31 @@ func (matrix *Matrix) Get(it uint32, iv uint32) (float64, float64) {
 	return matrix.Vectors[it].Points[iv].X, matrix.Vectors[it].Points[iv].Y
 }
 
+func (r *Range) initialize() {
+	r.F = math.MaxFloat64
+	r.T = -math.MaxFloat64
+}
+
+func (r *Range) update(v float64) {
+	if v < r.F {
+		r.F = v
+	}
+	if v > r.T {
+		r.T = v
+	}
+}
+
 // GetSubMatrix function export
 func (model *Model) GetSubMatrix(count uint32) *Matrix {
 	use := min(model.DataPointCount, count)
 	matrix := CreateMatrix(model.Count, use)
+	matrix.Ranges.X.initialize()
+	matrix.Ranges.Y.initialize()
 	for i := uint32(0); i < use; i++ {
 		for j := uint32(0); j < model.Count; j++ {
 			x, y := model.Get(i, j)
+			matrix.Ranges.X.update(x)
+			matrix.Ranges.Y.update(y)
 			matrix.Set(i, j, x, y)
 		}
 	}

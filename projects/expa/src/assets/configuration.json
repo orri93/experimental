@@ -1,3 +1,7 @@
 {
-  "timerInterval": 10.0
+  "timerInterval": 10.0,
+  "lc": {
+    "interpolate": true,
+    "pixelate": true
+  } 
 }

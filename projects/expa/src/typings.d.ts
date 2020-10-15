@@ -35,8 +35,14 @@ interface EmscriptenModule {
 /**
  * Typing definition for the Application Configuration
  */
+interface LcConfiguration {
+  interpolate: boolean,
+  pixelate: boolean
+}
+
 interface ApplicationConfiguration {
   timerInterval: number;
+  lc: LcConfiguration
 }
 
 interface DataPoint {
@@ -63,6 +69,17 @@ interface Vector {
   p: Point[];
 }
 
+interface DataRange {
+  f: number
+  t: number
+}
+
+interface DataRanges {
+  x: DataRange;
+  y: DataRange;
+}
+
 interface Matrix {
+  r: DataRanges;
   v: Vector[];
 }

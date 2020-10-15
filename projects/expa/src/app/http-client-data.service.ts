@@ -25,7 +25,8 @@ export class HttpClientDataService extends DataService {
     };
     return this.http.get<Matrix>(restPath, options).pipe(
       retry(3), // retry a failed request up to 3 times
-      catchError(this.handleError<Matrix>('getMatrix', {v: []})));
+      catchError(this.handleError<Matrix>('getMatrix',
+        super.createEmptyMatrix())));
   }
 
   getVector(): Observable<Vector> {
