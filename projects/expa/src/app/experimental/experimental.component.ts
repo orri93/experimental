@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClientDataService } from './../http-client-data.service';
+import { WebSocketService } from './../web-socket.service';
 
 @Component({
   selector: 'app-experimental',
@@ -11,9 +12,15 @@ export class ExperimentalComponent implements OnInit {
 
   error: string;
 
-  constructor(private dataService: HttpClientDataService) { }
+  constructor(
+    private dataService: HttpClientDataService,
+    private webSocketService: WebSocketService) { }
 
   ngOnInit(): void {
+    this.webSocketService.connect()
+      .subscribe(evt => {
+        console.log("WD event data: " + evt.data);
+      });
   }
 
   showMatrix(): void {

@@ -51,6 +51,9 @@ ECHO %GOS_GO_GET_CMD%
 SET GOS_GO_GET_CMD=go get github.com/gorilla/mux
 ECHO %GOS_GO_GET_CMD%
 %GOS_GO_GET_CMD%
+SET GOS_GO_GET_CMD=go get github.com/gorilla/sessions
+ECHO %GOS_GO_GET_CMD%
+%GOS_GO_GET_CMD%
 SET GOS_GO_GET_CMD=go get github.com/gorilla/websocket
 ECHO %GOS_GO_GET_CMD%
 %GOS_GO_GET_CMD%

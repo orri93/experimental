@@ -8,8 +8,12 @@ import (
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 
+	//"github.com/gorilla/sessions"
+
 	"../../model"
 )
+
+//var store = sessions.NewCookieStore
 
 // HandleMatrixRequest function export
 func HandleMatrixRequest(w http.ResponseWriter, r *http.Request) {

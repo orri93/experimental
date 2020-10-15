@@ -10,6 +10,7 @@ import (
 	"./handler"
 	"./handler/rest"
 	"./handler/web"
+	"./handler/ws"
 )
 
 // Application has handler
@@ -63,4 +64,5 @@ func (a *Application) setRouters(webpath string) {
 		a.Handler.Web(web)
 	}
 	a.Handler.Get("data/matrix/{count}", rest.HandleMatrixRequest)
+	a.Handler.WebSocket("ws", ws.GetWsService)
 }

@@ -7,6 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule } from "@angular/common/http";
 //import { InMemoryDataOverrideService } from './in-memory-data-override.service';
 //import { InMemoryDataService } from './in-memory-data.service';
 //import { DataService } from './data.service';
+import { WebSocketService } from './web-socket.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -44,6 +45,7 @@ export function initializeApp(appConfiguration: AppConfiguration) {
   ],
   providers: [
     //DataService,
+    WebSocketService,
     AppConfiguration, {
     provide: APP_INITIALIZER,
     useFactory: initializeApp,

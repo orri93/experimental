@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  wsPath: "ws://localhost:8880/ws",
   restPath: "/data",
   wasmAssetsPath: "/assets/wasm",
   configurationFile: "/assets/configuration.json"

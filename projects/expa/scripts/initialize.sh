@@ -93,6 +93,9 @@ ${GOS_GO_GET_CMD}
 GOS_GO_GET_CMD="go get github.com/gorilla/mux"
 echo "${GOS_GO_GET_CMD}"
 ${GOS_GO_GET_CMD}
+GOS_GO_GET_CMD="go get github.com/gorilla/sessions"
+echo "${GOS_GO_GET_CMD}"
+${GOS_GO_GET_CMD}
 GOS_GO_GET_CMD="go get github.com/gorilla/websocket"
 echo "${GOS_GO_GET_CMD}"
 ${GOS_GO_GET_CMD}
