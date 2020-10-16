@@ -56,9 +56,17 @@ include(extern/gosc/cmake/gosc.cmake)
 include(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
 
-if (BUILD_WITH_EMSCRIPTEN)
+if (GOS_DEVELOPE_EMSCRIPTEN OR BUILD_WITH_EMSCRIPTEN)
   set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten
     CACHE STRING "Emscripten path")
+endif ()
+
+if (GOS_DEVELOPE_EMSCRIPTEN)
+  set(gos_emscripten_include
+    "${EMSCRIPTEN_ROOT}/system/include")
+endif ()
+
+if (BUILD_WITH_EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE
     ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
   set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
