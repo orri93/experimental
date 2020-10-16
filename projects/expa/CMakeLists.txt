@@ -27,6 +27,8 @@ option(GOS_USE_GTEST_DISCOVER
   "Use CMake Google Test descovery for unit tests" OFF)
 option(GOS_USE_GTEST_PACKAGE
   "Use CMake GTest Package for unit tests" OFF)
+option(GOS_DEVELOPE_EMSCRIPTEN
+  "Develope with emscripten" OFF)
 
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 

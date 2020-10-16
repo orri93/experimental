@@ -33,6 +33,11 @@ if (HAVE_LIB_M)
   list(APPEND gos_expa_heatmap_libraries m)
 endif (HAVE_LIB_M)
 
+if (GOS_DEVELOPE_EMSCRIPTEN)
+  list(APPEND gos_expa_heatmap_definitions
+    __EMSCRIPTEN__)
+endif ()
+
 if (GOS_SDL_TARGET)
   add_library(${gos_expa_heatmap_library_target}
     ${gos_expa_heatmap_library_source})

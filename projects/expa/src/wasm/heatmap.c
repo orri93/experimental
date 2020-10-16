@@ -8,6 +8,8 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#include <emscripten/fetch.h>
+#include <emscripten/websocket.h>
 #endif
 
 #include <gos/data.h>
@@ -57,6 +59,16 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef __EMSCRIPTEN__
+
+EMSCRIPTEN_KEEPALIVE void start() {
+
+}
+
+EMSCRIPTEN_KEEPALIVE void stop() {
+  emscripten_fetch_attr_t attr;
+  
+}
+
 EMSCRIPTEN_KEEPALIVE void shutdown() {
   printf("Shutting down SDL Chart!\n");
   gos_heatmap_shutdown();
