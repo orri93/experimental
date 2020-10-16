@@ -164,11 +164,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
       this.heatMap.invalidateValuesOnly(this.data);
       this.heatMap.setFillStyle(fill);
 
-      this.webSocketService.connect()
-      .subscribe(evt => {
-        console.log("WD event data: " + evt.data);
-      });
-      this.webSocketService.sendMessage(RES_X.toString());
+      //this.webSocketService.connect();
+      //this.webSocketService.sendMessage(RES_X.toString());
     });
   } 
 

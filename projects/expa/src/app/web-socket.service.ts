@@ -1,46 +1,52 @@
 import { Injectable } from '@angular/core';
-import { Observable, Observer, Subject } from 'rxjs';
+import { EMPTY, Subject, Observable, timer } from 'rxjs';
+import { catchError, switchAll, retryWhen, delayWhen, tap } from 'rxjs/operators';
+import { webSocket, WebSocketSubject }  from 'rxjs/webSocket';
 import { environment } from '../environments/environment';
 
+/* https://javascript-conference.com/blog/real-time-in-angular-a-journey-into-websocket-and-rxjs/ */
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
-  private ws: WebSocket;
-  private subject: Subject<any>;
+  private socket: WebSocketSubject<any>;
+  private messageSubject = new Subject();
 
-  constructor() { }
+  public messages = this.messageSubject.pipe(switchAll(), catchError(e => { throw e } ));
 
-  public connect(): Observable<any> {
-    if(!this.subject) {
-      this.subject = this.create();
+  public connect(cfg: { reconnect: boolean } = { reconnect: false }): void {
+    if(!this.socket || this.socket.closed) {
+      this.socket = this.getNewWebSocket(environment.wsPath);
     }
-    return this.subject.asObservable();
   }
 
-  create() {
-    this.ws = new WebSocket(environment.wsPath);
+  public dataUpdates() {
+    return this.socket.asObservable();
+  }
 
-    const observable = Observable.create(
-      (obs: Observer<MessageEvent>) => {
-        this.ws.onmessage = obs.next.bind(obs);
-        this.ws.onerror   = obs.error.bind(obs);
-        this.ws.onclose   = obs.complete.bind(obs);
+  public sendMessage(msg: any) {
+    this.socket.next(msg);
+  }
 
-        return this.ws.close.bind(this.ws);
-      });
+  public close() {
+    this.socket.complete();
+  }
 
-    const observer = {
-      next: (data: Object) => {
-        if (this.ws.readyState === WebSocket.OPEN) {
-          this.ws.send(JSON.stringify(data));
+  private getNewWebSocket(url: string): WebSocketSubject<any> {
+    return webSocket({
+      url: url,
+      closeObserver: {
+        next: () => {
+          console.log('[DataService]: connection closed');
+          this.socket = undefined;
+          this.connect({ reconnect: true });
         }
-      }
-    };
-
-    return Subject.create(observer, observable);
+      },
+    }); 
   }
 
-  sendMessage(message: string) {
-    console.log(message);
-    this.ws.send(message);
+  private reconnect(observable: Observable<any>): Observable<any> {
+    return observable.pipe(
+      retryWhen(errors => errors.pipe(
+        tap(val => console.log('[Data Service] Try to reconnect', val)),
+        delayWhen(_ => timer(environment.wsReconnectInterval)))));
   }
 }
