@@ -37,7 +37,7 @@ if (GOS_DEVELOPE_EMSCRIPTEN)
   list(APPEND gos_expa_heatmap_definitions
     __EMSCRIPTEN__)
   list(APPEND gos_expa_heatmap_include
-    ${gos_emscripten_cjson_lib_dir}
+    ${gos_emscripten_cjson_src_dir}
     ${gos_emscripten_include})
 endif ()
 
@@ -82,8 +82,8 @@ if (BUILD_WITH_EMSCRIPTEN)
   else ()
     set(em_assertions 0)
   endif ()
-  if (GOS_EMSCRIPTEN_CJSON_LIB)
-    set(em_include -I${gos_expa_source_include} -I${gos_c_library_include} -I${gos_emscripten_cjson_lib_dir})
+  if (GOS_EMSCRIPTEN_CJSON_SRC)
+    set(em_include -I${gos_expa_source_include} -I${gos_c_library_include} -I${gos_emscripten_cjson_src_dir})
   else ()
     set(em_include -I${gos_expa_source_include} -I${gos_c_library_include})
   endif ()
@@ -97,10 +97,21 @@ if (BUILD_WITH_EMSCRIPTEN)
   list(APPEND gos_expa_heatmap_wasm_library_source ${gos_expa_heatmap_source})
   list(TRANSFORM gos_expa_heatmap_wasm_library_source
     PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+  if (GOS_EMSCRIPTEN_GOSC_SRC)
+    list(APPEND gos_expa_heatmap_wasm_library_source
+      ${gosc_source})
+    set(gosc_wasm_lib_use "")
+  else ()
+    set(gosc_wasm_lib_use ${gosc_wasm_library})
+  endif ()
+  if (GOS_EMSCRIPTEN_CJSON_SRC)
+    list(APPEND gos_expa_heatmap_wasm_library_source
+      "${gos_emscripten_cjson_src_dir}/cJSON.c")
+  endif ()
   add_custom_command(
     TARGET ${gos_expa_heatmap_library_target} POST_BUILD
     BYPRODUCTS gossdlheatmap.js gossdlheatmap.wasm
-    COMMAND emcc ${gos_expa_heatmap_wasm_library_source} ${gosc_wasm_library} ${EMCC_ARGS} -o gossdlheatmap.js
+    COMMAND emcc ${gos_expa_heatmap_wasm_library_source} ${gosc_wasm_lib_use} ${EMCC_ARGS} -o gossdlheatmap.js
     DEPENDS
       ${gos_expa_heatmap_source}
       ${gos_expa_heatmap_library_public_header}

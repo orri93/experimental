@@ -21,7 +21,8 @@ option(GOS_SDL_TARGET "Generate SDL Desktop targets" OFF)
 option(GOS_SDL_MAIN "Use SDL Main" OFF)
 option(GOS_DEPLOY_PDB_FILES "Deploy PDB files" OFF)
 option(GOS_EM_ASSERTIONS "EMCC ASSERTIONS" OFF)
-option(GOS_EMSCRIPTEN_CJSON_LIB "Generate Emscipten cJSON WebAssembly library" ON)
+option(GOS_EMSCRIPTEN_GOSC_SRC "With Emscipten GOSC WebAssembly source" ON)
+option(GOS_EMSCRIPTEN_CJSON_SRC "With Emscipten cJSON WebAssembly source" ON)
 
 # GOS Test Options
 option(GOS_USE_GTEST_DISCOVER
@@ -79,8 +80,8 @@ if (BUILD_WITH_EMSCRIPTEN)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/wasm")
 endif ()
 
-if (GOS_EMSCRIPTEN_CJSON_LIB)
-  set(gos_emscripten_cjson_lib_dir
+if (GOS_EMSCRIPTEN_CJSON_SRC)
+  set(gos_emscripten_cjson_src_dir
     "${CMAKE_CURRENT_SOURCE_DIR}/extern/cJSON")
 endif ()
 
