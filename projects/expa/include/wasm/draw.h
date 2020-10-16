@@ -11,12 +11,24 @@
 extern "C" {
 #endif
 
+gos_rgb* gos_draw_gradient_intensity_rgb(
+  gos_rgb_gradient* gradient,
+  double intensity);
+
 void gos_draw_setpixel(
   SDL_Surface* surface,
   int x,
   int y,
   int width,
   Uint32 pixel);
+
+void gos_draw_gradient_setpixel(
+  SDL_Surface* surface,
+  gos_rgb_gradient* gradient,
+  int x,
+  int y,
+  int width,
+  double intensity);
 
 bool gos_draw_initialize(SDL_Surface** surface, int width, int height);
 

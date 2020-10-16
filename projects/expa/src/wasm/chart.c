@@ -2,6 +2,17 @@
 
 #define GOS_CHART_COLOR_STOP_COUNT 6
 
+int gos_chart_vector_index(gos_point_2d_vector* vector, int row) {
+  int i;
+  double r = row;
+  for (i = 0; i < vector->count - 1; i++) {
+    if (r >= (vector->points[i]).x && r <= (vector->points[i + 1]).x) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 bool gos_chart_create_gradient(gos_rgb_gradient* gradient) {
   int i;
   int* gsizeat;

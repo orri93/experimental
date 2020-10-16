@@ -40,3 +40,6 @@
 [submodule "projects/expa/extern/gosc"]
 	path = projects/expa/extern/gosc
 	url = git@github.com:orri93/gosc.git
+[submodule "projects/expa/extern/cJSON"]
+	path = projects/expa/extern/cJSON
+	url = https://github.com/DaveGamble/cJSON.git

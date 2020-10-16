@@ -21,6 +21,7 @@ option(GOS_SDL_TARGET "Generate SDL Desktop targets" OFF)
 option(GOS_SDL_MAIN "Use SDL Main" OFF)
 option(GOS_DEPLOY_PDB_FILES "Deploy PDB files" OFF)
 option(GOS_EM_ASSERTIONS "EMCC ASSERTIONS" OFF)
+option(GOS_EMSCRIPTEN_CJSON_LIB "Generate Emscipten cJSON WebAssembly library" ON)
 
 # GOS Test Options
 option(GOS_USE_GTEST_DISCOVER
@@ -57,8 +58,12 @@ include(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
 
 if (GOS_DEVELOPE_EMSCRIPTEN OR BUILD_WITH_EMSCRIPTEN)
-  set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten
-    CACHE STRING "Emscripten path")
+  if (DEFINED ENV{EMSDK})
+    set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
+  else ()
+    set(EMSCRIPTEN_ROOT "emsdk/upstream/emscripten" CACHE PATH "Emscripten path")
+  endif ()
+  message(STATUS "Emscripten root path: ${EMSCRIPTEN_ROOT}")
 endif ()
 
 if (GOS_DEVELOPE_EMSCRIPTEN)
@@ -72,6 +77,11 @@ if (BUILD_WITH_EMSCRIPTEN)
   set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
   set(gos_assets_wasm_sdl_heatmap_dir
     "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/wasm")
+endif ()
+
+if (GOS_EMSCRIPTEN_CJSON_LIB)
+  set(gos_emscripten_cjson_lib_dir
+    "${CMAKE_CURRENT_SOURCE_DIR}/extern/cJSON")
 endif ()
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "

@@ -36,6 +36,9 @@ endif (HAVE_LIB_M)
 if (GOS_DEVELOPE_EMSCRIPTEN)
   list(APPEND gos_expa_heatmap_definitions
     __EMSCRIPTEN__)
+  list(APPEND gos_expa_heatmap_include
+    ${gos_emscripten_cjson_lib_dir}
+    ${gos_emscripten_include})
 endif ()
 
 if (GOS_SDL_TARGET)
@@ -79,8 +82,13 @@ if (BUILD_WITH_EMSCRIPTEN)
   else ()
     set(em_assertions 0)
   endif ()
+  if (GOS_EMSCRIPTEN_CJSON_LIB)
+    set(em_include -I${gos_expa_source_include} -I${gos_c_library_include} -I${gos_emscripten_cjson_lib_dir})
+  else ()
+    set(em_include -I${gos_expa_source_include} -I${gos_c_library_include})
+  endif ()
   set(EMCC_ARGS
-    -I${gos_expa_source_include} -I${gos_c_library_include}
+    ${em_include}
     -O3
     -s MODULARIZE=1
     -s ASSERTIONS=${em_assertions}

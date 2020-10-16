@@ -6,6 +6,15 @@
 
 static int _sdl_init_result = 1;
 
+gos_rgb* gos_draw_gradient_intensity_rgb(
+  gos_rgb_gradient* gradient,
+  double intensity) {
+  int i = intensity >= 0.0 ?
+    (intensity <= 1.0 ? ((int)(((double)(gradient->count - 1)) * intensity)) :
+      gradient->count - 1) : 0;
+  return &(gradient->gradient[i]);
+}
+
 void gos_draw_setpixel(
   SDL_Surface* surface,
   int x,
@@ -13,6 +22,19 @@ void gos_draw_setpixel(
   int width,
   Uint32 pixel) {
   *(((Uint32*)(surface->pixels)) + x + ((size_t)y) * ((size_t)width)) = pixel;
+}
+
+void gos_draw_gradient_setpixel(
+  SDL_Surface* surface,
+  gos_rgb_gradient* gradient,
+  int x,
+  int y,
+  int width,
+  double intensity) {
+  Uint32 pixel;
+  gos_rgb* rgb = gos_draw_gradient_intensity_rgb(gradient, intensity);
+  pixel = gos_draw_to_pixel(surface->format, rgb);
+  gos_draw_setpixel(surface, x, y, width, pixel);
 }
 
 bool gos_draw_initialize(SDL_Surface** surface, int width, int height) {
@@ -50,9 +72,10 @@ void gos_draw_vector_d1(
   int index) {
   int i, c;
   Uint32 pixel;
+  gos_rgb* rgb;
   for (i = 0; i < vector->count; i++) {
-    c = (int)(((double)(gradient->count - 1)) * vector->data[i]);
-    pixel = gos_draw_to_pixel(surface->format, &(gradient->gradient[c]));
+    rgb = gos_draw_gradient_intensity_rgb(gradient, vector->data[i]);
+    pixel = gos_draw_to_pixel(surface->format, rgb);
     gos_draw_setpixel(surface, index, i, surface->w, pixel);
   }
 }

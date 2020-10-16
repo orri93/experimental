@@ -10,10 +10,14 @@
 #include <emscripten.h>
 #include <emscripten/fetch.h>
 #include <emscripten/websocket.h>
+
+#include <cJSON.h>
 #endif
 
 #include <gos/data.h>
 #include <gos/color.h>
+#include <gos/geometry.h>
+#include <gos/interpolate.h>
 
 #include <wasm/draw.h>
 #include <wasm/chart.h>
@@ -60,13 +64,210 @@ int main(int argc, char** argv) {
 
 #ifdef __EMSCRIPTEN__
 
-EMSCRIPTEN_KEEPALIVE void start() {
+bool gos_api_get_number(double* v, cJSON* j, const char* n) {
+  cJSON* c = NULL;
+  if (j != NULL) {
+    c = cJSON_GetObjectItemCaseSensitive(j, n);
+    if (c != NULL) {
+      if (cJSON_IsNumber(c)) {
+        *v = cJSON_GetNumberValue(c);
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
+bool gos_api_update_from_json_to_vector(gos_point_2d_vector* v, cJSON* j) {
+  int i;
+  cJSON* p;
+  bool result = true;
+  if (cJSON_IsArray(j)) {
+    v->count = cJSON_GetArraySize(j);
+    v->points = calloc(v->count, sizeof(gos_point_2d));
+    for (i = 0; i < v->count; i++) {
+      p = cJSON_GetArrayItem(j, i);
+      if (cJSON_IsObject(p)) {
+        if (!gos_api_get_number(&((v->points[i]).x), p, "x")) {
+          result = false;
+        }
+        if (!gos_api_get_number(&((v->points[i]).y), p, "y")) {
+          result = false;
+        }
+      }
+    }
+    return result;
+  }
+  return false;
+}
+
+bool gos_vector_get_points(
+  gos_point_2d_vector* v,
+  gos_point_2d* p1,
+  gos_point_2d* p2,
+  int i) {
+  if (i < v->count - 1) {
+    p1->x = (v->points[i]).x;
+    p1->y = (v->points[i]).y;
+    p2->x = (v->points[i + 1]).x;
+    p2->y = (v->points[i + 1]).y;
+    return true;
+  }
+  return false;
+}
+
+bool gos_api_update_column_from_vector(
+  gos_range_1d* xr,
+  gos_range_1d* yr,
+  gos_point_2d_vector* v,
+  int i) {
+  int j, index;
+  Uint32 color;
+  gos_point_2d p1, p2;
+  double mu, r, f, n;
+  if (i < _width) {
+    for (j = 0; j < _height; j++) {
+      index = gos_chart_vector_index(v, j);
+      if(index >= 0) {
+        r = (double)j;
+        gos_vector_get_points(v, &p1, &p2, index);
+        mu = (r - p1.x) / (p2.x - p1.x);
+        f = gos_interpolate_linear(p1.y, p2.y, mu);
+        n = (f - yr->from) / gos_geometry_distance_1d(yr);
+        gos_draw_gradient_setpixel(_surface, &_gradient, i, j, _width, n);
+      } else {
+        gos_draw_setpixel(_surface, i, j, _width, 0);
+      }
+    }
+  }
+}
+
+bool gos_api_update_column_from_json(
+  gos_range_1d* xr,
+  gos_range_1d* yr,
+  cJSON* e,
+  int i) {
+  cJSON* points;
+  gos_point_2d_vector vector;
+  points = cJSON_GetObjectItemCaseSensitive(e, "p");
+  if (points != NULL) {
+    if (gos_api_update_from_json_to_vector(&vector, points)) {
+      return gos_api_update_column_from_vector(xr, yr, &vector, i);
+    }
+  }
+  return false;
+}
+
+bool gos_api_update_from_json(gos_range_1d* xr, gos_range_1d* yr, cJSON* m) {
+  cJSON* e;
+  cJSON* vectors = cJSON_GetObjectItemCaseSensitive(m, "v");
+  int i = 0;
+  if (vectors != NULL) {
+    if (cJSON_IsArray(vectors)) {
+      cJSON_ArrayForEach(e, vectors) {
+        gos_api_update_column_from_json(xr, yr, e, i++);
+      }
+    }
+  }
+}
+
+bool gos_api_get_range(gos_range_1d* r, cJSON* rj) {
+  bool result = true;
+  if (!gos_api_get_number(&(r->from), rj, "f")) {
+    result = false;
+  }
+  if (!gos_api_get_number(&(r->to), rj, "t")) {
+    result = false;
+  }
+  return result;
+}
+
+bool gos_api_get_range_by_name(gos_range_1d* r, cJSON* rj, const char* n) {
+  cJSON* range = cJSON_GetObjectItemCaseSensitive(rj, n);
+  if (range != NULL) {
+    if (cJSON_IsObject(range)) {
+      return gos_api_get_range(r, range);
+    }
+  }
+  return false;
+}
+
+bool gos_api_get_ranges(gos_range_1d* xr, gos_range_1d* yr, cJSON* m) {
+  bool result = true;
+  cJSON* ranges = cJSON_GetObjectItemCaseSensitive(m, "r");
+  if (ranges != NULL) {
+    if (cJSON_IsObject(ranges)) {
+      if (!gos_api_get_range_by_name(xr, ranges, "x")) {
+        result = false;
+      }
+      if (!gos_api_get_range_by_name(yr, ranges, "y")) {
+        result = false;
+      }
+      return result;
+    }
+  }
+  return false;
+}
+
+void gos_api_succeeded(emscripten_fetch_t* fetch) {
+  cJSON* v;
+  cJSON* json;
+  gos_range_1d xr, yr;
+  const char* error_ptr;
+  printf("Finished downloading %llu bytes from URL %s.\n",
+    fetch->numBytes,
+    fetch->url);
+  /* The data is now available at
+   * fetch->data[0] through fetch->data[fetch->numBytes-1];
+   */
+  if (fetch->numBytes > 0) {
+    assert(fetch->data[fetch->numBytes - 1] == '\0');
+    json = cJSON_Parse(fetch->data);
+    if (json != NULL) {
+      if (cJSON_IsObject(json)) {
+        if (gos_api_get_ranges(&xr, &yr, json)) {
+          if (!gos_api_update_from_json(&xr, &yr, json)) {
+            fprintf(stderr, "Failed to update from JSON\n");
+          }
+        } else {
+          fprintf(stderr, "Failed to get ranges\n");
+        }
+      } else {
+        fprintf(stderr, "JSON is not an object\n");
+      }
+      cJSON_Delete(json);
+    } else {
+      error_ptr = cJSON_getErrorPtr();
+      if (error_ptr != NULL) {
+        fprintf(stderr, "Error before: %s\n", error_ptr);
+      }
+    }
+  }
+
+  /* Free data associated with the fetch */
+  emscripten_fetch_close(fetch);
+}
+
+void gos_api_failed(emscripten_fetch_t* fetch) {
+  printf(
+    "Downloading %s failed, HTTP failure status code: %d.\n",
+    fetch->url,
+    fetch->status);
+  /* Also free data on failure */
+  emscripten_fetch_close(fetch);
+}
+
+EMSCRIPTEN_KEEPALIVE void start(const char* resturl, const char* wsurl) {
+  emscripten_fetch_attr_t attr;
+  emscripten_fetch_attr_init(&attr);
+  strcpy(attr.requestMethod, "GET");
+  attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+  attr.onsuccess = gos_api_succeeded;
+  attr.onerror = gos_api_failed;
+  emscripten_fetch(&attr, resturl);
 }
 
 EMSCRIPTEN_KEEPALIVE void stop() {
-  emscripten_fetch_attr_t attr;
-  
 }
 
 EMSCRIPTEN_KEEPALIVE void shutdown() {
