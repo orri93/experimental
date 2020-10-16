@@ -23,10 +23,10 @@ import {
   emptyFill, } from '@arction/lcjs';
 import { AppConfiguration } from './../app.configuration';
 import { HttpClientDataService } from './../http-client-data.service';
+import { WebSocketService } from './../web-socket.service';
 import { DummyService } from './../dummy.service';
 import { LcDataService } from './../lc-data.service';
 import { LcService } from './../lc.service';
-
 
 const MINIMUM_Z = 0.0;
 const MAXIMUM_Z = 100.0;
@@ -88,7 +88,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   constructor(
     private lcService: LcService,
     private dummyService: DummyService,
-    private dataService: HttpClientDataService) {
+    private dataService: HttpClientDataService,
+    private webSocketService: WebSocketService) {
     console.log("Construct the LC Component");
     this.start = { x: FIRST_X, y: FIRST_Y };
     this.end = {x: LAST_X, y: LAST_Y };
@@ -162,6 +163,12 @@ export class LcComponent implements OnDestroy, AfterViewInit {
 
       this.heatMap.invalidateValuesOnly(this.data);
       this.heatMap.setFillStyle(fill);
+
+      this.webSocketService.connect()
+      .subscribe(evt => {
+        console.log("WD event data: " + evt.data);
+      });
+      this.webSocketService.sendMessage(RES_X.toString());
     });
   } 
 

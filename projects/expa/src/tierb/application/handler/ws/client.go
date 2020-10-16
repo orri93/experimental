@@ -36,8 +36,11 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	indexAt uint32
 }
 
+// Process messages from a client
 func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
