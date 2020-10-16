@@ -40,6 +40,17 @@ func (matrix *Matrix) initialize(count uint32, dataPointCount uint32) {
 	}
 }
 
+// CreateVector function export
+func CreateVector(count uint32) *Vector {
+	vector := new(Vector)
+	vector.initialize(count)
+	return vector
+}
+
+func (vector *Vector) initialize(count uint32) {
+	vector.Points = make([]Point, count)
+}
+
 // Set to Model
 func (model *Model) Set(it uint32, iv uint32, x float64, y float64) {
 	model.Matrix.Set(it, iv, x, y)
@@ -59,6 +70,11 @@ func (matrix *Matrix) Set(it uint32, iv uint32, x float64, y float64) {
 // Get from Matrix
 func (matrix *Matrix) Get(it uint32, iv uint32) (float64, float64) {
 	return matrix.Vectors[it].Points[iv].X, matrix.Vectors[it].Points[iv].Y
+}
+
+func (vector *Vector) Set(i uint32, x float64, y float64) {
+	vector.Points[i].X = x
+	vector.Points[i].Y = y
 }
 
 func (r *Range) initialize() {
@@ -90,4 +106,32 @@ func (model *Model) GetSubMatrix(count uint32) *Matrix {
 		}
 	}
 	return matrix
+}
+
+func (model *Model) CreateWsUpdate(at uint32) *WsUpdate {
+	vector := CreateVector(model.Count)
+
+	for i := uint32(0); i < model.Count; i++ {
+		x, y := model.Get(at, i)
+		vector.Set(i, x, y)
+	}
+
+	update := new(WsUpdate)
+	update.Vector = *vector
+	update.At = at
+	return update
+}
+
+// CreateWsMessage function export
+func CreateWsMessage(t string) *WsMessage {
+	message := new(WsMessage)
+	message.Type = t
+	return message
+}
+
+// CreateWsTextMessage function export
+func CreateWsTextMessage(t string, m string) *WsMessage {
+	message := CreateWsMessage(t)
+	message.Message = &m
+	return message
 }

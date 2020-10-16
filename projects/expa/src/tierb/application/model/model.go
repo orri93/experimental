@@ -28,3 +28,19 @@ type Matrix struct {
 	Ranges  Ranges   `json:"r"`
 	Vectors []Vector `json:"v"`
 }
+
+type WsStart struct {
+	From uint32 `json:"f"`
+}
+
+type WsUpdate struct {
+	At     uint32 `json:"t"`
+	Vector Vector `json:"v"`
+}
+
+type WsMessage struct {
+	Type    string    `json:"t"`
+	Message *string   `json:"m"`
+	Start   *WsStart  `json:"s"`
+	Update  *WsUpdate `json:"u"`
+}

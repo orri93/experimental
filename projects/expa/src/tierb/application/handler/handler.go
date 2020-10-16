@@ -19,6 +19,7 @@ type Handler struct {
 // Initialize initializes the application with predefined configuration
 func (h *Handler) Initialize() {
 	ws.Initialize()
+	go ws.Instance.Execute()
 
 	h.Router = mux.NewRouter()
 }
@@ -65,8 +66,6 @@ func (h *Handler) Delete(path string, f func(w http.ResponseWriter, r *http.Requ
 
 // Execute the application on it's router
 func (h *Handler) Execute() {
-	go ws.Instance.Execute()
-
 	host := configuration.Instance.GetServiceHost()
 	welcome := "Starting to service " + host + " with root path as " + configuration.Instance.Service.Path
 	log.Println(welcome)

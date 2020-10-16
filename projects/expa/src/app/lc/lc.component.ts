@@ -23,7 +23,7 @@ import {
   emptyFill, } from '@arction/lcjs';
 import { AppConfiguration } from './../app.configuration';
 import { HttpClientDataService } from './../http-client-data.service';
-import { WebSocketService } from './../web-socket.service';
+import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
 import { DummyService } from './../dummy.service';
 import { LcDataService } from './../lc-data.service';
 import { LcService } from './../lc.service';
@@ -93,6 +93,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     console.log("Construct the LC Component");
     this.start = { x: FIRST_X, y: FIRST_Y };
     this.end = {x: LAST_X, y: LAST_Y };
+    this.webSocketService.connect();
   }
 
   ngAfterViewInit() {
@@ -127,6 +128,17 @@ export class LcComponent implements OnDestroy, AfterViewInit {
 
     /* Disable animation */
     this.chart.getDefaultAxisY().setAnimationScroll(false);
+
+    this.webSocketService.dataUpdates().subscribe( (message: WsMessage) => {
+      if(message.t === TYPE_UPDATE && message.u) {
+        let update: WsUpdate = message.u;
+        let line = LcDataService.lineGenerator(RES_Y, update.v);
+        this.xAtFrom++;
+        this.xAtTo++;
+        this.axisX.setInterval(this.xAtFrom, this.xAtTo, false, false);
+        this.heatMap.addColumn(1, 'value', [line]);
+      }
+    });
   }
 
   showMatrix() {
@@ -164,12 +176,21 @@ export class LcComponent implements OnDestroy, AfterViewInit {
       this.heatMap.invalidateValuesOnly(this.data);
       this.heatMap.setFillStyle(fill);
 
-      //this.webSocketService.connect();
-      //this.webSocketService.sendMessage(RES_X.toString());
+      let wsStart: WsStart = { f: RES_X };
+      let wsMessage: WsMessage = { t: TYPE_START, s: wsStart };
+      this.webSocketService.sendMessage(wsMessage);
     });
-  } 
+  }
+
+  stop(): void {
+    console.log("Stop Button Clicked");
+
+    let wsMessage: WsMessage = { t: TYPE_STOP };
+    this.webSocketService.sendMessage(wsMessage);
+  }
 
   ngOnDestroy(): void {
+    this.webSocketService.close();
     // "dispose" should be called when the component is unmounted to free all the resources used by the chart
     this.chart.dispose();
   }

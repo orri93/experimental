@@ -1,11 +1,16 @@
 package ws
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
+
+	"../../../configuration"
+	"../../model"
 )
 
 const (
@@ -37,6 +42,8 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
+	active bool
+
 	indexAt uint32
 }
 
@@ -60,14 +67,34 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		log.Println(string(message))
+		log.Println("WebSocket Message from web client: " + string(message))
+
+		incoming := model.WsMessage{}
+		err = json.Unmarshal(message, &incoming)
+		if err == nil {
+			response := []byte{}
+			response = nil
+			if strings.Compare(incoming.Type, TypeStart) == 0 {
+				response = c.handleStartRequest(incoming.Start)
+			} else if strings.Compare(incoming.Type, TypeStop) == 0 {
+				response = c.handleStopRequest()
+			}
+			if response != nil {
+				c.send <- response
+			}
+		} else {
+			log.Printf("error: %v", err)
+		}
+
 		//message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		//c.hub.broadcast <- message
 	}
 }
 
 func (c *Client) writePump() {
+	updatePeriod := time.Duration(configuration.Instance.Hub.Interval) * time.Millisecond
 	ticker := time.NewTicker(pingPeriod)
+	updateTicker := time.NewTicker(updatePeriod)
 	defer func() {
 		ticker.Stop()
 		c.connection.Close()
@@ -102,6 +129,13 @@ func (c *Client) writePump() {
 			c.connection.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.connection.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
+			}
+		case <-updateTicker.C:
+			if c.active {
+				updateMessage := c.createUpdate()
+				if updateMessage != nil {
+					c.send <- updateMessage
+				}
 			}
 		}
 	}

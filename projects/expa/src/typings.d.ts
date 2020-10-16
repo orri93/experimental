@@ -83,3 +83,19 @@ interface Matrix {
   r: DataRanges;
   v: Vector[];
 }
+
+interface WsStart {
+  f: number;
+}
+
+interface WsUpdate {
+  t: number;
+  v: Vector
+} 
+
+interface WsMessage {
+  t: string;
+  m?: string;
+  s?: WsStart;
+  u?: WsUpdate;
+} 

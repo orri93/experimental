@@ -29,7 +29,7 @@ type Service struct {
 
 // Hub structure export
 type Hub struct {
-	Interval uint32 `yaml:"interval"`
+	Interval int64 `yaml:"interval"`
 }
 
 // Binding structure export

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpClientDataService } from './../http-client-data.service';
-import { WebSocketService } from './../web-socket.service';
+import { WebSocketService, TYPE_START } from './../web-socket.service';
 
 @Component({
   selector: 'app-experimental',
@@ -20,8 +20,11 @@ export class ExperimentalComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    this.webSocketService.dataUpdates().subscribe( (data: any) => {
-      console.log("Data: " + data);
+    this.webSocketService.dataUpdates().subscribe( (message: WsMessage) => {
+      console.log(`WebSocket message: ${JSON.stringify(message)}`);
+
+      let div = <HTMLDivElement>this.show.nativeElement;
+      div.innerHTML = `Got WebSocket event: ${JSON.stringify(message)}`;
     });
   }
 
@@ -33,8 +36,18 @@ export class ExperimentalComponent implements OnInit, OnDestroy {
 
       let div = <HTMLDivElement>this.show.nativeElement;
       div.innerHTML = `Got Matrix: ${JSON.stringify(m)}`;
-
     });
+  }
+
+  testWs(): void {
+    console.log("Test WebSocket Button Clicked");
+
+    const message: WsMessage = {
+      t: TYPE_START,
+      m: "Message from web client"
+    };
+
+    this.webSocketService.sendMessage(message);
   }
 
   ngOnDestroy(): void {

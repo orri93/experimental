@@ -1,5 +1,7 @@
 package ws
 
+import "log"
+
 // Hub structure export
 type Hub struct {
 	// Registered clients.
@@ -19,6 +21,7 @@ var Instance Hub
 
 // Initialize function export
 func Initialize() {
+	log.Println("Initialize the WebSocket Hub")
 	//Instance.broadcast = make(chan []byte)
 	Instance.register = make(chan *Client)
 	Instance.unregister = make(chan *Client)
@@ -27,6 +30,7 @@ func Initialize() {
 
 // Execute function export
 func (h *Hub) Execute() {
+	log.Println("Executing the WebSocket Hub")
 	for {
 		select {
 		case client := <-h.register:
