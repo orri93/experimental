@@ -70,7 +70,7 @@ void gos_draw_vector_d1(
   gos_vector* vector,
   gos_rgb_gradient* gradient,
   int index) {
-  int i, c;
+  int i;
   Uint32 pixel;
   gos_rgb* rgb;
   for (i = 0; i < vector->count; i++) {

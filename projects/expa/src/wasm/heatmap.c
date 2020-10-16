@@ -139,7 +139,9 @@ bool gos_api_update_column_from_vector(
         gos_draw_setpixel(_surface, i, j, _width, 0);
       }
     }
+    return true;
   }
+  return false;
 }
 
 bool gos_api_update_column_from_json(
@@ -159,16 +161,21 @@ bool gos_api_update_column_from_json(
 }
 
 bool gos_api_update_from_json(gos_range_1d* xr, gos_range_1d* yr, cJSON* m) {
+  bool result = true;
   cJSON* e;
   cJSON* vectors = cJSON_GetObjectItemCaseSensitive(m, "v");
   int i = 0;
   if (vectors != NULL) {
     if (cJSON_IsArray(vectors)) {
       cJSON_ArrayForEach(e, vectors) {
-        gos_api_update_column_from_json(xr, yr, e, i++);
+        if (!gos_api_update_column_from_json(xr, yr, e, i++)) {
+          result = false;
+        }
       }
+      return result;
     }
   }
+  return false;
 }
 
 bool gos_api_get_range(gos_range_1d* r, cJSON* rj) {
@@ -237,7 +244,7 @@ void gos_api_succeeded(emscripten_fetch_t* fetch) {
       }
       cJSON_Delete(json);
     } else {
-      error_ptr = cJSON_getErrorPtr();
+      error_ptr = cJSON_GetErrorPtr();
       if (error_ptr != NULL) {
         fprintf(stderr, "Error before: %s\n", error_ptr);
       }
