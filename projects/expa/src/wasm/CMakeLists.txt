@@ -76,7 +76,7 @@ else ()
 
 endif ()
 
-if (BUILD_WITH_EMSCRIPTEN)
+if (GOS_EXPA_EMSCRIPTEN_BUILD)
   if (GOS_EM_ASSERTIONS)
     set(em_assertions 1)
   else ()
@@ -91,6 +91,7 @@ if (BUILD_WITH_EMSCRIPTEN)
     ${em_include}
     -O3
     -s MODULARIZE=1
+    -s FETCH=1
     -s ASSERTIONS=${em_assertions}
     -s EXPORT_NAME="SdlHeatmapModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")

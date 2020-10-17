@@ -7,7 +7,7 @@ project(GosExperimentA
 
 # Build Options
 option(BUILD_TESTS "Build tests" OFF)
-option(BUILD_WITH_EMSCRIPTEN "Build a Web Assembly Library with emscripten" ON)
+option(GOS_EXPA_EMSCRIPTEN_BUILD "Build a Web Assembly Library with emscripten" ON)
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 # Tidy Options
@@ -58,23 +58,23 @@ include(extern/gosc/cmake/gosc.cmake)
 include(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
 
-if (GOS_DEVELOPE_EMSCRIPTEN OR BUILD_WITH_EMSCRIPTEN)
+if (GOS_DEVELOPE_EMSCRIPTEN OR GOS_EXPA_EMSCRIPTEN_BUILD)
   if (DEFINED ENV{EMSDK})
-    set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
+    set(GOS_EXPA_EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
   else ()
-    set(EMSCRIPTEN_ROOT "emsdk/upstream/emscripten" CACHE PATH "Emscripten path")
+    set(GOS_EXPA_EMSCRIPTEN_ROOT "emsdk/upstream/emscripten" CACHE PATH "Emscripten path")
   endif ()
-  message(STATUS "Emscripten root path: ${EMSCRIPTEN_ROOT}")
+  message(STATUS "Emscripten root path: ${GOS_EXPA_EMSCRIPTEN_ROOT}")
 endif ()
 
 if (GOS_DEVELOPE_EMSCRIPTEN)
   set(gos_emscripten_include
-    "${EMSCRIPTEN_ROOT}/system/include")
+    "${GOS_EXPA_EMSCRIPTEN_ROOT}/system/include")
 endif ()
 
-if (BUILD_WITH_EMSCRIPTEN)
+if (GOS_EXPA_EMSCRIPTEN_BUILD)
   set(CMAKE_TOOLCHAIN_FILE
-    ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
+    ${GOS_EXPA_EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
   set(gos_c_library_include "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/include")
   set(gos_assets_wasm_sdl_heatmap_dir
     "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/wasm")

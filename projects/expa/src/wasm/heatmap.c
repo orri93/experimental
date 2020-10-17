@@ -37,6 +37,7 @@ static int _height = 0;
 static int _atstep = 0;
 
 static char _gos_chart_message[GOS_HEATMAP_MESSAGE_SIZE];
+static int _gos_chart_message_len = 0;
 
 static void gos_heatmap_create_random_vector(gos_vector* vector, double f);
 static bool gos_heatmap_demo(int width, int height);
@@ -58,6 +59,7 @@ int main(int argc, char** argv) {
     gos_heatmap_draw();
     return EXIT_SUCCESS;
   }
+
   return EXIT_FAILURE;
 }
 #endif
@@ -121,11 +123,14 @@ bool gos_api_update_column_from_vector(
   gos_range_1d* yr,
   gos_point_2d_vector* v,
   int i) {
+  bool result;
   int j, index;
   Uint32 color;
   gos_point_2d p1, p2;
   double mu, r, f, n;
+
   if (i < _width) {
+    gos_draw_lock(_surface);
     for (j = 0; j < _height; j++) {
       index = gos_chart_vector_index(v, j);
       if(index >= 0) {
@@ -139,9 +144,13 @@ bool gos_api_update_column_from_vector(
         gos_draw_setpixel(_surface, i, j, _width, 0);
       }
     }
-    return true;
+    gos_draw_unlock(_surface);
+    SDL_Flip(_surface);
+    result = true;
+  } else {
+    result = false;
   }
-  return false;
+  return result;
 }
 
 bool gos_api_update_column_from_json(
@@ -228,8 +237,7 @@ void gos_api_succeeded(emscripten_fetch_t* fetch) {
    * fetch->data[0] through fetch->data[fetch->numBytes-1];
    */
   if (fetch->numBytes > 0) {
-    assert(fetch->data[fetch->numBytes - 1] == '\0');
-    json = cJSON_Parse(fetch->data);
+    json = cJSON_ParseWithLength(fetch->data, (size_t)(fetch->numBytes));
     if (json != NULL) {
       if (cJSON_IsObject(json)) {
         if (gos_api_get_ranges(&xr, &yr, json)) {
@@ -265,7 +273,12 @@ void gos_api_failed(emscripten_fetch_t* fetch) {
 }
 
 EMSCRIPTEN_KEEPALIVE void start(const char* resturl, const char* wsurl) {
+  EmscriptenWebSocketCreateAttributes wsattr;
   emscripten_fetch_attr_t attr;
+
+  emscripten_websocket_init_create_attributes(wsattr);
+  
+
   emscripten_fetch_attr_init(&attr);
   strcpy(attr.requestMethod, "GET");
   attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
@@ -293,6 +306,52 @@ EMSCRIPTEN_KEEPALIVE void line() {
 EMSCRIPTEN_KEEPALIVE void test(int value) {
   printf("Test value %d\n", value);
 }
+
+EMSCRIPTEN_KEEPALIVE void lock() {
+  gos_draw_lock(_surface);
+}
+
+EMSCRIPTEN_KEEPALIVE void unlock_and_flip() {
+  gos_draw_unlock(_surface);
+  SDL_Flip(_surface);
+}
+
+EMSCRIPTEN_KEEPALIVE void shift() {
+  gos_draw_shift_d1d1(_surface);
+}
+
+EMSCRIPTEN_KEEPALIVE void unset_pixel_last_column(int y) {
+  gos_draw_setpixel(_surface, _width - 1, y, _width, 0);
+}
+
+EMSCRIPTEN_KEEPALIVE void set_pixel_last_column(int y, double v) {
+  gos_draw_gradient_setpixel(
+    _surface, &_gradient, _width - 1, y, _width, v);
+} 
+
+EMSCRIPTEN_KEEPALIVE void set_pixel(int x, int y, double v) {
+  gos_draw_gradient_setpixel(
+    _surface, &_gradient, x, y, _width, v);
+}
+
+EMSCRIPTEN_KEEPALIVE void unset_pixel(int x, int y) {
+  gos_draw_setpixel(_surface, x, y, _width, 0);
+}
+
+EMSCRIPTEN_KEEPALIVE int set_data(int* values, int count) {
+  int i, s = 0;
+  for(i = 0; i < count; i++) {
+    printf("Adding %d to the sum\n", values[i]);
+    s += values[i];
+  }
+  _gos_chart_message_len = snprintf(
+    _gos_chart_message,
+    GOS_HEATMAP_MESSAGE_SIZE,
+    "Set data value sum: %d",
+    s);
+  return s;
+}
+
 #endif
 
 void gos_heatmap_create_random_vector(gos_vector* vector, double f) {
