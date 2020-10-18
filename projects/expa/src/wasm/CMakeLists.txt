@@ -1,6 +1,12 @@
 list(APPEND gos_expa_heatmap_library_source
+  update.c
+  vector.c
   chart.c
-  draw.c)
+  rest.c
+  json.c
+  draw.c
+  demo.c
+  ws.c)
 
 list(APPEND gos_expa_heatmap_source
   ${gos_expa_heatmap_library_source}
