@@ -8,22 +8,17 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-/* https://emscripten.org/docs/api_reference/fetch.html */
-/* https://magnealvheim.wordpress.com/2017/12/31/a-simple-webassembly-experiment/ */
-#include <emscripten/fetch.h>
-/* https://gist.github.com/nus/564e9e57e4c107faa1a45b8332c265b9 */
-#include <emscripten/websocket.h>
+#include <wasm/rest.h>
+#include <wasm/ws.h>
 #endif
 
 #include <gos/data.h>
 #include <gos/color.h>
 
 #include <wasm/draw.h>
-#include <wasm/rest.h>
 #include <wasm/chart.h>
 #include <wasm/types.h>
 #include <wasm/heatmap.h>
-#include <wasm/ws.h>
 
 #define GOS_HEATMAP_MESSAGE_SIZE 1024
 
@@ -62,19 +57,7 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef __EMSCRIPTEN__
-EMSCRIPTEN_KEEPALIVE void start(const char* url) {
-  EmscriptenWebSocketCreateAttributes attr;
-  attr.url = url;
-  attr.protocols = NULL;
-  attr.createOnMainThread = EM_TRUE;
-  _ws = emscripten_websocket_new(&attr);
-  emscripten_websocket_set_onopen_callback(_ws, NULL, gos_ws_on_open);
-  emscripten_websocket_set_onerror_callback(_ws, NULL, gos_ws_on_error);
-  emscripten_websocket_set_onclose_callback(_ws, NULL, gos_ws_on_close);
-  emscripten_websocket_set_onmessage_callback(_ws, NULL, gos_ws_on_message);
-}
-
-EMSCRIPTEN_KEEPALIVE void fetch(const char* url) {
+EMSCRIPTEN_KEEPALIVE void fetchrest(const char* url) {
   emscripten_fetch_attr_t attr;
   emscripten_fetch_attr_init(&attr);
   strcpy(attr.requestMethod, "GET");
@@ -85,11 +68,29 @@ EMSCRIPTEN_KEEPALIVE void fetch(const char* url) {
   emscripten_fetch(&attr, url);
 }
 
-EMSCRIPTEN_KEEPALIVE void stop() {
-  EMSCRIPTEN_RESULT result;
-  if (_ws != 0) {
-    
-  }
+EMSCRIPTEN_KEEPALIVE void startws(const char* url, int from) {
+  EmscriptenWebSocketCreateAttributes attr;
+  attr.url = url;
+  attr.protocols = NULL;
+  attr.createOnMainThread = EM_TRUE;
+  _expa_data.ws.start_from = from;
+  _ws = emscripten_websocket_new(&attr);
+  emscripten_websocket_set_onopen_callback(_ws, &_expa_data, gos_ws_on_open);
+  emscripten_websocket_set_onerror_callback(_ws, &_expa_data, gos_ws_on_error);
+  emscripten_websocket_set_onclose_callback(_ws, &_expa_data, gos_ws_on_close);
+  emscripten_websocket_set_onmessage_callback(_ws, &_expa_data, gos_ws_on_message);
+}
+
+EMSCRIPTEN_KEEPALIVE void stopws() {
+  gos_ws_stop(_ws);
+}
+
+EMSCRIPTEN_KEEPALIVE void closews() {
+  gos_ws_close(_ws, 1000);
+}
+
+EMSCRIPTEN_KEEPALIVE void deletews() {
+  gos_ws_delete(&_ws);
 }
 
 EMSCRIPTEN_KEEPALIVE void shutdown() {
