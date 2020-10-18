@@ -82,6 +82,7 @@ else ()
 
 endif ()
 
+# See also https://github.com/kripken/ammo.js/blob/master/CMakeLists.txt
 if (GOS_EXPA_EMSCRIPTEN_BUILD)
   if (GOS_EM_ASSERTIONS)
     set(em_assertions 1)
