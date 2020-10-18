@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+extern gos_expa_data _expa_data;
+
 void gos_heatmap_create_random_vector(gos_vector* vector, double f);
 bool gos_heatmap_initialize(int width, int height);
 void gos_heatmap_draw();

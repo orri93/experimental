@@ -25,7 +25,11 @@
 #define GOS_HEATMAP_DEMO_WIDTH 600
 #define GOS_HEATMAP_DEMO_HEIGHT 400
 
-static gos_expa_data _expa_data;
+gos_expa_data _expa_data = {
+  NULL,           /* surface            */
+  { NULL, 0 },    /* gradient           */ 
+  { 0 }           /* ws.start_from = 0  */
+};
 
 static gos_matrix _matrix = { NULL, 0, 0 };
 static gos_vector _vd1 = { NULL, 0 };
@@ -35,9 +39,6 @@ static int _atstep = 0;
 
 static char _gos_chart_message[GOS_HEATMAP_MESSAGE_SIZE];
 static int _gos_chart_message_len = 0;
-
-static EMSCRIPTEN_WEBSOCKET_T _ws = 0;
-
 
 #ifdef GOS_CHART_SDL_MAIN
 int SDL_main(int argc, char** argv) {
@@ -66,31 +67,6 @@ EMSCRIPTEN_KEEPALIVE void fetchrest(const char* url) {
   attr.onsuccess = gos_rest_succeeded;
   attr.onerror = gos_rest_failed;
   emscripten_fetch(&attr, url);
-}
-
-EMSCRIPTEN_KEEPALIVE void startws(const char* url, int from) {
-  EmscriptenWebSocketCreateAttributes attr;
-  attr.url = url;
-  attr.protocols = NULL;
-  attr.createOnMainThread = EM_TRUE;
-  _expa_data.ws.start_from = from;
-  _ws = emscripten_websocket_new(&attr);
-  emscripten_websocket_set_onopen_callback(_ws, &_expa_data, gos_ws_on_open);
-  emscripten_websocket_set_onerror_callback(_ws, &_expa_data, gos_ws_on_error);
-  emscripten_websocket_set_onclose_callback(_ws, &_expa_data, gos_ws_on_close);
-  emscripten_websocket_set_onmessage_callback(_ws, &_expa_data, gos_ws_on_message);
-}
-
-EMSCRIPTEN_KEEPALIVE void stopws() {
-  gos_ws_stop(_ws);
-}
-
-EMSCRIPTEN_KEEPALIVE void closews() {
-  gos_ws_close(_ws, 1000);
-}
-
-EMSCRIPTEN_KEEPALIVE void deletews() {
-  gos_ws_delete(&_ws);
 }
 
 EMSCRIPTEN_KEEPALIVE void shutdown() {
@@ -185,7 +161,7 @@ bool gos_heatmap_initialize(int width, int height) {
 
 void gos_heatmap_draw() {
   gos_draw_lock(_expa_data.surface);
-  gos_draw_matrix(_expa_data.surface, &_matrix, &(_expa_data.gradient));
+  gos_draw_matrix(&_expa_data, &_matrix);
   gos_draw_unlock(_expa_data.surface);
   SDL_Flip(_expa_data.surface);
 }
@@ -237,10 +213,7 @@ void gos_heatmap_line() {
   gos_draw_lock(_expa_data.surface);
   gos_heatmap_create_random_vector(&_vd1, 0.5);
   gos_draw_shift_d1d1(_expa_data.surface);
-  gos_draw_vector_d1(
-    _expa_data.surface,
-    &_vd1, &(_expa_data.gradient),
-    _expa_data.surface->w - 1);
+  gos_draw_vector_d1(&_expa_data, &_vd1, _expa_data.surface->w - 1);
   gos_draw_unlock(_expa_data.surface);
   SDL_Flip(_expa_data.surface);
 }

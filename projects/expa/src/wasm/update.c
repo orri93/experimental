@@ -27,9 +27,9 @@ bool gos_update_column_from_vector(
         mu = (r - p1.x) / (p2.x - p1.x);
         f = gos_interpolate_linear(p1.y, p2.y, mu);
         n = (f - yr->from) / gos_geometry_distance_1d(yr);
-        gos_draw_gradient_setpixel(expad, i, j, surface->w, n);
+        gos_draw_gradient_setpixel(expad, i, j, n);
       } else {
-        gos_draw_setpixel(surface, i, j, surface->w, 0);
+        gos_draw_setpixel(surface, i, j, 0);
       }
     }
     gos_draw_unlock(surface);

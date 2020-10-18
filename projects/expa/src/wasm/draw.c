@@ -8,7 +8,7 @@
 static int _sdl_init_result = 1;
 
 void gos_draw_get_pixel_pointer(SDL_Surface* surface, Uint32** p, int x, int y) {
-  *p = *(((Uint32*)(surface->pixels)) + x + ((size_t)y) * ((size_t)surface->w));
+  *p = (((Uint32*)(surface->pixels)) + x + ((size_t)y) * ((size_t)surface->w));
 }
 
 gos_rgb* gos_draw_gradient_intensity_rgb(gos_rgb_gradient* gradient, double i) {
@@ -29,7 +29,7 @@ void gos_draw_gradient_setpixel(gos_expa_data* expad, int x, int y, double i) {
   SDL_Surface* surface = expad->surface;
   gos_rgb* rgb = gos_draw_gradient_intensity_rgb(&(expad->gradient), i);
   pixel = gos_draw_to_pixel(surface->format, rgb);
-  gos_draw_setpixel(surface, x, y, surface->w, pixel);
+  gos_draw_setpixel(surface, x, y, pixel);
 }
 
 bool gos_draw_initialize(SDL_Surface** surface, int width, int height) {
@@ -68,7 +68,7 @@ void gos_draw_vector_d1(gos_expa_data* expad, gos_vector* vector, int index) {
   for (i = 0; i < vector->count; i++) {
     rgb = gos_draw_gradient_intensity_rgb(&(expad->gradient), vector->data[i]);
     pixel = gos_draw_to_pixel(surface->format, rgb);
-    gos_draw_setpixel(surface, index, i, surface->w, pixel);
+    gos_draw_setpixel(surface, index, i, pixel);
   }
 }
 
@@ -86,7 +86,7 @@ void gos_draw_matrix(gos_expa_data* expad, gos_matrix* matrix) {
         gos_data_get_matrix(matrix, i, j));
       assert(c < (expad->gradient).count);
       pixel = gos_draw_to_pixel(surface->format, (expad->gradient).gradient + c);
-      gos_draw_setpixel(surface, i, j, matrix->countd1, pixel);
+      gos_draw_setpixel(surface, i, j, pixel);
     }
   }
 }

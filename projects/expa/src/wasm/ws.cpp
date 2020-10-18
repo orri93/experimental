@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <assert.h>
 
 #include <cJSON.h>
@@ -8,6 +7,11 @@
 #include <wasm/ws.h>
 #include <wasm/json.h>
 #include <wasm/types.h>
+#include <wasm/heatmap.h>
+
+static EMSCRIPTEN_WEBSOCKET_T _ws = 0;
+
+static EMSCRIPTEN_RESULT gos_ws_send_json(EMSCRIPTEN_WEBSOCKET_T s, cJSON* message);
 
 EM_BOOL gos_ws_on_open(int t, const EmscriptenWebSocketOpenEvent* e, void* d) {
   EMSCRIPTEN_RESULT result;
@@ -37,22 +41,6 @@ EM_BOOL gos_ws_on_close(int t, const EmscriptenWebSocketOpenEvent* e, void* d) {
 EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketOpenEvent* e, void* d) {
   printf("WebSocket Message with event type: %d\n", t);
   return EM_TRUE;
-}
-
-EMSCRIPTEN_RESULT gos_ws_send_json(EMSCRIPTEN_WEBSOCKET_T s, cJSON* message) {
-  EMSCRIPTEN_RESULT result = EMSCRIPTEN_RESULT_FAILED;
-  char* string;
-  if (s != 0 && message != NULL) {
-    string = cJSON_PrintUnformatted(message);
-    if (string != NULL) {
-      result = emscripten_websocket_send_utf8_text(s, string);
-      free(string);
-    }
-  }
-  if (message != NULL) {
-    cJSON_Delete(message);
-  }
-  return result;
 }
 
 EMSCRIPTEN_RESULT gos_ws_start(EMSCRIPTEN_WEBSOCKET_T s, int from) {
@@ -90,4 +78,45 @@ EMSCRIPTEN_RESULT gos_ws_delete(EMSCRIPTEN_WEBSOCKET_T* s) {
     }
   }
   return result;
+}
+
+EMSCRIPTEN_RESULT gos_ws_send_json(EMSCRIPTEN_WEBSOCKET_T s, cJSON* message) {
+  EMSCRIPTEN_RESULT result = EMSCRIPTEN_RESULT_FAILED;
+  char* string;
+  if (s != 0 && message != NULL) {
+    string = cJSON_PrintUnformatted(message);
+    if (string != NULL) {
+      result = emscripten_websocket_send_utf8_text(s, string);
+      free(string);
+    }
+  }
+  if (message != NULL) {
+    cJSON_Delete(message);
+  }
+  return result;
+}
+
+EMSCRIPTEN_KEEPALIVE void startws(const char* url, int from) {
+  EmscriptenWebSocketCreateAttributes attr;
+  attr.url = url;
+  attr.protocols = NULL;
+  attr.createOnMainThread = EM_TRUE;
+  _expa_data.ws.start_from = from;
+  _ws = emscripten_websocket_new(&attr);
+  emscripten_websocket_set_onopen_callback(_ws, &_expa_data, gos_ws_on_open);
+  emscripten_websocket_set_onerror_callback(_ws, &_expa_data, gos_ws_on_error);
+  emscripten_websocket_set_onclose_callback(_ws, &_expa_data, gos_ws_on_close);
+  emscripten_websocket_set_onmessage_callback(_ws, &_expa_data, gos_ws_on_message);
+}
+
+EMSCRIPTEN_KEEPALIVE void stopws() {
+  gos_ws_stop(_ws);
+}
+
+EMSCRIPTEN_KEEPALIVE void closews() {
+  gos_ws_close(_ws, 1000);
+}
+
+EMSCRIPTEN_KEEPALIVE void deletews() {
+  gos_ws_delete(&_ws);
 }

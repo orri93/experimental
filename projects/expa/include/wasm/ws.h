@@ -1,12 +1,9 @@
 #ifndef GOS_EXPA_WASM_WS_H_
 #define GOS_EXPA_WASM_WS_H_
 
-#include <stdbool.h>
-
+#include <emscripten.h>
 /* https://gist.github.com/nus/564e9e57e4c107faa1a45b8332c265b9 */
 #include <emscripten/websocket.h>
-
-#include <gos/types.h>
 
 #ifdef __cplusplus
 extern "C" {

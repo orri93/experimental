@@ -5,8 +5,9 @@ list(APPEND gos_expa_heatmap_library_source
   rest.c
   json.c
   draw.c
-  demo.c
-  ws.c)
+  demo.c)
+list(APPEND gos_expa_heatmap_cpp_source
+  ws.cpp)
 
 list(APPEND gos_expa_heatmap_source
   ${gos_expa_heatmap_library_source}
@@ -105,6 +106,9 @@ if (GOS_EXPA_EMSCRIPTEN_BUILD)
   list(APPEND gos_expa_heatmap_wasm_library_source ${gos_expa_heatmap_source})
   list(TRANSFORM gos_expa_heatmap_wasm_library_source
     PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+  list(APPEND gos_expa_heatmap_wasm_library_cpp_source ${gos_expa_heatmap_cpp_source})
+  list(TRANSFORM gos_expa_heatmap_wasm_library_cpp_source
+    PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
   if (GOS_EMSCRIPTEN_GOSC_SRC)
     list(APPEND gos_expa_heatmap_wasm_library_source
       ${gosc_source})
@@ -119,6 +123,7 @@ if (GOS_EXPA_EMSCRIPTEN_BUILD)
   add_custom_command(
     TARGET ${gos_expa_heatmap_library_target} POST_BUILD
     BYPRODUCTS gossdlheatmap.js gossdlheatmap.wasm
+    COMMAND em++ ${gos_expa_heatmap_wasm_library_cpp_source} -O3 -c
     COMMAND emcc ${gos_expa_heatmap_wasm_library_source} ${gosc_wasm_lib_use} ${EMCC_ARGS} -o gossdlheatmap.js
     DEPENDS
       ${gos_expa_heatmap_source}
