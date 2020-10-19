@@ -5,9 +5,10 @@ list(APPEND gos_expa_heatmap_library_source
   rest.c
   json.c
   draw.c
-  demo.c)
-list(APPEND gos_expa_heatmap_cpp_source
-  ws.cpp)
+  demo.c
+  ws.c)
+#list(APPEND gos_expa_heatmap_cpp_source
+#  ws.cpp)
 
 list(APPEND gos_expa_heatmap_source
   ${gos_expa_heatmap_library_source}
@@ -98,17 +99,24 @@ if (GOS_EXPA_EMSCRIPTEN_BUILD)
   set(EMCC_ARGS
     ${em_include}
     -O3
+    -lwebsocket.js
     -s MODULARIZE=1
     -s FETCH=1
     -s ASSERTIONS=${em_assertions}
     -s EXPORT_NAME="SdlHeatmapModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
+# set(EMPP_ARGS
+#   ${em_include}
+#   -O3
+#   -lwebsocket.js
+#   -s MODULARIZE=1
+#   -s ASSERTIONS=${em_assertions})
   list(APPEND gos_expa_heatmap_wasm_library_source ${gos_expa_heatmap_source})
   list(TRANSFORM gos_expa_heatmap_wasm_library_source
     PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
-  list(APPEND gos_expa_heatmap_wasm_library_cpp_source ${gos_expa_heatmap_cpp_source})
-  list(TRANSFORM gos_expa_heatmap_wasm_library_cpp_source
-    PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+# list(APPEND gos_expa_heatmap_wasm_library_cpp_source ${gos_expa_heatmap_cpp_source})
+# list(TRANSFORM gos_expa_heatmap_wasm_library_cpp_source
+#   PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
   if (GOS_EMSCRIPTEN_GOSC_SRC)
     list(APPEND gos_expa_heatmap_wasm_library_source
       ${gosc_source})
@@ -123,8 +131,8 @@ if (GOS_EXPA_EMSCRIPTEN_BUILD)
   add_custom_command(
     TARGET ${gos_expa_heatmap_library_target} POST_BUILD
     BYPRODUCTS gossdlheatmap.js gossdlheatmap.wasm
-    COMMAND em++ ${gos_expa_heatmap_wasm_library_cpp_source} -O3 -c
-    COMMAND emcc ${gos_expa_heatmap_wasm_library_source} ${gosc_wasm_lib_use} ${EMCC_ARGS} -o gossdlheatmap.js
+#   COMMAND em++ ${EMPP_ARGS} -o ws.html ${gos_expa_heatmap_wasm_library_cpp_source}
+    COMMAND emcc ${EMCC_ARGS} -o gossdlheatmap.js ${gos_expa_heatmap_wasm_library_source} ${gosc_wasm_lib_use}
     DEPENDS
       ${gos_expa_heatmap_source}
       ${gos_expa_heatmap_library_public_header}
