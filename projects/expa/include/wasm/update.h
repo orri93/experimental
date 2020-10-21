@@ -13,25 +13,16 @@
 extern "C" {
 #endif
 
+bool gos_update_last_column_from_vector(
+  gos_expa_data* expad,
+  gos_point_2d_vector* v);
+
 bool gos_update_column_from_vector(
   gos_expa_data* expad,
-  gos_range_1d* xr,
-  gos_range_1d* yr,
   gos_point_2d_vector* v,
   int i);
 
-bool gos_update_column_from_json(
-  gos_expa_data* expad,
-  gos_range_1d* xr,
-  gos_range_1d* yr,
-  cJSON* e,
-  int i);
-
-bool gos_update_from_json(
-  gos_expa_data* expad,
-  gos_range_1d* xr,
-  gos_range_1d* yr,
-  cJSON* m);
+bool gos_update_from_json(gos_expa_data* expad, cJSON* m);
 
 #ifdef __cplusplus
 }

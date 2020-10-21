@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+void gos_rest_advanced_succeeded(emscripten_fetch_t* fetch);
+
 void gos_rest_succeeded(emscripten_fetch_t* fetch);
 void gos_rest_failed(emscripten_fetch_t* fetch);
 

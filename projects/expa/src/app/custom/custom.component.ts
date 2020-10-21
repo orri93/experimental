@@ -1,11 +1,9 @@
 import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
 import { HttpClient } from "@angular/common/http";
 import { HttpClientDataService } from './../http-client-data.service';
 import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
 import { EmscriptenWasmComponent } from "../emscripten-wasm.component";
 import { InterpolateService } from './../interpolate.service';
-import { AppConfiguration } from '../app.configuration';
 import { DataService } from './../data.service';
 
 const RES_X = 600.0;
@@ -57,7 +55,7 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
     }
   }
 
-  showMatrix() {
+  start(): void {
     this.dataService.getMatrix(RES_X).subscribe(m => {
       console.log("Got Matrix");
       let v, n, mu, x1: number;
@@ -128,22 +126,7 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
       let wsStart: WsStart = { f: RES_X };
       let wsMessage: WsMessage = { t: TYPE_START, s: wsStart };
       this.webSocketService.sendMessage(wsMessage);
-  
     });
-
-  }
-
-  start(): void {
-    console.log("Start Button Clicked");
-
-    let getMatrixUrl = HttpClientDataService.createGetMatrixUrl(RES_X);
-    let wsUrl = "";
-
-    this.module.ccall(
-      "start",
-      "void",
-      ["string", "string"],
-      [getMatrixUrl, wsUrl]);
   }
 
   stop(): void {

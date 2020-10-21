@@ -36,13 +36,13 @@ interface EmscriptenModule {
  * Typing definition for the Application Configuration
  */
 interface LcConfiguration {
-  interpolate: boolean,
-  pixelate: boolean
+  interpolate: boolean;
+  pixelate: boolean;
 }
 
 interface ApplicationConfiguration {
   timerInterval: number;
-  lc: LcConfiguration
+  lc: LcConfiguration;
 }
 
 interface DataPoint {
@@ -70,8 +70,8 @@ interface Vector {
 }
 
 interface DataRange {
-  f: number
-  t: number
+  f: number;
+  t: number;
 }
 
 interface DataRanges {
@@ -90,7 +90,7 @@ interface WsStart {
 
 interface WsUpdate {
   t: number;
-  v: Vector
+  v: Vector;
 } 
 
 interface WsMessage {

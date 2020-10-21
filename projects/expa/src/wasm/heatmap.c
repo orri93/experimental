@@ -15,6 +15,7 @@
 #include <gos/data.h>
 #include <gos/color.h>
 
+#include <wasm/ws.h>
 #include <wasm/draw.h>
 #include <wasm/chart.h>
 #include <wasm/types.h>
@@ -26,9 +27,10 @@
 #define GOS_HEATMAP_DEMO_HEIGHT 400
 
 gos_expa_data _expa_data = {
-  NULL,           /* surface            */
-  { NULL, 0 },    /* gradient           */ 
-  { 0 }           /* ws.start_from = 0  */
+  NULL,                           /* surface            */
+  { { 0.0, 0.0 }, { 0.0, 0.0 } }, /* ranges             */
+  { NULL, 0 },                    /* gradient           */ 
+  { 0, 0 }                        /* ws                 */
 };
 
 static gos_matrix _matrix = { NULL, 0, 0 };
@@ -72,6 +74,10 @@ EMSCRIPTEN_KEEPALIVE void fetchrest(const char* url) {
 EMSCRIPTEN_KEEPALIVE void shutdown() {
   printf("Shutting down SDL Chart!\n");
   gos_heatmap_shutdown();
+  if (_expa_data.ws.socket > 0) {
+    printf("Shutting down the Web Socket!\n");
+    gos_ws_delete(&(_expa_data.ws));
+  }
 }
 
 EMSCRIPTEN_KEEPALIVE void step() {
@@ -128,6 +134,35 @@ EMSCRIPTEN_KEEPALIVE int set_data(int* values, int count) {
     s);
   return s;
 }
+
+EMSCRIPTEN_KEEPALIVE void advanced_start(const char* url, const char* ws, int at) {
+  emscripten_fetch_attr_t attr;
+  emscripten_fetch_attr_init(&attr);
+  strcpy(attr.requestMethod, "GET");
+  _expa_data.ws.start_from = at;
+  strncpy(_expa_data.ws.url, ws, GOS_EXPA_WASM_WS_URL);
+  attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+  attr.userData = &_expa_data;
+  attr.onsuccess = gos_rest_advanced_succeeded;
+  attr.onerror = gos_rest_failed;
+  printf(
+    "Advanced start from %d with Rest API URL as %s and Web Socket URL as %s\n",
+    at, url, _expa_data.ws.url);
+  emscripten_fetch(&attr, url);
+}
+
+EMSCRIPTEN_KEEPALIVE void advanced_stop() {
+  if (_expa_data.ws.socket > 0) {
+    gos_ws_send_stop(&(_expa_data.ws));
+  }
+}
+
+EMSCRIPTEN_KEEPALIVE void advanced_close() {
+  if (_expa_data.ws.socket > 0) {
+    gos_ws_close(&(_expa_data.ws), 1000);
+  }
+}
+
 #endif
 
 void gos_heatmap_create_random_vector(gos_vector* vector, double f) {

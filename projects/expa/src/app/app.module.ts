@@ -16,6 +16,7 @@ import { HomeComponent } from './home/home.component';
 import { LcComponent } from './lc/lc.component';
 import { CustomComponent } from './custom/custom.component';
 import { ExperimentalComponent } from './experimental/experimental.component';
+import { CustomWsComponent } from './custom-ws/custom-ws.component';
 
 export function initializeApp(appConfiguration: AppConfiguration) {
   return () => appConfiguration.load();
@@ -27,7 +28,8 @@ export function initializeApp(appConfiguration: AppConfiguration) {
     HomeComponent,
     LcComponent,
     CustomComponent,
-    ExperimentalComponent
+    ExperimentalComponent,
+    CustomWsComponent
   ],
   imports: [
     BrowserModule,
