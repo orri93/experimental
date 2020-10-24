@@ -62,8 +62,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   axisX: Axis;
   chartOptions: EngineOptions & ChartXYOptions;
   heatMap: IntensityGridSeries;
-  start: Point;
-  end: Point;
+  startPoint: Point;
+  endPoint: Point;
 
   xAtFrom: number = 0.0;
   xAtTo: number = 0.0;
@@ -91,8 +91,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     private dataService: HttpClientDataService,
     private webSocketService: WebSocketService) {
     console.log("Construct the LC Component");
-    this.start = { x: FIRST_X, y: FIRST_Y };
-    this.end = {x: LAST_X, y: LAST_Y };
+    this.startPoint = { x: FIRST_X, y: FIRST_Y };
+    this.endPoint = {x: LAST_X, y: LAST_Y };
     this.webSocketService.connect();
   }
 
@@ -112,8 +112,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
       rows: RES_Y,
       columns: RES_X,
       pixelate: lcConfig.pixelate,
-      start: this.start,
-      end: this.end
+      start: this.startPoint,
+      end: this.endPoint
     });
     this.heatMap.invalidateValuesOnly(this.dummy);
     this.heatMap.setFillStyle(fill);
@@ -141,7 +141,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  showMatrix() {
+  start(): void {
     const lcConfig: LcConfiguration = AppConfiguration.settings.lc;
 
     console.log("Show Matrix Button Clicked");
