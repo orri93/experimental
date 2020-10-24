@@ -10,6 +10,9 @@ list(APPEND gos_expa_heatmap_library_source
 #list(APPEND gos_expa_heatmap_cpp_source
 #  ws.cpp)
 
+list(APPEND gos_expa_testable_library_source
+  json.c)
+
 list(APPEND gos_expa_heatmap_source
   ${gos_expa_heatmap_library_source}
   heatmap.c)
@@ -82,6 +85,21 @@ else ()
   add_library(${gos_expa_heatmap_library_target}
     dummy.c)
 
+endif ()
+
+add_library(${gos_expa_testable_library_target}
+  ${gos_expa_testable_library_source})
+if (gos_expa_heatmap_definitions)
+  target_compile_definitions(${gos_expa_testable_library_target} PUBLIC
+    ${gos_expa_heatmap_definitions})
+endif ()
+target_include_directories(${gos_expa_testable_library_target} PUBLIC
+  ${gos_emscripten_cjson_src_dir}
+  ${gos_expa_heatmap_include})
+if (gos_expa_testable_library_public_header)
+  set_target_properties(${gos_expa_testable_library_target}
+    PROPERTIES PUBLIC_HEADER
+    "${gos_expa_testable_library_public_header}")
 endif ()
 
 # See also https://github.com/kripken/ammo.js/blob/master/CMakeLists.txt
@@ -158,6 +176,12 @@ endif()
 install(TARGETS ${gos_expa_heatmap_library_target}
   LIBRARY DESTINATION lib
   PUBLIC_HEADER DESTINATION include/gos
+  ARCHIVE DESTINATION lib
+  RESOURCE DESTINATION lib)
+
+install(TARGETS ${gos_expa_testable_library_target}
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include/wasm
   ARCHIVE DESTINATION lib
   RESOURCE DESTINATION lib)
 

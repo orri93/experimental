@@ -64,12 +64,12 @@ void gos_rest_update(emscripten_fetch_t* fetch) {
         if (gos_json_get_ranges(&(expad->ranges), json)) {
           printf(
             "JSON X range is from %f to %f\n",
-            (expad->ranges).x.from,
-            (expad->ranges).x.to);
+            (expad->ranges).first.from,
+            (expad->ranges).first.to);
           printf(
             "JSON Y range is from %f to %f\n",
-            (expad->ranges).y.from,
-            (expad->ranges).y.to);
+            (expad->ranges).second.from,
+            (expad->ranges).second.to);
           if (!gos_update_from_json(expad, json)) {
             fprintf(stderr, "Failed to update from JSON\n");
           }

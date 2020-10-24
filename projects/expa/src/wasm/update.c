@@ -25,7 +25,7 @@ bool gos_update_column_from_vector(
   gos_point_2d p1, p2;
   gos_range_1d* yr;
   double mu, r, f, n;
-  yr = &((expad->ranges).y);
+  yr = &((expad->ranges).second);
   surface = expad->surface;
   if (gos_geometry_distance_1d(yr) != 0.0) {
     if (i < surface->w) {
@@ -75,6 +75,7 @@ bool gos_update_from_json(gos_expa_data* expad, cJSON* m) {
         } else {
           result = false;
         }
+        i++;
       }
       return result;
     } else {

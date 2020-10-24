@@ -6,12 +6,14 @@
 /* https://github.com/DaveGamble/cJSON */
 #include <cJSON.h>
 
-#include <wasm/types.h>
+#include <gos/types.h>
 
 typedef enum GosWsMessageType {
   GosWsMsgUndefined,
+  GosWsMsgStarting,
   GosWsMsgStart,
   GosWsMsgStop,
+  GosWsMsgStopping,
   GosWsMsgUpdate,
   GosWsMsgUnknown
 } GosWsMessageType;
@@ -31,7 +33,7 @@ bool gos_json_points_to_vector(gos_point_2d_vector* v, cJSON* points);
 bool gos_json_to_vector(gos_point_2d_vector* v, cJSON* json);
 bool gos_json_get_range(gos_range_1d* r, cJSON* rj);
 bool gos_json_get_range_by_name(gos_range_1d* r, cJSON* rj, const char* n);
-bool gos_json_get_ranges(gos_expa_ranges* ranges, cJSON* m);
+bool gos_json_get_ranges(gos_range_2d* ranges, cJSON* m);
 bool gos_json_get_update(gos_json_ws_update* update, cJSON* message);
 bool gos_json_create_start(cJSON** start, int from);
 bool gos_json_create_message(cJSON** message, GosWsMessageType type);

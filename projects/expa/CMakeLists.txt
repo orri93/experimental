@@ -44,6 +44,10 @@ configure_file(
   "include/tiera/version.h"
   @ONLY)
 
+set(gos_expa_testable_library_target testable)
+list(APPEND gos_expa_testable_library_public_header
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/wasm/json.h")
+
 set(gos_expa_heatmap_library_target heatmap)
 set(gos_expa_heatmap_target sdlhm)
 
@@ -80,10 +84,8 @@ if (GOS_EXPA_EMSCRIPTEN_BUILD)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/assets/wasm")
 endif ()
 
-if (GOS_EMSCRIPTEN_CJSON_SRC)
-  set(gos_emscripten_cjson_src_dir
-    "${CMAKE_CURRENT_SOURCE_DIR}/extern/cJSON")
-endif ()
+set(gos_emscripten_cjson_src_dir
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/cJSON")
 
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "
   CACHE STRING "Arguments for Clang-Tidy check")

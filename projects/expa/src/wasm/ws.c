@@ -61,6 +61,9 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
       if (message != NULL) {
         type = gos_json_get_message_type(message);
         switch (type) {
+        case GosWsMsgUndefined:
+          fprintf(stderr, "Undefined JSON message\n");
+          break;
         case GosWsMsgUpdate:
           if (gos_json_get_update(&update, message)) {
             gos_draw_lock(expad->surface);
@@ -70,12 +73,32 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
 
             gos_draw_unlock(expad->surface);
             SDL_Flip(expad->surface);
+          } else {
+            fprintf(stderr, "Failed to get update from JSON message\n");
           }
           break;
+        case GosWsMsgStarting:
+          printf("Starting JSON message\n");
+          break;
+        case GosWsMsgStart:
+          printf("Start JSON message\n");
+          break;
+        case GosWsMsgStop:
+          printf("Stop JSON message\n");
+          break;
+        case GosWsMsgStopping:
+          printf("Stopping JSON message\n");
+          break;
+        case GosWsMsgUnknown:
+          fprintf(stderr, "Unknown JSON message\n");
+          break;
         default:
+          fprintf(stderr, "Unsupported JSON message\n");
           break;
         }
         cJSON_Delete(message);
+      } else {
+        fprintf(stderr, "Failed to parse JSON\n");
       }
     }
   }

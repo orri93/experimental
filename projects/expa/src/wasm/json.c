@@ -7,6 +7,8 @@
 
 #define GOS_JSON_WS_TYPE_UPDATE_TEXT "update"
 #define GOS_JSON_WS_TYPE_START_TEXT "start"
+#define GOS_JSON_WS_TYPE_STARTING_TEXT "starting"
+#define GOS_JSON_WS_TYPE_STOPPING_TEXT "stopping"
 #define GOS_JSON_WS_TYPE_STOP_TEXT "stop"
 
 bool gos_json_get_unsigned_integer(unsigned int* i, cJSON* j, const char* n) {
@@ -89,15 +91,15 @@ bool gos_json_get_range_by_name(gos_range_1d* r, cJSON* rj, const char* n) {
   return false;
 }
 
-bool gos_json_get_ranges(gos_expa_ranges* ranges, cJSON* m) {
+bool gos_json_get_ranges(gos_range_2d* ranges, cJSON* m) {
   bool result = true;
   cJSON* rangesj = cJSON_GetObjectItemCaseSensitive(m, "r");
   if (rangesj != NULL) {
     if (cJSON_IsObject(rangesj)) {
-      if (!gos_json_get_range_by_name(&(ranges->x), rangesj, "x")) {
+      if (!gos_json_get_range_by_name(&(ranges->first), rangesj, "x")) {
         result = false;
       }
-      if (!gos_json_get_range_by_name(&(ranges->y), rangesj, "y")) {
+      if (!gos_json_get_range_by_name(&(ranges->second), rangesj, "y")) {
         result = false;
       }
       return result;
@@ -107,7 +109,6 @@ bool gos_json_get_ranges(gos_expa_ranges* ranges, cJSON* m) {
 }
 
 bool gos_json_get_update(gos_json_ws_update* update, cJSON* message) {
-  cJSON* t;
   cJSON* updatej;
   cJSON* vector;
   if (message != NULL) {
@@ -145,13 +146,13 @@ bool gos_json_create_message(cJSON** message, GosWsMessageType type) {
     case GosWsMsgUndefined:
       return false;
     case GosWsMsgStart:
-      t = cJSON_CreateString("start");
+      t = cJSON_CreateString(GOS_JSON_WS_TYPE_START_TEXT);
       break;
     case GosWsMsgStop:
-      t = cJSON_CreateString("stop");
+      t = cJSON_CreateString(GOS_JSON_WS_TYPE_STOP_TEXT);
       break;
     case GosWsMsgUpdate:
-      t = cJSON_CreateString("update");
+      t = cJSON_CreateString(GOS_JSON_WS_TYPE_UPDATE_TEXT);
       break;
     case GosWsMsgUnknown:
       return false;
@@ -182,27 +183,51 @@ GosWsMessageType gos_json_get_message_type(cJSON* message) {
   if (message != NULL) {
     t = cJSON_GetObjectItemCaseSensitive(message, "t");
     if (t != NULL) {
-      if (cJSON_IsString(t) && (t->valuestring != NULL)) {
-        if (strncmp(
-          t->valuestring,
-          GOS_JSON_WS_TYPE_UPDATE_TEXT,
-          sizeof(GOS_JSON_WS_TYPE_UPDATE_TEXT)) == 0) {
-          type = GosWsMsgUndefined;
-        } else if (strncmp(
-          t->valuestring,
-          GOS_JSON_WS_TYPE_START_TEXT,
-          sizeof(GOS_JSON_WS_TYPE_START_TEXT)) == 0) {
-          type = GosWsMsgStart;
-        } else if (strncmp(
-          t->valuestring,
-          GOS_JSON_WS_TYPE_STOP_TEXT,
-          sizeof(GOS_JSON_WS_TYPE_STOP_TEXT)) == 0) {
-          type = GosWsMsgStop;
+      if (cJSON_IsString(t)) {
+        s = cJSON_GetStringValue(t);
+        if (s != NULL) {
+          if (strncmp(
+            s,
+            GOS_JSON_WS_TYPE_UPDATE_TEXT,
+            sizeof(GOS_JSON_WS_TYPE_UPDATE_TEXT)) == 0) {
+            type = GosWsMsgUpdate;
+          } else if (strncmp(
+            s,
+            GOS_JSON_WS_TYPE_STARTING_TEXT,
+            sizeof(GOS_JSON_WS_TYPE_STARTING_TEXT)) == 0) {
+            type = GosWsMsgStarting;
+          } else if (strncmp(
+            s,
+            GOS_JSON_WS_TYPE_START_TEXT,
+            sizeof(GOS_JSON_WS_TYPE_START_TEXT)) == 0) {
+            type = GosWsMsgStart;
+          } else if (strncmp(
+            s,
+            GOS_JSON_WS_TYPE_STOPPING_TEXT,
+            sizeof(GOS_JSON_WS_TYPE_STOPPING_TEXT)) == 0) {
+            type = GosWsMsgStopping;
+          } else if (strncmp(
+            s,
+            GOS_JSON_WS_TYPE_STOP_TEXT,
+            sizeof(GOS_JSON_WS_TYPE_STOP_TEXT)) == 0) {
+            type = GosWsMsgStop;
+          } else {
+            fprintf(stderr, "'%s' is unsupported message type\n", s);
+            type = GosWsMsgUnknown;
+          }
         } else {
-          type = GosWsMsgUnknown;
+          fprintf(
+            stderr,
+            "The t item of the message results in an undefined string\n");
         }
+      } else {
+        fprintf(stderr, "The t item of the message is not a string\n");
       }
+    } else {
+      fprintf(stderr, "Message type is undefined\n");
     }
+  } else {
+    fprintf(stderr, "Message is undefined\n");
   }
   return type;
 }
