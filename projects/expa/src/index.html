@@ -15,6 +15,24 @@
     />
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
 
+    <script type="text/javascript">
+      //<![CDATA[
+      function setPerformanceResult(result) {
+        var resultElement = document.getElementById('custom-ws-performance-result');
+        if(resultElement) {
+          resultElement.innerHTML = result;
+        }
+      }
+
+      function setPerformanceIntervalResult(result) {
+        var resultElement = document.getElementById('custom-ws-interval-performance-result');
+        if(resultElement) {
+          resultElement.innerHTML = "Interval - " + result;
+        }
+      }
+      //]]>
+    </script>
+
   </head>
   <body>
     <app-root>

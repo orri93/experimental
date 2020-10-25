@@ -59,19 +59,8 @@ int main(int argc, char** argv) {
   printf("Initialize the GOS Heatmap!\n");
   if (gos_heatmap_initialize(GOS_HEATMAP_DEMO_WIDTH, GOS_HEATMAP_DEMO_HEIGHT)) {
     gos_heatmap_draw();
-    if (gos_performance_initialize_sd(
-      &_performance,
-      GOS_HEATMAP_PERFORMANCE_SIZE)) {
-      if (gos_performance_initialize_sd(
-        &_interval_performance,
-        GOS_HEATMAP_PERFORMANCE_SIZE)) {
-        printf("The GOS Heatmap has been initialized\n");
-        return EXIT_SUCCESS;
-      } else {
-        fprintf(stderr, "Failed to initialized the interval performance\n");
-      }
-    } else {
-      fprintf(stderr, "Failed to initialized the performance\n");
+    if (gos_heatmap_initialize_performance()) {
+      return EXIT_SUCCESS;
     }
   }
   return EXIT_FAILURE;
@@ -189,6 +178,24 @@ void gos_heatmap_create_random_vector(gos_vector* vector, double f) {
   for (i = 0; i < vector->count; i++) {
     vector->data[i] = f * (((double)rand()) / RAND_MAX);
   }
+}
+
+bool gos_heatmap_initialize_performance() {
+  if (gos_performance_initialize_sd(
+    &_performance,
+    GOS_HEATMAP_PERFORMANCE_SIZE)) {
+    if (gos_performance_initialize_sd(
+      &_interval_performance,
+      GOS_HEATMAP_PERFORMANCE_SIZE)) {
+      printf("The GOS Heatmap performance has been initialized\n");
+      return true;
+    } else {
+      fprintf(stderr, "Failed to initialized the interval performance\n");
+    }
+  } else {
+    fprintf(stderr, "Failed to initialized the performance\n");
+  }
+  return false;
 }
 
 bool gos_heatmap_initialize(int width, int height) {

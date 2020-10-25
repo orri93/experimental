@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include <wasm/types.h>
+#include <wasm/sdltypes.h>
 #include <wasm/performance.h>
 
 #ifdef __cplusplus
@@ -15,6 +15,7 @@ extern gos_performance _performance;
 extern gos_performance _interval_performance;
 
 void gos_heatmap_create_random_vector(gos_vector* vector, double f);
+bool gos_heatmap_initialize_performance();
 bool gos_heatmap_initialize(int width, int height);
 void gos_heatmap_draw();
 void gos_heatmap_step();

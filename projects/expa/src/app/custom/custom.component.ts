@@ -1,9 +1,10 @@
 import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { HttpClientDataService } from './../http-client-data.service';
 import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
-import { EmscriptenWasmComponent } from "../emscripten-wasm.component";
-import { InterpolateService } from './../interpolate.service';
+import { EmscriptenWasmComponent } from '../emscripten-wasm.component';
+import { IntervalPerformanceService } from './../interval-performance.service';
 import { PerformanceService } from './../performance.service';
+import { InterpolateService } from './../interpolate.service';
 import { DataService } from './../data.service';
 
 const RES_X = 600.0;
@@ -21,13 +22,15 @@ const requestFullscreen =
   styleUrls: ['./custom.component.css']
 })
 export class CustomComponent extends EmscriptenWasmComponent implements OnDestroy {
-  @ViewChild("canvas") canvas: ElementRef;
+  @ViewChild("intervalResult") intervalResult: ElementRef;
   @ViewChild("result") result: ElementRef;
+  @ViewChild("canvas") canvas: ElementRef;
 
   error: string;
   supportsFullscreen: boolean;
 
   constructor(
+    private intervalPerformanceService: IntervalPerformanceService,
     private performanceService: PerformanceService,
     private webSocketService: WebSocketService,
     private dataService: HttpClientDataService,
@@ -94,21 +97,25 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
 
       this.module.ccall("unlock_and_flip", "void", [], []);
 
+      this.intervalPerformanceService.initialize(true);
       this.performanceService.initialize(true);
 
       this.webSocketService.dataUpdates().subscribe( (message: WsMessage) => {
         if(message.t === TYPE_UPDATE && message.u) {
+          let duration: number;
           let update: WsUpdate = message.u;
           let vector: Vector = update.v;
 
-          if(this.performanceService.isStarted) {
-            let duration = this.performanceService.completed();
-            this.performanceService.update(duration);
-            this.performanceService.calculate();
+          if(this.intervalPerformanceService.isStarted) {
+            duration = this.intervalPerformanceService.completed();
+            this.intervalPerformanceService.update(duration);
+            this.intervalPerformanceService.calculate();
     
-            let resultElement = <HTMLDivElement>this.result.nativeElement;
-            resultElement.innerHTML = this.performanceService.format();  
+            let intervalResultElement = <HTMLDivElement>this.intervalResult.nativeElement;
+            intervalResultElement.innerHTML = 
+              "Interval - " + this.intervalPerformanceService.format();  
           }
+          this.intervalPerformanceService.start();
           this.performanceService.start();
 
           this.module.ccall("lock", "void", [], []);
@@ -139,6 +146,13 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
           }
 
           this.module.ccall("unlock_and_flip", "void", [], []);
+
+          duration = this.performanceService.completed();
+          this.performanceService.update(duration);
+          this.performanceService.calculate();
+
+          let resultElement = <HTMLDivElement>this.result.nativeElement;
+          resultElement.innerHTML = this.performanceService.format();
         }
       });
 

@@ -12,6 +12,7 @@
 #include <wasm/heatmap.h>
 
 #define GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE 1024
+#define GOS_WS_PERFORMANCE_SCRIPT_BUFFER_SIZE 1024
 
 static EMSCRIPTEN_RESULT gos_ws_send_json(
   EMSCRIPTEN_WEBSOCKET_T s,
@@ -54,21 +55,32 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
   gos_json_ws_update update;
   gos_expa_data* expad;
   double intervalduration, duration;
+  int scriptformatresult;
 
   char pfb[GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE];
+  char script[GOS_WS_PERFORMANCE_SCRIPT_BUFFER_SIZE];
 
   expad = (gos_expa_data*)d;
   assert(expad != NULL);
 
   if (_interval_performance.is) {
-    intervalduration = gos_performance_completed(&_interval_performance);
+    intervalduration = gos_performance_completed_ms(&_interval_performance);
     if (gos_performance_update_sd(&_interval_performance, intervalduration)) {
       gos_performance_calculate_sd(&_interval_performance);
       if (gos_performance_format_sd(
         &_interval_performance,
         pfb,
         GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE) > 0) {
-        printf("%s\n", pfb);
+        scriptformatresult = snprintf(
+          script,
+          GOS_WS_PERFORMANCE_SCRIPT_BUFFER_SIZE,
+          "setPerformanceIntervalResult('%s')",
+          pfb);
+        if (scriptformatresult > 0) {
+          emscripten_run_script(script);
+        } else {
+          fprintf(stderr, "Interval Performance SD format script failed\n");
+        }
       } else {
         fprintf(stderr, "Interval Performance SD format failed\n");
       }
@@ -129,14 +141,23 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
     }
   }
 
-  duration = gos_performance_completed(&_performance);
+  duration = gos_performance_completed_ms(&_performance);
   if (gos_performance_update_sd(&_performance, duration)) {
     gos_performance_calculate_sd(&_performance);
     if (gos_performance_format_sd(
       &_performance,
       pfb,
       GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE) > 0) {
-      printf("%s\n", pfb);
+      scriptformatresult = snprintf(
+        script,
+        GOS_WS_PERFORMANCE_SCRIPT_BUFFER_SIZE,
+        "setPerformanceResult('%s')",
+        pfb);
+      if (scriptformatresult > 0) {
+        emscripten_run_script(script);
+      } else {
+        fprintf(stderr, "Performance SD format script failed\n");
+      }
     } else {
       fprintf(stderr, "Performance SD format failed\n");
     }

@@ -7,7 +7,7 @@
 
 #include <cJSON.h>
 
-#include <wasm/types.h>
+#include <wasm/sdltypes.h>
 
 #ifdef __cplusplus
 extern "C" {

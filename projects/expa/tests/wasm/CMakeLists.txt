@@ -7,6 +7,7 @@ set(gos_expa_wasm_test_name gosexpawasmtest)
 
 list(APPEND gos_expa_wasm_test_source
   ${gos_emscripten_cjson_src_dir}/cJSON.c
+  performance.cpp
   json.cpp)
 
 #list(APPEND gos_tier_a_test_definitions

@@ -17,6 +17,7 @@ option(CLANG_TIDY_FIX "Perform fixes with Clang-Tidy" OFF)
 option(CLANG_TIDY "Perform Clang-Tidy check" OFF)
 
 # GOS Options
+option(GOS_USE_CLOCK_GETTIME "Use clock_gettime instead of timespec_get" OFF)
 option(GOS_SDL_TARGET "Generate SDL Desktop targets" OFF)
 option(GOS_SDL_MAIN "Use SDL Main" OFF)
 option(GOS_DEPLOY_PDB_FILES "Deploy PDB files" OFF)

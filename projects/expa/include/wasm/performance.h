@@ -26,9 +26,11 @@ int gos_performance_format(gos_performance* performance, char* b, size_t s);
 int gos_performance_format_sd(gos_performance* performance, char* b, size_t s);
 
 int gos_performance_start(gos_performance* performance);
-double gos_performance_completed(gos_performance* performance);
+double gos_performance_completed_s(gos_performance* performance);
+double gos_performance_completed_ms(gos_performance* performance);
 
-double gos_performance_measure(struct timespec* before);
+double gos_performance_measure_s(struct timespec* before);
+double gos_performance_measure_ms(struct timespec* before);
 
 void gos_performance_shutdown(gos_performance* performance);
 

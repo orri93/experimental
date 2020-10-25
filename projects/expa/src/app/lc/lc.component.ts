@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   LUT,
   Axis,
@@ -24,7 +24,7 @@ import {
 import { AppConfiguration } from './../app.configuration';
 import { HttpClientDataService } from './../http-client-data.service';
 import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
-import { PerformanceService } from './../performance.service';
+import { IntervalPerformanceService } from './../interval-performance.service';
 import { DummyService } from './../dummy.service';
 import { LcDataService } from './../lc-data.service';
 import { LcService } from './../lc.service';
@@ -88,7 +88,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   }
   
   constructor(
-    private performanceService: PerformanceService,
+    private performanceService: IntervalPerformanceService,
     private lcService: LcService,
     private dummyService: DummyService,
     private dataService: HttpClientDataService,
@@ -140,7 +140,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
           this.performanceService.calculate();
   
           let resultElement = <HTMLDivElement>this.result.nativeElement;
-          resultElement.innerHTML = this.performanceService.format();  
+          resultElement.innerHTML = "Interval - " + this.performanceService.format();
         }
         this.performanceService.start();
 

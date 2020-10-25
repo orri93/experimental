@@ -11,6 +11,21 @@ const requestFullscreen =
   document.documentElement["webkitRequestFullscreen"] ||
   document.documentElement["msRequestFullscreen"] ||
   document.documentElement["mozRequestFullScreen"];
+
+export function setPerformanceResult(formatted: string) {
+  var resultElement = document.getElementById('custom-ws-performance-result');
+  if(resultElement) {
+    resultElement.innerHTML = formatted;
+  }
+}
+
+export function setPerformanceIntervalResult(formatted: string) {
+  var resultElement = document.getElementById('custom-ws-interval-performance-result');
+  if(resultElement) {
+    resultElement.innerHTML = "Interval - " + formatted;
+  }
+}
+
 @Component({
   selector: 'app-custom-ws',
   templateUrl: './custom-ws.component.html',

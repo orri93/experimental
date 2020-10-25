@@ -7,7 +7,7 @@
 /* https://gist.github.com/nus/564e9e57e4c107faa1a45b8332c265b9 */
 #include <emscripten/websocket.h>
 
-#include <wasm/types.h>
+#include <wasm/sdltypes.h>
 
 #ifdef __cplusplus
 extern "C" {

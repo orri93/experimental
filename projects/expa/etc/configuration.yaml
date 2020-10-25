@@ -10,4 +10,4 @@ service:
     trusted:
   path: /
 hub:
-  interval: 20
+  interval: 5

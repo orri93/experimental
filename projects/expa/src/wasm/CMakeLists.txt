@@ -29,6 +29,11 @@ list(APPEND gos_expa_heatmap_include
 list(APPEND gos_expa_heatmap_libraries
   ${gosc_target})
 
+if (GOS_USE_CLOCK_GETTIME)
+  list(APPEND gos_expa_heatmap_definitions
+    GOS_CLOCK_GETTIME)
+endif ()
+
 if (GOS_SDL_TARGET)
   list(APPEND gos_expa_heatmap_include
     ${SDL_INCLUDE_DIR})
@@ -98,6 +103,7 @@ endif ()
 target_include_directories(${gos_expa_testable_library_target} PUBLIC
   ${gos_emscripten_cjson_src_dir}
   ${gos_expa_heatmap_include})
+set_property(TARGET ${gos_expa_testable_library_target} PROPERTY C_STANDARD 11)
 if (gos_expa_testable_library_public_header)
   set_target_properties(${gos_expa_testable_library_target}
     PROPERTIES PUBLIC_HEADER
