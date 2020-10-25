@@ -11,6 +11,8 @@
 #include <wasm/update.h>
 #include <wasm/heatmap.h>
 
+#define GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE 1024
+
 static EMSCRIPTEN_RESULT gos_ws_send_json(
   EMSCRIPTEN_WEBSOCKET_T s,
   cJSON* message);
@@ -25,6 +27,8 @@ EM_BOOL gos_ws_on_open(int t, const EmscriptenWebSocketOpenEvent* e, void* d) {
   (expad->ws).socket = e->socket;
 
   if ((expad->ws).start_from > 0) {
+    gos_performance_reset_sd(&_performance);
+    gos_performance_reset_sd(&_interval_performance);
     result = gos_ws_send_start(&(expad->ws));
     if (result != EMSCRIPTEN_RESULT_SUCCESS) {
       fprintf(stderr, "Sending Start Web Socket message failed: %d\n", result);
@@ -49,9 +53,31 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
   GosWsMessageType type;
   gos_json_ws_update update;
   gos_expa_data* expad;
+  double intervalduration, duration;
+
+  char pfb[GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE];
 
   expad = (gos_expa_data*)d;
   assert(expad != NULL);
+
+  if (_interval_performance.is) {
+    intervalduration = gos_performance_completed(&_interval_performance);
+    if (gos_performance_update_sd(&_interval_performance, intervalduration)) {
+      gos_performance_calculate_sd(&_interval_performance);
+      if (gos_performance_format_sd(
+        &_interval_performance,
+        pfb,
+        GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE) > 0) {
+        printf("%s\n", pfb);
+      } else {
+        fprintf(stderr, "Interval Performance SD format failed\n");
+      }
+    } else {
+      fprintf(stderr, "Interval Performance SD update failed\n");
+    }
+  }
+  gos_performance_start(&_performance);
+  gos_performance_start(&_interval_performance);
 
   if (e->isText) {
     if (e->numBytes > 0) {
@@ -101,6 +127,22 @@ EM_BOOL gos_ws_on_message(int t, const EmscriptenWebSocketMessageEvent* e, void*
         fprintf(stderr, "Failed to parse JSON\n");
       }
     }
+  }
+
+  duration = gos_performance_completed(&_performance);
+  if (gos_performance_update_sd(&_performance, duration)) {
+    gos_performance_calculate_sd(&_performance);
+    if (gos_performance_format_sd(
+      &_performance,
+      pfb,
+      GOS_WS_PERFORMANCE_FORMAT_BUFFER_SIZE) > 0) {
+      printf("%s\n", pfb);
+    } else {
+      fprintf(stderr, "Performance SD format failed\n");
+    }
+
+  } else {
+    fprintf(stderr, "Performance SD update failed\n");
   }
 
   return EM_TRUE;

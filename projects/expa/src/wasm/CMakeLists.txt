@@ -1,4 +1,5 @@
 list(APPEND gos_expa_heatmap_library_source
+  performance.c
   update.c
   vector.c
   chart.c
@@ -11,6 +12,7 @@ list(APPEND gos_expa_heatmap_library_source
 #  ws.cpp)
 
 list(APPEND gos_expa_testable_library_source
+  performance.c
   json.c)
 
 list(APPEND gos_expa_heatmap_source

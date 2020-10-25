@@ -1,9 +1,9 @@
 import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
 import { HttpClientDataService } from './../http-client-data.service';
 import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
 import { EmscriptenWasmComponent } from "../emscripten-wasm.component";
 import { InterpolateService } from './../interpolate.service';
+import { PerformanceService } from './../performance.service';
 import { DataService } from './../data.service';
 
 const RES_X = 600.0;
@@ -22,14 +22,15 @@ const requestFullscreen =
 })
 export class CustomComponent extends EmscriptenWasmComponent implements OnDestroy {
   @ViewChild("canvas") canvas: ElementRef;
+  @ViewChild("result") result: ElementRef;
 
   error: string;
   supportsFullscreen: boolean;
 
   constructor(
+    private performanceService: PerformanceService,
     private webSocketService: WebSocketService,
     private dataService: HttpClientDataService,
-    private httpClient: HttpClient,
     private ngZone: NgZone) {
     super("SdlHeatmapModule", "gossdlheatmap.js");
 
@@ -71,7 +72,10 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
           if(index >= 0) {
             x1 = vector.p[index].x;
             mu = (y - x1) / (vector.p[index + 1].x - x1);
-            v = InterpolateService.interpolateLinear(vector.p[index].y, vector.p[index + 1].y, mu);
+            v = InterpolateService.interpolateLinear(
+              vector.p[index].y,
+              vector.p[index + 1].y,
+              mu);
             n = (v - yRange.f) / (yRange.t - yRange.f);
             this.module.ccall(
               "set_pixel",
@@ -90,10 +94,22 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
 
       this.module.ccall("unlock_and_flip", "void", [], []);
 
+      this.performanceService.initialize(true);
+
       this.webSocketService.dataUpdates().subscribe( (message: WsMessage) => {
         if(message.t === TYPE_UPDATE && message.u) {
           let update: WsUpdate = message.u;
           let vector: Vector = update.v;
+
+          if(this.performanceService.isStarted) {
+            let duration = this.performanceService.completed();
+            this.performanceService.update(duration);
+            this.performanceService.calculate();
+    
+            let resultElement = <HTMLDivElement>this.result.nativeElement;
+            resultElement.innerHTML = this.performanceService.format();  
+          }
+          this.performanceService.start();
 
           this.module.ccall("lock", "void", [], []);
           this.module.ccall("shift", "void", [], []);
@@ -103,7 +119,10 @@ export class CustomComponent extends EmscriptenWasmComponent implements OnDestro
             if(index >= 0) {
               x1 = vector.p[index].x;
               mu = (y - x1) / (vector.p[index + 1].x - x1);
-              v = InterpolateService.interpolateLinear(vector.p[index].y, vector.p[index + 1].y, mu);
+              v = InterpolateService.interpolateLinear(
+                vector.p[index].y,
+                vector.p[index + 1].y,
+                mu);
               n = (v - yRange.f) / (yRange.t - yRange.f);
               this.module.ccall(
                 "set_pixel_last_column",

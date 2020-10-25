@@ -7,6 +7,20 @@
 
 #define GOS_EXPA_WASM_WS_URL 1024
 
+typedef struct gos_performance {
+  gos_dynamic_double_array items;
+  unsigned long count;
+  double value;
+  double sum;
+  double minimum;
+  double maximum;
+  double average;
+  double sd;
+  bool is;
+  bool withsd;
+  struct timespec at;
+} gos_performance;
+
 typedef struct gos_expa_ws {
   int socket;
   int start_from;

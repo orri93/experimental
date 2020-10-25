@@ -6,6 +6,7 @@
     </p>
     
     <div class="demo-contents">
+      <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
       <div id="lcjsc"></div>
     </div>
 
@@ -20,9 +21,7 @@
       </div>
     </div>
 
-    <div class="performance-result" id="performance-result-id"></div>
-
-    <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
+    <div class="performance-result" #result></div>
 
   </div>
 </section>

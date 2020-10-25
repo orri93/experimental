@@ -7,15 +7,11 @@
 
     <div class="demo-contents">
       <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
-
       <div class="row">
         <div class="col-lg-6">
           <canvas class="sdl-chart" oncontextmenu="event.preventDefault()" #canvas></canvas>
         </div>
-        <div class="performance-result" id="performance-result-id"></div>
-
       </div>
-
     </div>
 
     <div class="col-lg-6">
@@ -33,6 +29,8 @@
         </div>
       </div>
     </div>
+
+    <div class="performance-result" #result></div>
 
   </div>
 </section>

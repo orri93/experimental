@@ -20,18 +20,25 @@
 #include <wasm/chart.h>
 #include <wasm/types.h>
 #include <wasm/heatmap.h>
+#include <wasm/performance.h>
 
 #define GOS_HEATMAP_MESSAGE_SIZE 1024
 
 #define GOS_HEATMAP_DEMO_WIDTH 600
 #define GOS_HEATMAP_DEMO_HEIGHT 400
 
+#define GOS_HEATMAP_PERFORMANCE_SIZE 1024
+
+
 gos_expa_data _expa_data = {
-  NULL,                           /* surface            */
-  { { 0.0, 0.0 }, { 0.0, 0.0 } }, /* ranges             */
-  { NULL, 0 },                    /* gradient           */ 
-  { 0, 0 }                        /* ws                 */
+  NULL,                           /* surface  */
+  { { 0.0, 0.0 }, { 0.0, 0.0 } }, /* ranges   */
+  { NULL, 0 },                    /* gradient */ 
+  { 0, 0 }                        /* ws       */
 };
+
+gos_performance _performance;
+gos_performance _interval_performance;
 
 static gos_matrix _matrix = { NULL, 0, 0 };
 static gos_vector _vd1 = { NULL, 0 };
@@ -49,12 +56,24 @@ int SDL_main(int argc, char** argv) {
 }
 #else
 int main(int argc, char** argv) {
-  printf("Initialize the SDL Chart!\n");
+  printf("Initialize the GOS Heatmap!\n");
   if (gos_heatmap_initialize(GOS_HEATMAP_DEMO_WIDTH, GOS_HEATMAP_DEMO_HEIGHT)) {
     gos_heatmap_draw();
-    return EXIT_SUCCESS;
+    if (gos_performance_initialize_sd(
+      &_performance,
+      GOS_HEATMAP_PERFORMANCE_SIZE)) {
+      if (gos_performance_initialize_sd(
+        &_interval_performance,
+        GOS_HEATMAP_PERFORMANCE_SIZE)) {
+        printf("The GOS Heatmap has been initialized\n");
+        return EXIT_SUCCESS;
+      } else {
+        fprintf(stderr, "Failed to initialized the interval performance\n");
+      }
+    } else {
+      fprintf(stderr, "Failed to initialized the performance\n");
+    }
   }
-
   return EXIT_FAILURE;
 }
 #endif
@@ -254,6 +273,9 @@ void gos_heatmap_line() {
 }
 
 void gos_heatmap_shutdown() {
+  gos_performance_shutdown(&_performance);
+  gos_performance_shutdown(&_interval_performance);
+
   gos_draw_shutdown();
   if ((_expa_data.gradient).gradient != NULL) {
     gos_color_free_rgb_gradient(&(_expa_data.gradient));

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import {
   LUT,
@@ -24,6 +24,7 @@ import {
 import { AppConfiguration } from './../app.configuration';
 import { HttpClientDataService } from './../http-client-data.service';
 import { WebSocketService, TYPE_START, TYPE_STOP, TYPE_UPDATE } from './../web-socket.service';
+import { PerformanceService } from './../performance.service';
 import { DummyService } from './../dummy.service';
 import { LcDataService } from './../lc-data.service';
 import { LcService } from './../lc.service';
@@ -52,7 +53,8 @@ const SIZE_HEIGHT = 440.0;
   styleUrls: ['./lc.component.css']
 })
 export class LcComponent implements OnDestroy, AfterViewInit {
-  
+  @ViewChild("result") result: ElementRef;
+
   error: string;
 
   dummy: any[];
@@ -86,6 +88,7 @@ export class LcComponent implements OnDestroy, AfterViewInit {
   }
   
   constructor(
+    private performanceService: PerformanceService,
     private lcService: LcService,
     private dummyService: DummyService,
     private dataService: HttpClientDataService,
@@ -131,6 +134,16 @@ export class LcComponent implements OnDestroy, AfterViewInit {
 
     this.webSocketService.dataUpdates().subscribe( (message: WsMessage) => {
       if(message.t === TYPE_UPDATE && message.u) {
+        if(this.performanceService.isStarted) {
+          let duration = this.performanceService.completed();
+          this.performanceService.update(duration);
+          this.performanceService.calculate();
+  
+          let resultElement = <HTMLDivElement>this.result.nativeElement;
+          resultElement.innerHTML = this.performanceService.format();  
+        }
+        this.performanceService.start();
+
         let update: WsUpdate = message.u;
         let line = LcDataService.lineGenerator(RES_Y, update.v);
         this.xAtFrom++;
@@ -175,6 +188,8 @@ export class LcComponent implements OnDestroy, AfterViewInit {
 
       this.heatMap.invalidateValuesOnly(this.data);
       this.heatMap.setFillStyle(fill);
+
+      this.performanceService.initialize(true);
 
       let wsStart: WsStart = { f: RES_X };
       let wsMessage: WsMessage = { t: TYPE_START, s: wsStart };
