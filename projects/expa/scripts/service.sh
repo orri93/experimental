@@ -53,21 +53,21 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   TARGET="$(readlink "$SOURCE")"
   if [[ $TARGET == /* ]]; then
-    echo "SOURCE '$SOURCE' is an absolute symlink to '$TARGET'"
+#   echo "SOURCE '$SOURCE' is an absolute symlink to '$TARGET'"
     SOURCE="$TARGET"
   else
     DIR="$( dirname "$SOURCE" )"
-    echo "SOURCE '$SOURCE' is a relative symlink to '$TARGET' (relative to '$DIR')"
+#   echo "SOURCE '$SOURCE' is a relative symlink to '$TARGET' (relative to '$DIR')"
     SOURCE="$DIR/$TARGET" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
   fi
 done
-echo "SOURCE is '$SOURCE'"
+#echo "SOURCE is '$SOURCE'"
 RDIR="$( dirname "$SOURCE" )"
 DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
-if [ "$DIR" != "$RDIR" ]; then
-  echo "DIR '$RDIR' resolves to '$DIR'"
-fi
-echo "DIR is '$DIR'"
+#if [ "$DIR" != "$RDIR" ]; then
+# echo "DIR '$RDIR' resolves to '$DIR'"
+#fi
+#echo "DIR is '$DIR'"
 
 # Silent pushd and popd
 silent_pushd () {
@@ -90,12 +90,11 @@ echo "Description=The ${GOS_PROJECT_NAME} Server"
 echo "After=syslog.target network.target"
 echo ""
 echo "[Service]"
-echo "Type=forking"
+echo "Type=simple"
+echo "Restart=always"
+echo "RestartSec=1"
 echo "WorkingDirectory=${GOS_ROOT_DIR}"
 echo "ExecStart=${GOS_START_CMD}"
-echo 'ExecStop=/bin/kill -WINCH ${MAINPID}'
-echo "KillSignal=SIGCONT"
-echo "PrivateTmp=true"
 echo "User=${GOS_USER}"
 echo "Group=${GOS_GROUP}"
 echo ""
