@@ -56,6 +56,8 @@ const drawExperiment = async () => {
   sciChartSurface.chartModifiers.add(new ZoomExtentsModifier());
   sciChartSurface.chartModifiers.add(new MouseWheelZoomModifier());
 
+  
+
   return { sciChartSurface, wasmContext, heatmapDataSeries };
 }
 

@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  background-color: darkslategray;
+}
+h1 {
+  color: lightgoldenrodyellow;
+}
+p {
+  color: white;
+}
+.performance-load-result {
+  color: white;
+}
+.performance-timer-result {
+  color: lightcyan;
+}
+.performance-interval-result {
+  color: lightcyan;
+}
