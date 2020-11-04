@@ -72,6 +72,7 @@ func (matrix *Matrix) Get(it uint32, iv uint32) (float64, float64) {
 	return matrix.Vectors[it].Points[iv].X, matrix.Vectors[it].Points[iv].Y
 }
 
+// Set value in Vector
 func (vector *Vector) Set(i uint32, x float64, y float64) {
 	vector.Points[i].X = x
 	vector.Points[i].Y = y
@@ -108,6 +109,7 @@ func (model *Model) GetSubMatrix(count uint32) *Matrix {
 	return matrix
 }
 
+// CreateWsUpdate function export
 func (model *Model) CreateWsUpdate(at uint32) *WsUpdate {
 	vector := CreateVector(model.Count)
 
