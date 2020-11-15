@@ -16,6 +16,7 @@ option(GOS_NN_EXPERIMENTAL "GOS Experimental for Neural Network" OFF)
 option(GOS_SPB_EXPERIMENTAL "GOS Experimental for Sparkplug B" OFF)
 option(GOS_SDL_WEB_EXPERIMENTAL "GOS Experimental for SDL Web" OFF)
 option(GOS_SDL_EXPERIMENTAL "GOS Experimental for SDL" OFF)
+option(GOS_SDL2_EXPERIMENTAL "GOS Experimental for SDL2" OFF)
 option(GOS_QT_EXPERIMENTAL "GOS Experimental for Qt" OFF)
 
 option(GOS_USE_GTEST_DISCOVER "Use CMake Google Test descovery for unit tests" OFF)
@@ -91,6 +92,13 @@ if(CLANG_TIDY)
     endif()
   endif()
 endif()
+
+# ##############################################################################
+# External dependency
+
+# GOSC
+set(gos_ext_gosc_dir "${CMAKE_SOURCE_DIR}/extern/gosc")
+add_subdirectory(extern/gosc)
 
 if (GOS_NN_EXPERIMENTAL)
   set(gos_nn_experimental_opennn_dir "${CMAKE_SOURCE_DIR}/extern/opennn")

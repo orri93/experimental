@@ -7,6 +7,10 @@ if (GOS_SDL_EXPERIMENTAL)
   add_subdirectory(sdl)
 endif ()
 
+if (GOS_SDL2_EXPERIMENTAL)
+  add_subdirectory(sdl2)
+endif ()
+
 if (GOS_SPB_EXPERIMENTAL)
   add_subdirectory(tahuspb)
   add_subdirectory(sparkplugb)
