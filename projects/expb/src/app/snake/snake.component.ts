@@ -1,9 +1,6 @@
 import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { EmscriptenWasmComponent } from '../emscripten-wasm.component';
 
-const RES_X = 600.0;
-const RES_Y = 400.0;
-
 const requestFullscreen =
   document.documentElement.requestFullscreen ||
   document.documentElement["webkitRequestFullscreen"] ||
@@ -11,25 +8,25 @@ const requestFullscreen =
   document.documentElement["mozRequestFullScreen"];
 
 @Component({
-  selector: 'app-mset',
-  templateUrl: './mset.component.html',
-  styleUrls: ['./mset.component.css']
+  selector: 'app-snake',
+  templateUrl: './snake.component.html',
+  styleUrls: ['./snake.component.css']
 })
-export class MsetComponent extends EmscriptenWasmComponent implements OnDestroy {
+export class SnakeComponent extends EmscriptenWasmComponent implements OnDestroy {
   @ViewChild("canvas") canvas: ElementRef;
 
-  title = "Mandelbrot set";
+  title = 'Snake';
 
   error: string;
   supportsFullscreen: boolean;
 
   constructor(private ngZone: NgZone) {
-    super("MsetModule", "mset.js");
+    super("SnakeModule", "snake.js");
 
     this.supportsFullscreen = !!requestFullscreen;
 
     this.moduleDecorator = (mod) => {
-      mod.arguments = ['640', '400'];
+      mod.arguments = [];
       mod.preRun = [];
       mod.canvas = <HTMLCanvasElement>this.canvas.nativeElement;
       mod.printErr = (what: string) => {
@@ -56,9 +53,5 @@ export class MsetComponent extends EmscriptenWasmComponent implements OnDestroy 
 
   ngOnDestroy(): void {
     console.log("On ng destroy");
-    if(this.module) {
-      console.log("Calling shutdown in module");
-      this.module.ccall("shutdown", "void", [], []);
-    }
   }
 }

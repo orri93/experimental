@@ -1,7 +1,8 @@
-import { AfterViewInit, Directive } from "@angular/core";
+import { AfterViewInit, Directive, ElementRef } from "@angular/core";
 import { loadScript } from "./tools";
 import { environment } from "./../environments/environment";
 import wasmCacheBusting from "../wasm-cache-busting.json";
+import { stringify } from 'querystring';
 
 type EmscriptenModuleDecorator<M extends EmscriptenModule> = (module: M) => void;
 
@@ -49,5 +50,22 @@ export abstract class EmscriptenWasmComponent<M extends EmscriptenModule = Emscr
       .then((mod) => {
         this.resolvedModule = mod;
       });
+  }
+
+  protected getCanvasNativeElement(canvas: ElementRef): HTMLCanvasElement {
+    let canvasElement: HTMLCanvasElement;
+    if(canvas) {
+      if(canvas.nativeElement) {
+        canvasElement = <HTMLCanvasElement>canvas.nativeElement;
+        if(!canvasElement) {
+          console.error("Canvas native element is not a HTML Canvas Element");
+        }
+      } else {
+        console.error("Undefined canvas native element");
+      }
+    } else {
+      console.error("Undefined canvas");
+    }
+    return canvasElement;
   }
 }

@@ -10,6 +10,7 @@
 #define GOS_MSET_CROSS_SIZE 17
 
 static bool gmset_draw_cross(gos_mset_context* context);
+static bool gmset_draw_rect(gos_mset_context* context);
 
 bool gmset_draw(gos_mset_context* context) {
   SDL_Rect crossrect;
@@ -20,6 +21,8 @@ bool gmset_draw(gos_mset_context* context) {
 
   if (context->isdrawcross) {
     gmset_draw_cross(context);
+  } else if (context->isdrawrect) {
+    gmset_draw_rect(context);
   }
 
   SDL_RenderPresent(context->renderer);
@@ -42,6 +45,13 @@ bool gmset_draw_cross(gos_mset_context* context) {
 
   SDL_RenderDrawLine(context->renderer, x - hs, y, x + hs, y);
   SDL_RenderDrawLine(context->renderer, x, y - hs, x, y + hs);
+
+  return true;
+}
+
+bool gmset_draw_rect(gos_mset_context* context) {
+  SDL_SetRenderDrawColor(context->renderer, 0xff, 0x10, 0x20, 0x40);
+  SDL_RenderDrawRect(context->renderer, &(context->mr));
 
   return true;
 }

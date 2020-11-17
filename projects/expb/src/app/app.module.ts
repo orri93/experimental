@@ -9,6 +9,9 @@ import { AppConfiguration } from './app.configuration';
 
 import { HomeComponent } from './home/home.component';
 import { MsetComponent } from './mset/mset.component';
+import { OwlComponent } from './owl/owl.component';
+import { SimpleComponent } from './simple/simple.component';
+import { SnakeComponent } from './snake/snake.component';
 
 export function initializeApp(appConfiguration: AppConfiguration) {
   return () => appConfiguration.load();
@@ -18,7 +21,10 @@ export function initializeApp(appConfiguration: AppConfiguration) {
   declarations: [
     AppComponent,
     HomeComponent,
-    MsetComponent
+    MsetComponent,
+    OwlComponent,
+    SimpleComponent,
+    SnakeComponent
   ],
   imports: [
     BrowserModule,

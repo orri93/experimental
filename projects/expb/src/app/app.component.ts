@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Geirmundur Orri Sigurdsson Experiment Project B';
+  sub = 'A collection of WebAssembly Experiments in Angular';
 }

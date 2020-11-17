@@ -29,9 +29,16 @@ void gmset_items_initalize(gos_mset_context* context) {
   context->mcpoint.y = context->mrect.b.f +
     GOS_MSET_HALF * (context->mrect.b.t - context->mrect.b.f);
 
+  context->mr.x = 0;
+  context->mr.y = 0;
+  context->mr.w = 0;
+  context->mr.h = 0;
+
   context->isgo = true;
   context->isdraw = true;
+  context->isdrawrect = false;
   context->isdrawcross = false;
+  context->ismouserect = false;
   context->isresize = false;
 
   context->gstepsize = 64;

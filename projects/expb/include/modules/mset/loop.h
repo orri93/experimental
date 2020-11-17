@@ -9,6 +9,7 @@
 extern "C" {
 #endif
 
+void gmset_loop_wasm(void* arg);
 bool gmset_loop(gos_mset_context* context);
 
 #ifdef __cplusplus

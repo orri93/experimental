@@ -24,9 +24,13 @@ typedef struct gos_mset_context {
 
   gosmpoint mcpoint;
 
+  SDL_Rect mr;
+
   bool isgo;
   bool isdraw;
+  bool isdrawrect;
   bool isdrawcross;
+  bool ismouserect;
   bool isresize;
 
   int gstepsize;

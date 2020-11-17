@@ -109,6 +109,7 @@ set(${gos_expb_mset_testable_library_target} msetl)
 list(APPEND gos_expb_mset_testable_library_source
   "${gos_expb_em_modules_dir}/mset/texture.c"
   "${gos_expb_em_modules_dir}/mset/handle.c"
+  "${gos_expb_em_modules_dir}/mset/mouse.c"
   "${gos_expb_em_modules_dir}/mset/scale.c"
   "${gos_expb_em_modules_dir}/mset/items.c"
   "${gos_expb_em_modules_dir}/mset/loop.c"
@@ -124,6 +125,37 @@ if (GOS_EM_TARGET)
     set(gos_expb_em_assertions 0)
   endif ()
 
+  # The Simple WebAssembly Module
+  set(gos_expb_em_simple_target simplewasm)
+  list(APPEND gos_expb_em_simple_source
+    "${gos_expb_em_modules_dir}/simple/simple.c"
+    ${gosc_source})
+  list(APPEND gos_expb_em_simple_include
+    ${gosc_include_directories})
+  list(TRANSFORM gos_expb_em_simple_include PREPEND -I)
+  set(gos_expb_em_simple_args
+    ${gos_expb_em_simple_include}
+    -O3
+    -s MODULARIZE=1
+    -s USE_SDL=2
+    -s TOTAL_MEMORY=67108864
+    -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+    -s ASSERTIONS=${gos_expb_em_assertions}
+    -s EXPORT_NAME="SimpleModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
+  set(gos_expb_em_simple_js simple.js)
+  set(gos_expb_em_simple_wasm simple.wasm)
+  add_custom_target(${gos_expb_em_simple_target} ALL
+    COMMAND emcc ${gos_expb_em_simple_args} -o ${gos_expb_em_simple_js} ${gos_expb_em_simple_source}
+    BYPRODUCTS ${gos_expb_em_simple_js} ${gos_expb_em_simple_wasm}
+    DEPENDS ${gos_expb_em_simple_source}
+    COMMENT "Building GOS SDL Simple Web Assembly")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_simple_js}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_simple_wasm}"
+    DESTINATION lib)
+
+  # The Mandelbrot Set WebAssembly Module
   set(gos_expb_em_mset_target msetwasm)
   list(APPEND gos_expb_em_mset_source
     "${gos_expb_em_modules_dir}/mc/mandel.c"
@@ -141,23 +173,55 @@ if (GOS_EM_TARGET)
     -s MODULARIZE=1
 #   -s FETCH=1
     -s USE_SDL=2
+    -s TOTAL_MEMORY=67108864
+    -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
     -s ASSERTIONS=${gos_expb_em_assertions}
     -s EXPORT_NAME="MsetModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
   set(gos_expb_em_mset_js mset.js)
   set(gos_expb_em_mset_wasm mset.wasm)
-
   add_custom_target(${gos_expb_em_mset_target} ALL
     COMMAND emcc ${gos_expb_em_mset_args} -o ${gos_expb_em_mset_js} ${gos_expb_em_mset_source}
     BYPRODUCTS ${gos_expb_em_mset_js} ${gos_expb_em_mset_wasm}
     DEPENDS ${gos_expb_em_mset_source}
     COMMENT "Building GOS SDL M-Set Web Assembly")
-
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_mset_js}"
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_mset_wasm}"
     DESTINATION lib)
 
+  # The Owl WebAssembly Module
+  set(gos_expb_em_owl_target owlwasm)
+  set(gos_expb_em_owl_assets "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+  list(APPEND gos_expb_em_owl_source
+    "${gos_expb_em_modules_dir}/owl/owl.c")
+  set(gos_expb_em_owl_args
+    -O2
+    -s MODULARIZE=1
+#   -s FETCH=1
+    -s USE_SDL=2
+    -s USE_SDL_TTF=2
+    -s USE_SDL_IMAGE=2
+    -s SDL2_IMAGE_FORMATS="['png']"
+    -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+    -s ASSERTIONS=${gos_expb_em_assertions}
+    -s EXPORT_NAME="OwlModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']"
+    --preload-file ${gos_expb_em_owl_assets})
+  set(gos_expb_em_owl_js owl.js)
+  set(gos_expb_em_owl_wasm owl.wasm)
+  set(gos_expb_em_owl_data owl.data)
+  add_custom_target(${gos_expb_em_owl_target} ALL
+    COMMAND emcc ${gos_expb_em_owl_args} -o ${gos_expb_em_owl_js} ${gos_expb_em_owl_source}
+    BYPRODUCTS ${gos_expb_em_owl_js} ${gos_expb_em_owl_wasm} ${gos_expb_em_owl_data}
+    DEPENDS ${gos_expb_em_owl_source}
+    COMMENT "Building GOS SDL Owl Web Assembly")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_owl_js}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_owl_wasm}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_owl_data}"
+    DESTINATION lib)
 endif ()
 
 if (BUILD_TESTS)

@@ -5,6 +5,7 @@
 #include <modules/mset.h>
 #include <modules/mset/move.h>
 #include <modules/mset/scale.h>
+#include <modules/mset/mouse.h>
 #include <modules/mset/handle.h>
 
 static void gmset_handle_keyboard(
@@ -15,6 +16,19 @@ bool gmset_handle(gos_mset_context* context, SDL_Event* event) {
   switch (event->type) {
   case SDL_QUIT:
     context->isgo = false;
+    break;
+  case SDL_MOUSEMOTION:
+    if (context->ismouserect) {
+      gmet_mouse_motion(context, &(event->motion));
+    }
+    break;
+  case SDL_MOUSEBUTTONDOWN:
+    gmet_mouse_start(context, &(event->button));
+    break;
+  case SDL_MOUSEBUTTONUP:
+    if (context->ismouserect) {
+      gmet_mouse_completed(context, &(event->button));
+    }
     break;
   case SDL_KEYDOWN:
     gmset_handle_keyboard(context, &(event->key));

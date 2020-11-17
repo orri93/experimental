@@ -3,6 +3,7 @@ set(gos_expb_modules_mset_target mset)
 list(APPEND gos_expb_modules_mset_source
   "texture.c"
   "handle.c"
+  "mouse.c"
   "scale.c"
   "items.c"
   "loop.c"
