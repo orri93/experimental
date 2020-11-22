@@ -174,6 +174,11 @@ ECHO %GOS_CP_LIB_CMD%
 ECHO Entering %GOS_ROOT_DIR%
 PUSHD "%GOS_ROOT_DIR%"
 
+ECHO *** Generate WebAssembly Cache for the Angular Web
+SET GOS_NPM_WASM_CMD=call npm run wasm
+ECHO %GOS_NPM_WASM_CMD%
+%GOS_NPM_WASM_CMD%
+
 ECHO *** Build Angular Web
 SET GOS_NG_BUILD_CMD=call ng build --prod
 ECHO %GOS_NG_BUILD_CMD%

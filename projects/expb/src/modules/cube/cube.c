@@ -69,7 +69,6 @@ static int winw  = 500;
 static int winh = 500;
 static float alpha = 20.0F;
 
-
 static void cube();
 static void display(void);
 static void reshape(int width, int height);
@@ -222,7 +221,6 @@ EMSCRIPTEN_KEEPALIVE void settexture(const char* filename) {
 */
 void keyboard(unsigned char key, int x, int y) {
   int foo;
-
   foo = x + y; /* Has no effect: just to avoid a warning */
   if ('q' == key || 'Q' == key || 27 == key)
     exit(0);
