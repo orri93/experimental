@@ -12,6 +12,7 @@ import { MsetComponent } from './mset/mset.component';
 import { OwlComponent } from './owl/owl.component';
 import { SimpleComponent } from './simple/simple.component';
 import { SnakeComponent } from './snake/snake.component';
+import { CubeComponent } from './cube/cube.component';
 
 export function initializeApp(appConfiguration: AppConfiguration) {
   return () => appConfiguration.load();
@@ -24,7 +25,8 @@ export function initializeApp(appConfiguration: AppConfiguration) {
     MsetComponent,
     OwlComponent,
     SimpleComponent,
-    SnakeComponent
+    SnakeComponent,
+    CubeComponent
   ],
   imports: [
     BrowserModule,

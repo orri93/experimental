@@ -43,14 +43,6 @@ export class SnakeComponent extends EmscriptenWasmComponent implements OnDestroy
     }
   }
 
-  start(): void {
-    console.log("Start");
-  }
-  
-  stop(): void {
-    console.log("Stop Button Clicked");
-  }
-
   ngOnDestroy(): void {
     console.log("On ng destroy");
   }

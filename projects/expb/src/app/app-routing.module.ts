@@ -6,6 +6,7 @@ import { SimpleComponent } from "./simple/simple.component";
 import { SnakeComponent } from "./snake/snake.component";
 import { OwlComponent } from "./owl/owl.component";
 import { MsetComponent } from "./mset/mset.component";
+import { CubeComponent } from './cube/cube.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -28,6 +29,11 @@ const routes: Routes = [
     path: "mset",
     component: MsetComponent,
     data: { demo: true, name: "Mandelbrot Set" }
+  },
+  {
+    path: "cube",
+    component: CubeComponent,
+    data: {demo: true, name: "3D Cube"}
   }
 ];
 

@@ -46,3 +46,6 @@
 [submodule "projects/expb/extern/gosc"]
 	path = projects/expb/extern/gosc
 	url = git@github.com:orri93/gosc.git
+[submodule "projects/expb/extern/soil"]
+	path = projects/expb/extern/soil
+	url = https://github.com/paralin/soil.git

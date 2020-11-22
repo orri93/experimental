@@ -31,6 +31,8 @@ option(GOS_DEVELOPE_EMSCRIPTEN
 
 set(GOS_BUILD_NUMBER "0" CACHE STRING "The build number")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
 list(APPEND gos_expb_testable_library_public_header
   "${CMAKE_CURRENT_SOURCE_DIR}/include/wasm/json.h")
 
@@ -43,6 +45,7 @@ list(APPEND gos_expb_include
   ${gos_expb_source_include}
   ${gos_expb_binary_include})
 
+include(cmake/soil.cmake)
 include(extern/gosc/cmake/gosc.cmake)
 include(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
@@ -79,6 +82,9 @@ endif()
 
 add_subdirectory(extern/gosc)
 gosc_get_properties()
+
+add_subdirectory(extern/soil)
+soil_get_properties()
 
 add_subdirectory(src)
 
@@ -125,6 +131,9 @@ if (GOS_EM_TARGET)
     set(gos_expb_em_assertions 0)
   endif ()
 
+  set(gos_expb_em_assets "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+  set(gos_expb_em_soil_lib "${CMAKE_CURRENT_SOURCE_DIR}/lib/libSOIL.bc")
+
   # The Simple WebAssembly Module
   set(gos_expb_em_simple_target simplewasm)
   list(APPEND gos_expb_em_simple_source
@@ -136,6 +145,8 @@ if (GOS_EM_TARGET)
   set(gos_expb_em_simple_args
     ${gos_expb_em_simple_include}
     -O3
+#   -lwebsocket.js
+#   -s FETCH=1
     -s MODULARIZE=1
     -s USE_SDL=2
     -s TOTAL_MEMORY=67108864
@@ -169,9 +180,7 @@ if (GOS_EM_TARGET)
   set(gos_expb_em_mset_args
     ${gos_expb_em_mset_include}
     -O3
-#   -lwebsocket.js
     -s MODULARIZE=1
-#   -s FETCH=1
     -s USE_SDL=2
     -s TOTAL_MEMORY=67108864
     -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
@@ -192,13 +201,15 @@ if (GOS_EM_TARGET)
 
   # The Owl WebAssembly Module
   set(gos_expb_em_owl_target owlwasm)
-  set(gos_expb_em_owl_assets "${CMAKE_CURRENT_SOURCE_DIR}/assets")
   list(APPEND gos_expb_em_owl_source
     "${gos_expb_em_modules_dir}/owl/owl.c")
+  list(APPEND gos_expb_em_owl_include
+    ${gos_expb_binary_include})
+  list(TRANSFORM gos_expb_em_owl_include PREPEND -I)
   set(gos_expb_em_owl_args
+    ${gos_expb_em_owl_include}
     -O2
     -s MODULARIZE=1
-#   -s FETCH=1
     -s USE_SDL=2
     -s USE_SDL_TTF=2
     -s USE_SDL_IMAGE=2
@@ -207,10 +218,16 @@ if (GOS_EM_TARGET)
     -s ASSERTIONS=${gos_expb_em_assertions}
     -s EXPORT_NAME="OwlModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']"
-    --preload-file ${gos_expb_em_owl_assets})
+    --preload-file ${gos_expb_em_assets})
   set(gos_expb_em_owl_js owl.js)
   set(gos_expb_em_owl_wasm owl.wasm)
   set(gos_expb_em_owl_data owl.data)
+  set(OWL_WASM_OWL_PNG_ASSET "${gos_expb_em_assets}/img/owl.png")
+  set(OWL_WASM_OWL_FONT_ASSET "${gos_expb_em_assets}/font/FreeSans.ttf")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/modules/owl.h.in"
+    "include/modules/owl.h"
+    @ONLY)
   add_custom_target(${gos_expb_em_owl_target} ALL
     COMMAND emcc ${gos_expb_em_owl_args} -o ${gos_expb_em_owl_js} ${gos_expb_em_owl_source}
     BYPRODUCTS ${gos_expb_em_owl_js} ${gos_expb_em_owl_wasm} ${gos_expb_em_owl_data}
@@ -221,6 +238,84 @@ if (GOS_EM_TARGET)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_owl_wasm}"
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_owl_data}"
+    DESTINATION lib)
+
+  # The Snake WebAssembly Module
+  set(gos_expb_em_snake_target snakewasm)
+  list(APPEND gos_expb_em_snake_source
+    "${gos_expb_em_modules_dir}/snake/background_actor.c"
+    "${gos_expb_em_modules_dir}/snake/input_processor.c"
+    "${gos_expb_em_modules_dir}/snake/apple_actor.c"
+    "${gos_expb_em_modules_dir}/snake/snake_actor.c"
+    "${gos_expb_em_modules_dir}/snake/engine.c"
+    "${gos_expb_em_modules_dir}/snake/sprite.c"
+    "${gos_expb_em_modules_dir}/snake/actor.c"
+    "${gos_expb_em_modules_dir}/snake/decal.c"
+    "${gos_expb_em_modules_dir}/snake/main.c")
+  list(APPEND gos_expb_em_snake_include
+    ${gos_expb_include})
+  list(TRANSFORM gos_expb_em_snake_include PREPEND -I)
+  set(gos_expb_em_snake_args
+    ${gos_expb_em_snake_include}
+    -O2
+    -s MODULARIZE=1
+    -s USE_SDL=2
+    -s USE_SDL_TTF=2
+    -s USE_SDL_IMAGE=2
+    -s TOTAL_MEMORY=67108864
+    -s SDL2_IMAGE_FORMATS="['png']"
+    -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+    -s ASSERTIONS=${gos_expb_em_assertions}
+    -s EXPORT_NAME="SnakeModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']"
+    --preload-file ${gos_expb_em_assets})
+  set(gos_expb_em_snake_js snake.js)
+  set(gos_expb_em_snake_wasm snake.wasm)
+  set(gos_expb_em_snake_data snake.data)
+  set(SNAKE_WASM_SNAKE_IMG_DIR "${gos_expb_em_assets}/img")
+  set(SNAKE_WASM_SNAKE_FONT_DIR "${gos_expb_em_assets}/font")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/modules/snake.h.in"
+    "include/modules/snake.h"
+    @ONLY)
+  add_custom_target(${gos_expb_em_snake_target} ALL
+    COMMAND emcc ${gos_expb_em_snake_args} -o ${gos_expb_em_snake_js} ${gos_expb_em_snake_source}
+    BYPRODUCTS ${gos_expb_em_snake_js} ${gos_expb_em_snake_wasm} ${gos_expb_em_snake_data}
+    DEPENDS ${gos_expb_em_snake_source}
+    COMMENT "Building GOS SDL Snake Web Assembly")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_snake_js}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_snake_wasm}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_snake_data}"
+    DESTINATION lib)
+
+  # The Cube WebAssembly Module
+  set(gos_expb_em_cube_target cubewasm)
+  list(APPEND gos_expb_em_cube_source
+    "${gos_expb_em_modules_dir}/cube/cube.c")
+  list(APPEND gos_expb_em_cube_include
+    ${gos_expb_source_include})
+  list(TRANSFORM gos_expb_em_cube_include PREPEND -I)
+  set(gos_expb_em_cube_args
+    ${gos_expb_em_cube_include}
+    -Os
+    -s MODULARIZE=1
+    -s FORCE_FILESYSTEM=1
+    -s LEGACY_GL_EMULATION=1
+    -s ASSERTIONS=${gos_expb_em_assertions}
+    -s EXPORT_NAME="CubeModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
+  set(gos_expb_em_cube_js cube.js)
+  set(gos_expb_em_cube_wasm cube.wasm)
+  add_custom_target(${gos_expb_em_cube_target} ALL
+    COMMAND emcc ${gos_expb_em_cube_args} -o ${gos_expb_em_cube_js} ${gos_expb_em_soil_lib} ${gos_expb_em_cube_source}
+    BYPRODUCTS ${gos_expb_em_cube_js} ${gos_expb_em_cube_wasm}
+    DEPENDS ${gos_expb_em_cube_source}
+    COMMENT "Building GOS SDL Cube Web Assembly")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_cube_js}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${gos_expb_em_cube_wasm}"
     DESTINATION lib)
 endif ()
 

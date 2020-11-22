@@ -1,9 +1,6 @@
 import { Component, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { EmscriptenWasmComponent } from '../emscripten-wasm.component';
 
-const RES_X = 600.0;
-const RES_Y = 400.0;
-
 const requestFullscreen =
   document.documentElement.requestFullscreen ||
   document.documentElement["webkitRequestFullscreen"] ||
@@ -46,15 +43,11 @@ export class OwlComponent extends EmscriptenWasmComponent implements OnDestroy {
     }
   }
 
-  start(): void {
-    console.log("Start");
-  }
-  
-  stop(): void {
-    console.log("Stop Button Clicked");
-  }
-
   ngOnDestroy(): void {
     console.log("On ng destroy");
+    if(this.module) {
+      console.log("Calling shutdown in module");
+      this.module.ccall("shutdown", "void", [], []);
+    }
   }
 }

@@ -1,0 +1,7 @@
+macro (soil_get_properties)
+  set(soil_target soil)
+  get_target_property(soil_source soil SOURCES)
+  get_target_property(soil_source_dir soil SOURCE_DIR)
+  set(soil_include_directory ${soil_source_dir}/inc)
+  list(TRANSFORM soil_source PREPEND "${soil_source_dir}/")
+endmacro (soil_get_properties)

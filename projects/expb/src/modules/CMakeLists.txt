@@ -1,3 +1,6 @@
 add_subdirectory(mc)
+add_subdirectory(owl)
+add_subdirectory(cube)
 add_subdirectory(mset)
+add_subdirectory(snake)
 add_subdirectory(simple)

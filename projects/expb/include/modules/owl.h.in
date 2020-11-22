@@ -1,0 +1,7 @@
+#ifndef GOS_OWL_H_
+#define GOS_OWL_H_
+
+#define OWL_WASM_ASSETS_IMG_OWL_PNG "@OWL_WASM_OWL_PNG_ASSET@"
+#define OWL_WASM_ASSETS_FONT "@OWL_WASM_OWL_FONT_ASSET@"
+
+#endif
