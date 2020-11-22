@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "expb"
+    }
+  },
+  "defaultProject": "expb",
+  "cli": {
+    "analytics": "50d360a8-eb58-4787-8252-54fe49e9a285"
+  }
 }
