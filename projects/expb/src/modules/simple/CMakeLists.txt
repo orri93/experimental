@@ -15,6 +15,11 @@ if(GOS_SDL_DESKTOP_TARGET)
     SDL2::SDL2-static
     SDL2::SDL2main)
 
+  if (MSVC)
+    list(APPEND gos_expb_modules_simple_definitions
+      HAVE_M_PI)
+  endif (MSVC)
+
   add_executable(${gos_expb_modules_simple_target}
     ${gos_expb_modules_simple_source})
 

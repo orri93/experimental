@@ -37,6 +37,7 @@ list(APPEND gos_expb_testable_library_public_header
   "${CMAKE_CURRENT_SOURCE_DIR}/include/wasm/json.h")
 
 set(gos_expb_modules_mc_library_target gosmc)
+set(gos_expb_modules_graph_library_target gosgraph)
 
 set(gos_expb_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(gos_expb_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
@@ -84,6 +85,7 @@ add_subdirectory(extern/gosc)
 gosc_get_properties()
 
 add_subdirectory(extern/soil)
+soil_set_properties()
 soil_get_properties()
 
 add_subdirectory(src)

@@ -30,12 +30,23 @@ if(GOS_SDL_DESKTOP_TARGET)
     SDL2::SDL2
     PNG::PNG)
 
+  if (MSVC)
+    list(APPEND gos_expb_modules_snake_options
+      /wd4018
+      /wd4996)
+  endif ()
+
   add_executable(${gos_expb_modules_snake_target}
     ${gos_expb_modules_snake_source})
 
   if (gos_expb_modules_snake_definitions)
     target_compile_definitions(${gos_expb_modules_snake_target} PUBLIC
       ${gos_expb_modules_snake_definitions})
+  endif ()
+
+  if (gos_expb_modules_snake_options)
+    target_compile_options(${gos_expb_modules_snake_target} PUBLIC
+      ${gos_expb_modules_snake_options})
   endif ()
 
   target_include_directories(${gos_expb_modules_snake_target} PUBLIC

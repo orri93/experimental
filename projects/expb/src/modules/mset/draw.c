@@ -13,7 +13,7 @@ static bool gmset_draw_cross(gos_mset_context* context);
 static bool gmset_draw_rect(gos_mset_context* context);
 
 bool gmset_draw(gos_mset_context* context) {
-  SDL_Rect crossrect;
+  /* SDL_Rect crossrect; */
 
   SDL_RenderClear(context->renderer);
 

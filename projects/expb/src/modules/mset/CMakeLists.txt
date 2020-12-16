@@ -18,6 +18,8 @@ if(GOS_SDL_DESKTOP_TARGET)
   find_package(SDL2_ttf COMPONENTS REQUIRED)
   find_package(PNG COMPONENTS REQUIRED)
 
+  message(STATUS "SDL_INCLUDE_DIR: ${SDL_INCLUDE_DIR}")
+
   list(APPEND gos_expb_modules_mset_include
     ${SDL_TTF_INCLUDE_DIRS}
     ${gos_experimental_include}
@@ -31,6 +33,11 @@ if(GOS_SDL_DESKTOP_TARGET)
     SDL2::SDL2-static
     SDL2::SDL2main
     PNG::PNG)
+
+  if (MSVC)
+    list(APPEND gos_expb_modules_mset_definitions
+      HAVE_M_PI)
+  endif (MSVC)
 
   add_executable(${gos_expb_modules_mset_target}
     ${gos_expb_modules_mset_source})

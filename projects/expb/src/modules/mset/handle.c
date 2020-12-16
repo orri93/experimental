@@ -38,7 +38,7 @@ bool gmset_handle(gos_mset_context* context, SDL_Event* event) {
 }
 
 void gmset_handle_keyboard(gos_mset_context* context, SDL_KeyboardEvent* event) {
-  gosmpoint point;
+  /* gosmpoint point; */
   SDL_Keysym* keysym = &(event->keysym);
   switch (keysym->scancode) {
   case SDL_SCANCODE_Q:

@@ -21,12 +21,22 @@ if(GOS_SDL_DESKTOP_TARGET)
     SDL2::SDL2
     PNG::PNG)
 
+  if (MSVC)
+    list(APPEND gos_expb_modules_owl_options
+      /wd4244)
+  endif ()
+
   add_executable(${gos_expb_modules_owl_target}
     ${gos_expb_modules_owl_source})
 
   if (gos_expb_modules_owl_definitions)
     target_compile_definitions(${gos_expb_modules_owl_target} PUBLIC
       ${gos_expb_modules_owl_definitions})
+  endif ()
+
+  if (gos_expb_modules_owl_options)
+    target_compile_options(${gos_expb_modules_owl_target} PUBLIC
+      ${gos_expb_modules_owl_options})
   endif ()
 
   target_include_directories(${gos_expb_modules_owl_target} PUBLIC
