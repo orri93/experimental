@@ -1,1 +1,22 @@
-<p>bar works!</p>
+<section>
+  <div class="container">
+    <h1>{{title}}</h1>
+
+    <div class="demo-contents">
+      <div class="alert alert-warning" role="alert" *ngIf="error">{{ error }}</div>
+      <div class="row">
+        <div class="col-lg-6">
+          <figure #figure></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-6">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

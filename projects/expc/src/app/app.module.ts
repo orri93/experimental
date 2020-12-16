@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 
+import { HttpClientModule, HttpClientXsrfModule } from "@angular/common/http";
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppConfiguration } from './app.configuration';
@@ -24,7 +26,9 @@ export function initializeApp(appConfiguration: AppConfiguration) {
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    HttpClientXsrfModule
   ],
   providers: [
     AppConfiguration, {
