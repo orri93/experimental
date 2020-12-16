@@ -7,7 +7,6 @@ import * as d3 from 'd3';
   styleUrls: ['./bar.component.css']
 })
 export class BarComponent implements OnInit {
-
   title = 'Bar';
   error: string;
 
@@ -36,37 +35,39 @@ export class BarComponent implements OnInit {
   }
 
   private drawBars(data: any[]): void {
+    var lh = this.height - (this.margin * 2);
+
     // Add X axis
     const x = d3.scaleBand()
-    .range([0, this.width])
-    .domain(data.map(d => d.Framework))
-    .padding(0.2);
+      .range([0, this.width])
+      .domain(data.map(d => d.Framework))
+      .padding(0.2);
 
     this.svg.append("g")
-    .attr("transform", "translate(0," + this.height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-    .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end");
+      .attr("transform", "translate(0," + lh + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "translate(-10,0)rotate(-45)")
+      .style("text-anchor", "end");
 
     // Add Y axis
     const y = d3.scaleLinear()
-    .domain([0, 200000])
-    .range([this.height, 0]);
+      .domain([0, 200000])
+      .range([lh, 0]);
 
     this.svg.append("g")
-    .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y));
 
     // Create and fill the bars
     this.svg.selectAll("bars")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("x", d => x(d.Framework))
-    .attr("y", d => y(d.Stars))
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => this.height - y(d.Stars))
-    .attr("fill", "#d04a35");
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("x", d => x(d.Framework))
+      .attr("y", d => y(d.Stars))
+      .attr("width", x.bandwidth())
+      .attr("height", (d) => lh - y(d.Stars))
+      .attr("fill", "#d04a35");
   }
 
   ngOnInit(): void {
