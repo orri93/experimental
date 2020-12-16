@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'expc';
+  title = 'Geirmundur Orri Sigurdsson Experiment Project C';
+  sub = 'A collection of D3 Experiments in Angular';
 }
