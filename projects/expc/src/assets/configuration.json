@@ -1,5 +1,23 @@
 {
-  "project": {
-    "enable": true
-  } 
+  "bar": {
+    "chart": {
+      "width": 700,
+      "height": 400,
+      "margin": 50
+    }
+  },
+  "pie": {
+    "chart": {
+      "width": 750,
+      "height": 600,
+      "margin": 50
+    }
+  },
+  "scatter": {
+    "chart": {
+      "width": 700,
+      "height": 400,
+      "margin": 50
+    }
+  }
 }

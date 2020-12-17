@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfiguration } from './../app.configuration';
 import * as d3 from 'd3';
+
+// Data visualization in Angular using D3.js
+// https://blog.logrocket.com/data-visualization-angular-d3/
 
 @Component({
   selector: 'app-scatter',
@@ -8,7 +12,6 @@ import * as d3 from 'd3';
 })
 export class ScatterComponent implements OnInit {
   title = 'Scatter';
-  error: string;
 
   private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
@@ -18,34 +21,36 @@ export class ScatterComponent implements OnInit {
     {"Framework": "Ember", "Stars": "21471", "Released": "2011"},
   ];
   private svg;
-  private margin = 50;
-  private width = 750 - (this.margin * 2);
-  private height = 400 - (this.margin * 2);
 
   constructor() { }
 
   private createSvg(): void {
+    let margin = AppConfiguration.settings.scatter.chart.margin;
     this.svg = d3.select("figure#scatter-figure")
       .append("svg")
-      .attr("width", this.width + (this.margin * 2))
-      .attr("height", this.height + (this.margin * 2))
+      .attr("width", AppConfiguration.settings.scatter.chart.width)
+      .attr("height", AppConfiguration.settings.scatter.chart.height)
       .append("g")
-      .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
+      .attr("transform", "translate(" + margin + "," + margin + ")");
   }
 
   private drawPlot(): void {
+    let margin = AppConfiguration.settings.scatter.chart.margin;
+    let width = AppConfiguration.settings.scatter.chart.width - (margin * 2);
+    let height = AppConfiguration.settings.scatter.chart.height - (margin * 2);
+
     // Add X axis
     const x = d3.scaleLinear()
       .domain([2009, 2017])
-      .range([ 0, this.width ]);
+      .range([ 0, width ]);
     this.svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
+      .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x).tickFormat(d3.format("d")));
 
     // Add Y axis
     const y = d3.scaleLinear()
       .domain([0, 200000])
-      .range([ this.height, 0]);
+      .range([ height, 0]);
     this.svg.append("g")
       .call(d3.axisLeft(y));
 
@@ -68,7 +73,7 @@ export class ScatterComponent implements OnInit {
       .append("text")
       .text(d => d.Framework)
       .attr("x", d => x(d.Released))
-      .attr("y", d => y(d.Stars))
+      .attr("y", d => y(d.Stars));
   }
 
   ngOnInit(): void {

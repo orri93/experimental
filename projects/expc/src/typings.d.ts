@@ -1,10 +1,26 @@
 /**
  * Typing definition for the Application Configuration
  */
-interface ProjectConfiguration {
-  enable: boolean;
+interface ChartConfiguration {
+  width: number;
+  height: number;
+  margin: number;
+}
+
+interface BarConfiguration {
+  chart: ChartConfiguration;
+}
+
+interface PieConfiguration {
+  chart: ChartConfiguration;
+}
+
+interface ScatterConfiguration {
+  chart: ChartConfiguration;
 }
 
 interface ApplicationConfiguration {
-  project: ProjectConfiguration;
+  bar: BarConfiguration;
+  pie: PieConfiguration;
+  scatter: ScatterConfiguration;
 }

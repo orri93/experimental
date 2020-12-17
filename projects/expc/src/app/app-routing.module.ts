@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { BarComponent } from './bar/bar.component';
 import { PieComponent } from './pie/pie.component';
 import { ScatterComponent } from './scatter/scatter.component';
+import { HeatmapComponent } from './heatmap/heatmap.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -22,6 +23,11 @@ const routes: Routes = [
     path: "scatter",
     component: ScatterComponent,
     data: { demo: true, name: "Scatter" }
+  },
+  {
+    path: "heatmap",
+    component: HeatmapComponent,
+    data: { demo: true, name: "Heatmap" }
   }
 ];
 

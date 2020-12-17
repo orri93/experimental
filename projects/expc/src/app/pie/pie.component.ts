@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfiguration } from './../app.configuration';
 import * as d3 from 'd3';
+
+// Data visualization in Angular using D3.js
+// https://blog.logrocket.com/data-visualization-angular-d3/
 
 @Component({
   selector: 'app-pie',
@@ -8,7 +12,6 @@ import * as d3 from 'd3';
 })
 export class PieComponent implements OnInit {
   title = 'Pie';
-  error: string;
 
   private data = [
     {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
@@ -19,25 +22,22 @@ export class PieComponent implements OnInit {
   ];
 
   private svg;
-  private margin = 50;
-  private width = 750;
-  private height = 600;
 
-  // The radius of the pie chart is half the smallest side
-  private radius = Math.min(this.width, this.height) / 2 - this.margin;
   private colors;
 
   constructor() { }
 
   private createSvg(): void {
+    let width = AppConfiguration.settings.pie.chart.width;
+    let height = AppConfiguration.settings.pie.chart.height;
     this.svg = d3.select("figure#pie-figure")
     .append("svg")
-    .attr("width", this.width)
-    .attr("height", this.height)
+    .attr("width", width)
+    .attr("height", height)
     .append("g")
     .attr(
       "transform",
-      "translate(" + this.width / 2 + "," + this.height / 2 + ")"
+      "translate(" + width / 2 + "," + height / 2 + ")"
     );
   }
 
@@ -48,6 +48,13 @@ export class PieComponent implements OnInit {
   }
 
   private drawChart(): void {
+    let margin = AppConfiguration.settings.pie.chart.margin;
+    let width = AppConfiguration.settings.pie.chart.width;
+    let height = AppConfiguration.settings.pie.chart.height;
+
+    // The radius of the pie chart is half the smallest side
+    let radius = Math.min(width, height) / 2 - margin;
+
     // Compute the position of each group on the pie:
     const pie = d3.pie<any>().value((d: any) => Number(d.Stars));
 
@@ -59,7 +66,7 @@ export class PieComponent implements OnInit {
     .append('path')
     .attr('d', d3.arc()
       .innerRadius(0)
-      .outerRadius(this.radius)
+      .outerRadius(radius)
     )
     .attr('fill', (d, i) => (this.colors(i)))
     .attr("stroke", "#121926")
@@ -68,7 +75,7 @@ export class PieComponent implements OnInit {
     // Add labels
     const labelLocation = d3.arc()
     .innerRadius(100)
-    .outerRadius(this.radius);
+    .outerRadius(radius);
 
     this.svg
     .selectAll('pieces')

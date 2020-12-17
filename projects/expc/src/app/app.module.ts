@@ -11,6 +11,7 @@ import { BarComponent } from './bar/bar.component';
 import { PieComponent } from './pie/pie.component';
 import { ScatterComponent } from './scatter/scatter.component';
 import { HomeComponent } from './home/home.component';
+import { HeatmapComponent } from './heatmap/heatmap.component';
 
 export function initializeApp(appConfiguration: AppConfiguration) {
   return () => appConfiguration.load();
@@ -22,7 +23,8 @@ export function initializeApp(appConfiguration: AppConfiguration) {
     BarComponent,
     PieComponent,
     ScatterComponent,
-    HomeComponent
+    HomeComponent,
+    HeatmapComponent
   ],
   imports: [
     BrowserModule,
