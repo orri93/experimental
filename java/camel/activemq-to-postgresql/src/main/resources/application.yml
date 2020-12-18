@@ -1,0 +1,28 @@
+gos:  
+  messaging:
+    prefix: testqueue
+    queues:
+      labview: ${gos.messaging.prefix}.LVMQTT
+
+logging:
+  file: gos-routes.log
+  path: log
+  
+spring:
+  profile: general
+
+  activemq:
+    broker-url: tcp://52.174.140.51:61616
+    
+  datasource:
+    initialize: true
+    url: jdbc:postgresql://52.174.140.51:5432/orri
+    driverClassName: org.postgresql.Driver
+    username: orri
+    password: Bios93
+
+camel:
+  springboot:
+    # The Camel context name
+    name: GosActiveMqToPostgrSql
+    mainRunController: true

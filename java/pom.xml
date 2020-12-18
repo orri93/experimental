@@ -18,6 +18,7 @@
   <description>GOS experimental</description>
 
   <modules>
+    <module>camel</module>
     <module>sparkplugb</module>
   </modules>
 
