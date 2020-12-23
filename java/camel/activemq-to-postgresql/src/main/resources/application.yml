@@ -10,16 +10,19 @@ logging:
   
 spring:
   profile: general
-
+  
   activemq:
     broker-url: tcp://52.174.140.51:61616
-    
+  
   datasource:
     initialize: true
     url: jdbc:postgresql://52.174.140.51:5432/orri
     driverClassName: org.postgresql.Driver
     username: orri
     password: Bios93
+
+name: general-profile
+environment: general
 
 camel:
   springboot:

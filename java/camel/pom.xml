@@ -21,4 +21,87 @@
     <module>activemq-to-postgresql</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+    
+    
+      <!-- BOM -->
+
+      <!-- Spring BOM -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>5.1.4.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>    
+    
+      <!-- Spring Boot BOM -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.1.0.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      
+      <!-- Camel BOM -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>2.23.0</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      
+      
+      <!-- Dependencies -->
+      
+      <!-- JSON -->
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20180813</version>
+      </dependency>
+      
+      <!-- JavaBeans Activation Framework -->
+      <!--  dependency>
+        <groupId>com.sun.activation</groupId>
+        <artifactId>javax.activation</artifactId>
+        <version>1.2.0</version>
+      </dependency -->
+      
+      <!-- Apache Commons-->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-configuration2</artifactId>
+        <version>2.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-pool2</artifactId>
+        <version>2.6.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-dbcp2</artifactId>
+        <version>2.6.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>2.1.2.RELEASE</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  
 </project>
