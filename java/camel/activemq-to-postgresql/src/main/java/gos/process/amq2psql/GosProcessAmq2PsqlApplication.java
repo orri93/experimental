@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import gos.process.amq2psql.configuration.Json2SqlConfiguration;
 import gos.process.amq2psql.processor.Json2SqlProcessor;
 
 @SpringBootApplication
@@ -30,28 +31,7 @@ public class GosProcessAmq2PsqlApplication {
 	
 	@Component
 	@ConfigurationProperties(prefix = "gos")
-	class Amq2PsqlConfiguration  {
-		class Messaging {
-			private String prefix;
-
-			public String getPrefix() {
-				return prefix;
-			}
-
-			public void setPrefix(String prefix) {
-				this.prefix = prefix;
-			}
-		}
-		
-		private Messaging messaging;
-
-		public Messaging getMessaging() {
-			return messaging;
-		}
-
-		public void setMessaging(Messaging messaging) {
-			this.messaging = messaging;
-		}
+	class Amq2PsqlConfiguration extends Json2SqlConfiguration {
 	}
 	
 	@Component
@@ -78,11 +58,17 @@ public class GosProcessAmq2PsqlApplication {
 
 		@Autowired
 		private Amq2PsqlProcessor processor;
+		
+		@Autowired
+		private Amq2PsqlConfiguration configuration;
 
 		@Override
 		public void configure() throws Exception {
 			Log.info("Creating Route for ActiveMQ Queue to PostgreSQL JDBC");
-			from("activemq:queue:testqueue.LVMQTT")
+			String from = "activemq:queue:" +
+			  configuration.getMessaging().getQueues().getLabview();
+			Log.info("From: " + from);
+			from(from)
 			  .unmarshal().json(JsonLibrary.Gson, Map.class).process(processor)
 			  //.to("log:testing");
 				.to("jdbc:dataSource");

@@ -1,22 +1,21 @@
 gos:  
   messaging:
-    prefix: testqueue
+    prefix: ioq
     queues:
-      labview: ${gos.messaging.prefix}.LVMQTT
+      labview: ${gos.messaging.prefix}.dht
 
 logging:
-  file: gos-routes.log
-  path: log
+  file: ioq-routes.log
   
 spring:
   profile: general
   
   activemq:
-    broker-url: tcp://52.174.140.51:61616
+    broker-url: tcp://192.168.10.168:61616
   
   datasource:
     initialize: true
-    url: jdbc:postgresql://52.174.140.51:5432/orri
+    url: jdbc:postgresql://192.168.10.168:5432/iot
     driverClassName: org.postgresql.Driver
     username: orri
     password: Bios93
