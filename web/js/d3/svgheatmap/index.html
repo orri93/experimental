@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+      svg heatmap d3 experiment
+
+      The Python server can be used to test it
+        python2 -m SimpleHTTPServer 8000
+      or
+        python3 -m http.server
+      then browse to
+        http://localhost:8000/index.html
+
+ -->
+
+ <html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+     <meta charset="UTF-8" />
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <script src="https://d3js.org/d3.v6.min.js" defer="true"></script>
+     <script src="https://d3js.org/d3-scale.v3.min.js" defer="true"></script>
+     <script src="https://d3js.org/d3-color.v2.min.js" defer="true"></script>
+     <script src="https://d3js.org/d3-interpolate.v2.min.js" defer="true"></script>
+     <script src="https://d3js.org/d3-scale-chromatic.v2.min.js" defer="true"></script>
+     <script src="app.js" defer="true"></script>
+     <link rel="stylesheet" href="style.css"></link>
+     <title>svg heatmap d3 experiment</title>
+   </head>
+   <body>
+     <figure>
+       <svg id="gosd3hm"></svg>
+       <figcaption>Heatmap D3 Experiment</figcaption>
+    </figure>
+   </body>
+ </html>

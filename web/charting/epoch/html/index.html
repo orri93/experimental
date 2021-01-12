@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+      Pure HTML epoch Heatmap Experiment
+
+      The Python server can be used to test it
+        python2 -m SimpleHTTPServer 8000
+      or
+        python3 -m http.server
+      then browse to
+        http://localhost:8000/index.html
+
+ -->
+
+ <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="node_modules/d3/d3.js"></script>
+    <script src="node_modules/epoch-charting/dist/js/epoch.js"></script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="node_modules/epoch-charting/dist/css/epoch.css"></link>
+    <link rel="stylesheet" type="text/css" href="ephm.css"></link>
+    <title>epoch heatmap</title>
+  </head>
+  <body>
+
+    <h1>epoch heatmap HTML Experiment</h1>
+
+    <div id="area" class="epoch category10" style="height: 200px;"></div>
+
+    <script type="application/javascript">
+
+var data = [
+  { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+  { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+];
+
+var areaChartInstance = $('#area').epoch({
+    type: 'area',
+    data: data,
+    axes: ['left', 'right', 'bottom']
+});
+
+    </script>
+
+  </body>
+</html>

@@ -49,3 +49,6 @@
 [submodule "projects/expb/extern/soil"]
 	path = projects/expb/extern/soil
 	url = https://github.com/paralin/soil.git
+[submodule "web/charting/d3/d3ng/extern/gosc"]
+	path = web/charting/d3/d3ng/extern/gosc
+	url = git@github.com:orri93/gosc.git

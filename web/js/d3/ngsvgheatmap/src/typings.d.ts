@@ -19,26 +19,17 @@ interface ChartConfiguration {
   margin: number;
 }
 
-interface BarConfiguration {
+interface SvgHeatmapConfiguration {
   chart: ChartConfiguration;
+  range: DataRange;
 }
 
-interface PieConfiguration {
-  chart: ChartConfiguration;
-}
-
-interface ScatterConfiguration {
-  chart: ChartConfiguration;
-}
-
-interface HeatmapConfiguration {
+interface CanvasHeatmapConfiguration {
   chart: ChartConfiguration;
   range: DataRange;
 }
 
 interface ApplicationConfiguration {
-  bar: BarConfiguration;
-  pie: PieConfiguration;
-  scatter: ScatterConfiguration;
-  heatmap: HeatmapConfiguration;
+  svg: SvgHeatmapConfiguration;
+  canvas: CanvasHeatmapConfiguration;
 }

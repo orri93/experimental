@@ -1,0 +1,13 @@
+{
+  "name": "epoch-heatmap",
+  "version": "0.0.0",
+  "scripts": {
+    "pys": "python -m http.server"
+  },
+  "private": true,
+  "dependencies": {
+    "epoch-charting": "^0.8.4",
+    "jquery": "^3.5.1"
+  },
+  "devDependencies": {}
+}
