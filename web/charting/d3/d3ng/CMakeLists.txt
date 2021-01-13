@@ -178,5 +178,5 @@ if (BUILD_TESTS)
       gmock
       gmock_main)
   endif ()
-  add_subdirectory(tests)
+  #add_subdirectory(tests)
 endif (BUILD_TESTS)

@@ -1,6 +1,7 @@
 set(gos_d3ng_modules_hm_target hm)
 
 list(APPEND gos_d3ng_modules_hm_source
+  hmm.c
   hm.c)
 
 if(GOS_SDL_DESKTOP_TARGET)
