@@ -29,6 +29,7 @@ bool ghm_create(goshm* context, int x, int y, const char* title);
 bool ghm_create_texture(goshm* context);
 bool ghm_draw(goshm* context);
 bool ghm_loop(goshm* context);
+bool ghm_shift(goshm* context);
 void ghm_shutdown(goshm* context);
 
 #endif

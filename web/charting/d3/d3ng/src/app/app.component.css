@@ -1,0 +1,15 @@
+.d3ng {
+  background-color: #18bc9c;
+}
+
+.d3ng .lead {
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.d3ng a:focus,
+.d3ng a:active,
+.d3ng a:hover {
+  color: #fff;
+}
+

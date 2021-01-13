@@ -105,12 +105,12 @@ if (GOS_EM_TARGET)
   else ()
     set(gos_d3ng_em_assertions 0)
   endif ()
+  message(STATUS "  Assertions              : ${gos_d3ng_em_assertions}")
 
-  set(gos_d3ng_em_assets "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-
-  # The Mandelbrot Set WebAssembly Module
-  set(gos_d3ng_em_hm_target msetwasm)
+  # The Heat-map WebAssembly Module
+  set(gos_d3ng_em_hm_target hmwasm)
   list(APPEND gos_d3ng_em_hm_source
+    "${gos_d3ng_em_modules_dir}/hm/hmm.c"
     "${gos_d3ng_em_modules_dir}/hm/hm.c"
     ${gosc_source})
   list(APPEND gos_d3ng_em_hm_include
@@ -125,10 +125,10 @@ if (GOS_EM_TARGET)
     -s TOTAL_MEMORY=67108864
     -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
     -s ASSERTIONS=${gos_d3ng_em_assertions}
-    -s EXPORT_NAME="MsetModule"
+    -s EXPORT_NAME="HmModule"
     -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
-  set(gos_d3ng_em_hm_js mset.js)
-  set(gos_d3ng_em_hm_wasm mset.wasm)
+  set(gos_d3ng_em_hm_js hm.js)
+  set(gos_d3ng_em_hm_wasm hm.wasm)
   add_custom_target(${gos_d3ng_em_hm_target} ALL
     COMMAND emcc ${gos_d3ng_em_hm_args} -o ${gos_d3ng_em_hm_js} ${gos_d3ng_em_hm_source}
     BYPRODUCTS ${gos_d3ng_em_hm_js} ${gos_d3ng_em_hm_wasm}

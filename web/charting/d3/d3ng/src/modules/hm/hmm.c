@@ -31,17 +31,24 @@ int main(int argc, char** argv) {
   ghm_initialize(&context, GHM_DEMO_WIDTH, GHM_DEMO_HEIGHT);
   ghm_parse_argument(&context, argc, argv);
 
-  if (!ghm_create(&context, GHM_DEMO_X, GHM_DEMO_Y, GHM_DEMO_TITLE)) {
-    return EXIT_FAILURE;
-  }
-
-  if (ghm_create_texture(&context)) {
-    if (!ghm_draw(&context)) {
+  if (ghm_create(&context, GHM_DEMO_X, GHM_DEMO_Y, GHM_DEMO_TITLE)) {
+    if (ghm_create_texture(&context)) {
+      if (!ghm_draw(&context)) {
+        ghm_shutdown(&context);
+        return EXIT_FAILURE;
+      }
+    } else {
       ghm_shutdown(&context);
       return EXIT_FAILURE;
     }
-  } else {
+
+    if (!ghm_loop(&context)) {
+      ghm_shutdown(&context);
+      return EXIT_FAILURE;
+    }
     ghm_shutdown(&context);
+    return EXIT_SUCCESS;
+  } else {
     return EXIT_FAILURE;
   }
 
@@ -50,8 +57,8 @@ int main(int argc, char** argv) {
 
 EMSCRIPTEN_KEEPALIVE void shift() {
   printf("Shift the GOS WASM Heatmap\n");
-  if (ghm_shift(context)) {
-    ghm_draw(context)
+  if (ghm_shift(&context)) {
+    ghm_draw(&context);
   }
 }
 
@@ -66,27 +73,26 @@ int main(int argc, char** argv) {
   ghm_initialize(&context, GHM_DEMO_WIDTH, GHM_DEMO_HEIGHT);
   ghm_parse_argument(&context, argc, argv);
 
-  if (!ghm_create(&context, GHM_DEMO_X, GHM_DEMO_Y, GHM_DEMO_TITLE)) {
-    return EXIT_FAILURE;
-  }
-
-  if (ghm_create_texture(&context)) {
-    if (!ghm_draw(&context)) {
+  if (ghm_create(&context, GHM_DEMO_X, GHM_DEMO_Y, GHM_DEMO_TITLE)) {
+    if (ghm_create_texture(&context)) {
+      if (!ghm_draw(&context)) {
+        ghm_shutdown(&context);
+        return EXIT_FAILURE;
+      }
+    } else {
       ghm_shutdown(&context);
       return EXIT_FAILURE;
     }
+
+    if (!ghm_loop(&context)) {
+      ghm_shutdown(&context);
+      return EXIT_FAILURE;
+    }
+    ghm_shutdown(&context);
+    return EXIT_SUCCESS;
   } else {
-    ghm_shutdown(&context);
     return EXIT_FAILURE;
   }
-
-  if (!ghm_loop(&context)) {
-    ghm_shutdown(&context);
-    return EXIT_FAILURE;
-  }
-
-  ghm_shutdown(&context);
-  return EXIT_SUCCESS;
 }
 
 #endif  /* __EMSCRIPTEN__ */

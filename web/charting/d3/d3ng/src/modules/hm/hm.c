@@ -11,7 +11,6 @@
 
 static bool ghm_create_gradient(gos_rgb_gradient* gradient);
 static bool ghm_create_sdl(goshm* context, int x, int y, const char* title);
-static bool ghm_shift(goshm* context);
 static bool ghm_loop_work(goshm* context, SDL_Event* event);
 static bool ghm_handle(goshm* context, SDL_Event* event);
 static bool ghm_handle_keyboard(goshm* context, SDL_KeyboardEvent* event);
@@ -138,70 +137,6 @@ bool ghm_loop(goshm* context) {
   return true;
 }
 
-void ghm_shutdown(goshm* context) {
-  gos_color_free_rgb_gradient(&context->gradient);
-  ghm_shutdown_sdl(context);
-}
-
-bool ghm_create_gradient(gos_rgb_gradient* gradient) {
-  int i;
-  int* gsizeat;
-  int gradientsize[GOS_CHART_COLOR_STOP_COUNT - 1];
-  gos_rgb stops[GOS_CHART_COLOR_STOP_COUNT];
-  gos_rgb* rgbat = stops;
-
-  gos_color_assign_rgb32(rgbat++, 0x07049b);  /* Dark blue */
-  gos_color_assign_rgb32(rgbat++, 0x02f7f3);  /* Cyan */
-  gos_color_assign_rgb32(rgbat++, 0x09f725);  /* Green */
-  gos_color_assign_rgb32(rgbat++, 0xf4ec04);  /* Yellow */
-  gos_color_assign_rgb32(rgbat++, 0xf79d01);  /* Orange */
-  gos_color_assign_rgb32(rgbat++, 0x8c0101);  /* Dark red */
-
-  /* Equal sized gradient */
-  gsizeat = gradientsize;
-  for (i = 0; i < GOS_CHART_COLOR_STOP_COUNT - 1; i++) {
-    *(gsizeat++) = 64;
-  }
-
-  return gos_color_create_rgb_gradient(
-    gradient,
-    stops,
-    gradientsize,
-    GOS_CHART_COLOR_STOP_COUNT,
-    GOS_COLOR_GAMMA);
-}
-
-bool ghm_create_sdl(goshm* context, int x, int y, const char* title) {
-  context->sdlinit = SDL_Init(SDL_INIT_VIDEO);
-  if (context->sdlinit != 0) {
-    fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
-    return false;
-  }
-
-  context->window = SDL_CreateWindow(
-    title,              /* Title */
-    x,                  /* X */
-    y,                  /* Y */
-    context->width,     /* W */
-    context->height,    /* H */
-    SDL_WINDOW_SHOWN);  /* Flags */
-  if (context->window == NULL) {
-    fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
-    return false;
-  }
-
-  context->renderer = SDL_CreateRenderer(
-    context->window,
-    -1,
-    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (context->renderer == NULL) {
-    fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
-    return false;
-  }
-
-  return true;
-}
-
 bool ghm_shift(goshm* context) {
   int i, j, k;
   gos_rgb* rgb;
@@ -267,6 +202,70 @@ bool ghm_shift(goshm* context) {
   return true;
 }
 
+void ghm_shutdown(goshm* context) {
+  gos_color_free_rgb_gradient(&context->gradient);
+  ghm_shutdown_sdl(context);
+}
+
+bool ghm_create_gradient(gos_rgb_gradient* gradient) {
+  int i;
+  int* gsizeat;
+  int gradientsize[GOS_CHART_COLOR_STOP_COUNT - 1];
+  gos_rgb stops[GOS_CHART_COLOR_STOP_COUNT];
+  gos_rgb* rgbat = stops;
+
+  gos_color_assign_rgb32(rgbat++, 0x07049b);  /* Dark blue */
+  gos_color_assign_rgb32(rgbat++, 0x02f7f3);  /* Cyan */
+  gos_color_assign_rgb32(rgbat++, 0x09f725);  /* Green */
+  gos_color_assign_rgb32(rgbat++, 0xf4ec04);  /* Yellow */
+  gos_color_assign_rgb32(rgbat++, 0xf79d01);  /* Orange */
+  gos_color_assign_rgb32(rgbat++, 0x8c0101);  /* Dark red */
+
+  /* Equal sized gradient */
+  gsizeat = gradientsize;
+  for (i = 0; i < GOS_CHART_COLOR_STOP_COUNT - 1; i++) {
+    *(gsizeat++) = 64;
+  }
+
+  return gos_color_create_rgb_gradient(
+    gradient,
+    stops,
+    gradientsize,
+    GOS_CHART_COLOR_STOP_COUNT,
+    GOS_COLOR_GAMMA);
+}
+
+bool ghm_create_sdl(goshm* context, int x, int y, const char* title) {
+  context->sdlinit = SDL_Init(SDL_INIT_VIDEO);
+  if (context->sdlinit != 0) {
+    fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+    return false;
+  }
+
+  context->window = SDL_CreateWindow(
+    title,              /* Title */
+    x,                  /* X */
+    y,                  /* Y */
+    context->width,     /* W */
+    context->height,    /* H */
+    SDL_WINDOW_SHOWN);  /* Flags */
+  if (context->window == NULL) {
+    fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+    return false;
+  }
+
+  context->renderer = SDL_CreateRenderer(
+    context->window,
+    -1,
+    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if (context->renderer == NULL) {
+    fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+    return false;
+  }
+
+  return true;
+}
+
 bool ghm_loop_work(goshm* context, SDL_Event* event) {
   while (SDL_PollEvent(event)) {
     if (!ghm_handle(context, event)) {
@@ -286,6 +285,9 @@ bool ghm_handle(goshm* context, SDL_Event* event) {
       return false;
     }
     break;
+  default:
+    /* Do nothing */
+    break;
   }
   return true;
 }
@@ -304,6 +306,9 @@ bool ghm_handle_keyboard(goshm* context, SDL_KeyboardEvent* event) {
     } else {
       return false;
     }
+    break;
+  default:
+    /* Do nothing */
     break;
   }
   return true;
