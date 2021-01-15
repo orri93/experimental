@@ -11,14 +11,15 @@ const requestFullscreen =
   document.documentElement['mozRequestFullScreen'];
 
 @Component({
-  selector: 'app-hm01',
-  templateUrl: './hm01.component.html',
-  styleUrls: ['./hm01.component.css']
+  selector: 'app-hm02',
+  templateUrl: './hm02.component.html',
+  styleUrls: ['./hm02.component.css']
 })
-export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy, OnInit {
+export class Hm02Component extends EmscriptenWasmComponent implements OnDestroy, OnInit {
   @ViewChild('canvas') canvas: ElementRef;
+  @ViewChild('chart') chart: ElementRef;
 
-  title = 'First Experiment';
+  title = 'Second Experiment';
 
   error: string;
   supportsFullscreen: boolean;
@@ -28,16 +29,19 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
 
   firstInterval: boolean;
 
-  xAxisSvg: any;
-  yAxisSvg: any;
+  hmDiv: any;
+  axesSvg: any;
 
   xScale: any;
   yScale: any;
+
+  xRange: RangeItem;
 
   constructor(private ngZone: NgZone) {
     super('HmModule', 'hm.js');
 
     this.settings = AppConfiguration.settings;
+    this.xRange = this.settings.heatmap.range.x;
 
     this.supportsFullscreen = !!requestFullscreen;
 
@@ -58,31 +62,26 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
     };
   }
 
-  private resizeItems(): void {
+  private scaleItems(): void {
     const chart = this.settings.heatmap.chart;
-    const axis = { width: 16, height: 16 };
+    const axes = this.settings.heatmap.axes;
 
-    d3.select('div#xa')
-      .attr('class', 'xa')
-      .style('width', (chart.width + axis.width) + 'px')
-      .style('height', axis.height + 'px');
+    this.hmDiv = d3.select('div#hm')
+      .style('position', 'relative')
+      .style('width', (chart.width + axes.width + axes.x) + 'px')
+      .style('height', (chart.height + axes.height + axes.y) + 'px');
 
-    d3.select('div#ya')
-    .attr('class', 'ya')
-    .style('width', (chart.width + axis.width) + 'px')
-    .style('height', chart.height + 'px');
+    this.axesSvg = d3.select('svg#axes')
+      .attr('width', chart.width + axes.width + axes.x)
+      .attr('height', chart.height + axes.height + axes.y)
+      .style('position', 'absolute')
+      .style('left', (axes.x) + 'px')
+      .style('top', (axes.y) + 'px');
 
-    this.xAxisSvg = d3.select('svg#xaxis')
-      .attr('width', chart.width)
-      .attr('height', axis.height);
-
-    this.yAxisSvg = d3.select('svg#yaxis')
-      .attr('width', axis.width)
-      .attr('height', chart.height);
-
-    d3.select('svg#corner')
-      .attr('width', axis.width)
-      .attr('height', axis.height);
+    d3.select('canvas')
+      .style('position', 'absolute')
+      .style('left', (axes.width + axes.x) + 'px')
+      .style('top', (2 * axes.y) + 'px');
   }
 
   private createScales(): void {
@@ -100,31 +99,51 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
 
   private drawAxes(): void {
     const chart = this.settings.heatmap.chart;
-    this.xAxisSvg.append('g')
+    const axes = this.settings.heatmap.axes;
+    this.axesSvg.append('g')
+      .attr('id', 'xag')
+      .attr('transform', 'translate(' + axes.x + ',' + (chart.height + axes.y) + ')')
       .call(d3.axisBottom(this.xScale).tickFormat(d3.format('d')));
-    this.yAxisSvg.append('g')
+    this.axesSvg.append('g')
+      .attr('id', 'yag')
+      .attr('transform', 'translate(' + axes.x + ', ' +  axes.y + ')')
       .call(d3.axisLeft(this.yScale));
   }
 
+  private redrawX(): void {
+    const chart = this.settings.heatmap.chart;
+    const axes = this.settings.heatmap.axes;
+    this.xScale = d3.scaleLinear()
+      .domain([this.xRange.from, this.xRange.to])
+      .range([0, chart.width]);
+    this.axesSvg.append('g')
+      .attr('id', 'xag')
+      .attr('transform', 'translate(' + axes.x + ',' + (chart.height + axes.y) + ')')
+      .call(d3.axisBottom(this.xScale).tickFormat(d3.format('d')));
+  }
+
   ngOnInit(): void {
-    this.resizeItems();
+    this.scaleItems();
     this.createScales();
     this.drawAxes();
   }
 
   onTimer(): void {
     if (!this.firstInterval) {
-      console.log('On timer interval');
     } else {
       console.log('On timer first interval');
       this.firstInterval = false;
     }
     this.module.ccall('shift', 'void', [], []);
+    d3.select('g#xag').remove();
+    this.xRange.from++;
+    this.xRange.to++;
+    this.redrawX();
   }
 
   toggleFullscreen(): void {
     if (requestFullscreen) {
-      requestFullscreen.bind(this.canvas.nativeElement)();
+      requestFullscreen.bind(this.chart.nativeElement)();
     }
   }
 

@@ -41,13 +41,6 @@ int main(int argc, char** argv) {
       ghm_shutdown(&context);
       return EXIT_FAILURE;
     }
-
-    if (!ghm_loop(&context)) {
-      ghm_shutdown(&context);
-      return EXIT_FAILURE;
-    }
-    ghm_shutdown(&context);
-    return EXIT_SUCCESS;
   } else {
     return EXIT_FAILURE;
   }

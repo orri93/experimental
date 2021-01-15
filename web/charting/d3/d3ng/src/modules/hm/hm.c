@@ -79,7 +79,8 @@ bool ghm_create_texture(goshm* context) {
     }
     for (i = 0; i < context->width; i++) {
       for (j = 0; j < context->height; j++) {
-        k = gos_noise_random_maximum_integer(context->gradient.count);
+        // k = gos_noise_random_maximum_integer(context->gradient.count);
+        k = i * j % context->gradient.count;
         rgb = &(context->gradient.gradient[k]);
         if (SDL_SetRenderDrawColor(
           context->renderer,

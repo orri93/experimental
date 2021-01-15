@@ -46,17 +46,29 @@ interface DataRange {
   z: RangeItem;
 }
 
+interface ChartAxes {
+  x: number,
+  y: number,
+  width: number;
+  height: number;
+}
+
 interface ChartConfiguration {
   width: number;
   height: number;
-  margin: number;
 }
 
 interface HeatmapConfiguration {
   chart: ChartConfiguration;
   range: DataRange;
+  axes: ChartAxes;
+}
+
+interface ChartTimer {
+  interval: number;
 }
 
 interface ApplicationConfiguration {
   heatmap: HeatmapConfiguration;
+  timer: ChartTimer;
 }

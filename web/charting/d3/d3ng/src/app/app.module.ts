@@ -9,6 +9,7 @@ import { AppConfiguration } from './app.configuration';
 
 import { HomeComponent } from './home/home.component';
 import { Hm01Component } from './hm01/hm01.component';
+import { Hm02Component } from './hm02/hm02.component';
 
 export function initializeApp(appConfiguration: AppConfiguration) {
   return () => appConfiguration.load();
@@ -18,7 +19,8 @@ export function initializeApp(appConfiguration: AppConfiguration) {
   declarations: [
     AppComponent,
     HomeComponent,
-    Hm01Component
+    Hm01Component,
+    Hm02Component
   ],
   imports: [
     BrowserModule,

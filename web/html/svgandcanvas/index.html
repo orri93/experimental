@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+      svg and canvas experiment
+
+      The Python server can be used to test it
+        python2 -m SimpleHTTPServer 8000
+      or
+        python3 -m http.server
+      then browse to
+        http://localhost:8000/index.html
+
+ -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>svg and canvas experiment</title>
+  </head>
+  <body>
+    <div>
+      <svg width="32" height="400">
+        <rect x="0" y="0" width="32" height="400" fill="red"></rect>
+      </svg>
+      <canvas id="canvas" width="600" height="400"></canvas>
+    </div>
+    <div>
+      <svg width="32" height="32"></svg>
+      <svg width="600" height="32">
+        <rect x="0" y="0" width="600" height="32" fill="red"></rect>
+      </svg>
+    </div>
+    <script>
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(0, 0, 600, 400);
+    </script>
+  </body>
+</html>
