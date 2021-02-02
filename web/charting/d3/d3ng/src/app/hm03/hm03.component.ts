@@ -88,7 +88,6 @@ export class Hm03Component extends EmscriptenWasmComponent implements OnDestroy,
   }
 
   private createScaleX(): void {
-    
   }
 
   private createScales(): void {
