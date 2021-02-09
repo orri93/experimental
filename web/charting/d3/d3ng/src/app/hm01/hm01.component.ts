@@ -42,8 +42,8 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
     this.supportsFullscreen = !!requestFullscreen;
 
     const hmarg = [
-      this.settings.heatmap.chart.width.toString(),
-      this.settings.heatmap.chart.height.toString()
+      this.settings.heatmap.size.width.toString(),
+      this.settings.heatmap.size.height.toString()
     ];
 
     this.moduleDecorator = (mod) => {
@@ -59,26 +59,26 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
   }
 
   private resizeItems(): void {
-    const chart = this.settings.heatmap.chart;
+    const size = this.settings.heatmap.size;
     const axis = { width: 16, height: 16 };
 
     d3.select('div#xa')
       .attr('class', 'xa')
-      .style('width', (chart.width + axis.width) + 'px')
+      .style('width', (size.width + axis.width) + 'px')
       .style('height', axis.height + 'px');
 
     d3.select('div#ya')
     .attr('class', 'ya')
-    .style('width', (chart.width + axis.width) + 'px')
-    .style('height', chart.height + 'px');
+    .style('width', (size.width + axis.width) + 'px')
+    .style('height', size.height + 'px');
 
     this.xAxisSvg = d3.select('svg#xaxis')
-      .attr('width', chart.width)
+      .attr('width', size.width)
       .attr('height', axis.height);
 
     this.yAxisSvg = d3.select('svg#yaxis')
       .attr('width', axis.width)
-      .attr('height', chart.height);
+      .attr('height', size.height);
 
     d3.select('svg#corner')
       .attr('width', axis.width)
@@ -86,20 +86,19 @@ export class Hm01Component extends EmscriptenWasmComponent implements OnDestroy,
   }
 
   private createScales(): void {
-    const chart = this.settings.heatmap.chart;
+    const size = this.settings.heatmap.size;
     const range = this.settings.heatmap.range;
 
     this.xScale = d3.scaleLinear()
       .domain([range.x.from, range.x.to])
-      .range([0, chart.width]);
+      .range([0, size.width]);
 
     this.yScale = d3.scaleLinear()
       .domain([range.y.from, range.y.to])
-      .range([chart.height, 0]);
+      .range([size.height, 0]);
   }
 
   private drawAxes(): void {
-    const chart = this.settings.heatmap.chart;
     this.xAxisSvg.append('g')
       .call(d3.axisBottom(this.xScale).tickFormat(d3.format('d')));
     this.yAxisSvg.append('g')
