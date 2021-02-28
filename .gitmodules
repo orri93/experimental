@@ -52,3 +52,6 @@
 [submodule "web/charting/d3/d3ng/extern/gosc"]
 	path = web/charting/d3/d3ng/extern/gosc
 	url = git@github.com:orri93/gosc.git
+[submodule "web/charting/wd3/extern/gosc"]
+	path = web/charting/wd3/extern/gosc
+	url = git@github.com:orri93/gosc.git
