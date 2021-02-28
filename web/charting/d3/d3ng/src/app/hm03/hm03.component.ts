@@ -12,8 +12,7 @@ const requestFullscreen = S1Service.getRequestFullscreen(document);
 
 const Duration = 10 * 60 * 1000;
 
-const ParseDateTime = d3.timeParse('%Y-%m-%d %H:%M:%S');
-const FormatTime = d3.timeFormat('%H:%M:%S');
+// const ParseDateTime = d3.timeParse('%Y-%m-%d %H:%M:%S');
 
 @Component({
   selector: 'app-hm03',
@@ -46,17 +45,21 @@ export class Hm03Component extends EmscriptenWasmComponent implements OnDestroy,
 
   private firstInterval: boolean;
 
+  private formatTime: any;
+
   constructor(private ngZone: NgZone) {
     super('HmModule', 'hm.js');
 
     const self = this;
     const configuration = AppConfiguration.settings.heatmap;
+    const format = AppConfiguration.settings.format;
     const timer = AppConfiguration.settings.timer;
+    this.formatTime = d3.timeFormat(format.time);
     this.observable = interval(timer.interval);
-    self.size = { width: configuration.size.width, height: configuration.size.height };
-    self.axes = _.clone(configuration.axes);
+    this.size = { width: configuration.size.width, height: configuration.size.height };
+    this.axes = _.clone(configuration.axes);
 
-    self.axes.size.height = 64;
+    this.axes.size.height = 64;
 
     this.xRange = _.clone(configuration.range.x);
     this.yRange = _.clone(configuration.range.y);
@@ -126,7 +129,9 @@ export class Hm03Component extends EmscriptenWasmComponent implements OnDestroy,
       .attr('transform', 'translate('
         + this.axes.x + ','
         + (this.size.height + this.axes.y) + ')')
-      .call(d3.axisBottom(this.xScale).tickFormat(FormatTime));
+      .call(d3.axisBottom(this.xScale).tickFormat(this.formatTime));
+    // For D3 time formatted axis see
+    // https://bl.ocks.org/d3noob/0e276dc70bb9184727ee47d6dd06e915
     g.selectAll('text')
       .style('text-anchor', 'end')
       .attr('dx', '-.8em')

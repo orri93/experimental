@@ -8,6 +8,7 @@
     },
     "axes": { "x": 32, "y": 4, "size": { "width": 32, "height": 16 }, "color": "blue" }
   },
+  "format": { "time": "%H:%M:%S"},
   "timer": {
     "interval": 50
   }

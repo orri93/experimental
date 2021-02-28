@@ -68,7 +68,12 @@ interface ChartTimer {
   interval: number;
 }
 
+interface ChartFormat {
+  time: string;
+}
+
 interface ApplicationConfiguration {
   heatmap: HeatmapConfiguration;
+  format: ChartFormat;
   timer: ChartTimer;
 }
