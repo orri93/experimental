@@ -142,7 +142,7 @@ if (EM_TARGET)
     COMMAND emcc ${wd3_experiment_c_em_hm_args} -o ${wd3_experiment_c_em_hm_js} ${wd3_experiment_c_em_hm_source}
     BYPRODUCTS ${wd3_experiment_c_em_hm_js} ${wd3_experiment_c_em_hm_wasm}
     DEPENDS ${wd3_experiment_c_em_hm_source}
-    COMMENT "Building EFD SDL Heatmap Web Assembly")
+    COMMENT "Building WD3 SDL Heatmap Web Assembly")
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_hm_js}"
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_hm_wasm}"
@@ -171,7 +171,7 @@ if (EM_TARGET)
     COMMAND emcc ${wd3_experiment_c_em_demo_args} -o ${wd3_experiment_c_em_demo_js} ${wd3_experiment_c_em_demo_source}
     BYPRODUCTS ${wd3_experiment_c_em_demo_js} ${wd3_experiment_c_em_demo_wasm}
     DEPENDS ${wd3_experiment_c_em_demo_source}
-    COMMENT "Building EFD SDL Demo Web Assembly")
+    COMMENT "Building WD3 SDL Demo Web Assembly")
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_demo_js}"
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_demo_wasm}"
@@ -194,20 +194,20 @@ if (BUILD_TESTS)
         set(gtest_force_shared_crt ON CACHE BOOL "Use Shared CRT")
       #endif ()
     endif (MSVC)
-    if (EXPB_INSTRUCT_GOOGLE_TEST_PATH)
-      set(EXPB_GOOGLE_TEST_PATH
-        "${EXPB_INSTRUCT_GOOGLE_TEST_PATH}")
+    if (WD3_INSTRUCT_GOOGLE_TEST_PATH)
+      set(WD3_GOOGLE_TEST_PATH
+        "${WD3_INSTRUCT_GOOGLE_TEST_PATH}")
     else ()
-      set(EXPB_GOOGLE_TEST_PATH
+      set(WD3_GOOGLE_TEST_PATH
         "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/extern/googletest")
 #     add_subdirectory(extern/googletest)
     endif ()
     set(wd3_experiment_c_unit_testing_dir
       "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     set(wd3_experiment_c_unit_testing_gmock_include_dir
-      "${EXPB_GOOGLE_TEST_PATH}/googlemock/include")
+      "${WD3_GOOGLE_TEST_PATH}/googlemock/include")
     set(wd3_experiment_c_unit_testing_gtest_include_dir
-      "${EXPB_GOOGLE_TEST_PATH}/googletest/include")
+      "${WD3_GOOGLE_TEST_PATH}/googletest/include")
     list(APPEND wd3_experiment_c_gtest_include
       ${wd3_experiment_c_unit_testing_gmock_include_dir}
       ${wd3_experiment_c_unit_testing_gtest_include_dir})
