@@ -17,8 +17,6 @@
 typedef struct wd3hm {
   int sdlinit;
 
-  bool isgo;  /* Only used by the desktop demo */
-
   gos_screen screen;
   gos_rgb_gradient gradient;
 

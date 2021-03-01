@@ -37,6 +37,8 @@ void ghmd_draw_pattern(wd3hm* context) {
 
 void ghmd_initialize(wd3hmdemo* demo) {
   demo->type = 0;
+  demo->isgo = false;
+  demo->isrun = false;
   demo->data = NULL;
 }
 
@@ -101,8 +103,8 @@ bool ghmd_render(wd3hm* context, wd3hmdemo* demo) {
 
 bool ghmd_loop(wd3hm* context, wd3hmdemo* demo) {
   SDL_Event sdlevent;
-  context->isgo = true;
-  while (context->isgo) {
+  demo->isgo = true;
+  while (demo->isgo) {
     if (!ghmd_loop_work(context, demo, &sdlevent)) {
       return false;
     }
@@ -128,13 +130,16 @@ bool ghmd_loop_work(wd3hm* context, wd3hmdemo* demo, SDL_Event* event) {
       return false;
     }
   }
+  if (demo->isrun) {
+    ghmd_next(context, demo);
+  }
   return true;
 }
 
 bool ghmd_handle(wd3hm* context, wd3hmdemo* demo, SDL_Event* event) {
   switch (event->type) {
   case SDL_QUIT:
-    context->isgo = false;
+    demo->isgo = false;
     break;
   case SDL_KEYDOWN:
     if (!ghmd_handle_keyboard(context, demo, &(event->key))) {
@@ -155,7 +160,10 @@ bool ghmd_handle_keyboard(
   SDL_keysym* keysym = &(event->keysym);
   switch (keysym->sym) {
   case SDLK_q:
-    context->isgo = false;
+    demo->isgo = false;
+    break;
+  case SDLK_s:
+    demo->isrun = demo->isrun ? false : true;
     break;
   case SDLK_n:
     // ghmd_next(context, demo);

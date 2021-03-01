@@ -1,6 +1,8 @@
 if(SDL_DESKTOP_TARGET)
   set(wd3_experiment_c_modules_demo_target demo)
 
+  find_package(SDL REQUIRED)
+
   list(APPEND wd3_experiment_c_modules_demo_source
     demo.c)
 

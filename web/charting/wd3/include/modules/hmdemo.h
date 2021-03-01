@@ -12,6 +12,8 @@
 
 typedef struct wd3hmdemo {
   int type;
+  bool isgo;
+  bool isrun;
   gos_point_2d* data;
 } wd3hmdemo;
 

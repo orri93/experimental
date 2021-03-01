@@ -5,6 +5,8 @@ endif ()
 set(wd3_hm_test_target wd3hmtest)
 set(wd3_hm_test_name wd3hmtest)
 
+find_package(SDL REQUIRED)
+
 list(APPEND wd3_hm_test_source
   hmdata.cpp
   sdlmock.c)

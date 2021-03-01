@@ -28,8 +28,6 @@ static void ghm_shutdown_sdl(wd3hm* context);
 void ghm_initialize(wd3hm* context, int width, int height) {
   context->sdlinit = WD3_SDL_INIT_DEFAULT;
 
-  context->isgo = false;
-
   context->screen.width = width;
   context->screen.height = height;
 
@@ -85,7 +83,7 @@ void ghm_parse_argument(wd3hm* context, int argc, char** argv) {
 
 bool ghm_create(wd3hm* context) {
   // Set either y scale range from or to parameter to height
-  context->yscale.range.to = (double)(context->screen.height);
+  context->yscale.range.to = (double)(context->screen.height) - 1.0;
   if (!ghm_create_buffer(context)) {
     ghm_shutdown(context);
     return false;
