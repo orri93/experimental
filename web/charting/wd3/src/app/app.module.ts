@@ -8,6 +8,8 @@ import { EffectsModule } from '@ngrx/effects';
 
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
+import { AngularResizedEventModule } from 'angular-resize-event';
+
 import { MatButtonModule } from '@angular/material/button';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -20,6 +22,7 @@ import { PhComponent } from './ph/ph.component';
 import { P1Component } from './p1/p1.component';
 import { P2Component } from './p2/p2.component';
 import { P3Component } from './p3/p3.component';
+import { P4Component } from './p4/p4.component';
 
 export function initializeApp(appConfiguration: AppConfiguration): any {
   return () => appConfiguration.load();
@@ -31,7 +34,8 @@ export function initializeApp(appConfiguration: AppConfiguration): any {
     PhComponent,
     P1Component,
     P2Component,
-    P3Component
+    P3Component,
+    P4Component
   ],
   imports: [
     FormsModule,
@@ -42,6 +46,7 @@ export function initializeApp(appConfiguration: AppConfiguration): any {
     BrowserAnimationsModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
+    AngularResizedEventModule,
     MatButtonModule,
     M1Module
   ],

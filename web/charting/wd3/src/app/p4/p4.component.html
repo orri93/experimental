@@ -1,0 +1,7 @@
+<h3>{{pageName}}</h3>
+
+<div>
+  <p>Child Size width: {{childSize.width}} and height: {{childSize.height}}</p>
+</div>
+
+<app-m1c4 #m1c4 (sizeChangedEvent) = "childSizeChanged($event)"></app-m1c4>

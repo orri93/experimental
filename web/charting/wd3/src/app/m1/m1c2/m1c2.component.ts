@@ -20,10 +20,15 @@ export class M1c2Component extends EmscriptenWasmComponentDirective implements O
     super('DemoModule', 'demo.js');
     const self = this;
     this.moduleDecorator = (mod) => {
-      mod.arguments = [
-        self.size.width.toString(),
-        self.size.height.toString()
-      ];
+      let args = [ '256', '256' ];
+      if (self.size) {
+        console.log('Using size');
+        args = [
+          self.size.width.toString(),
+          self.size.height.toString()
+        ];
+      }
+      mod.arguments = args;
       mod.preRun = [];
       mod.canvas = this.canvas.nativeElement as HTMLCanvasElement;
       mod.printErr = (what: string) => {
@@ -32,6 +37,20 @@ export class M1c2Component extends EmscriptenWasmComponentDirective implements O
         }
       };
     };
+  }
+
+  createWebAssembly(newSize: ChartSize): void {
+    if (super.module) {
+      console.log('Create the WebAssembly to width: ' + newSize.width + ' and height: ' + newSize.height);
+      super.module.ccall('create', 'void', ['number', 'number'], [newSize.width, newSize.height]);
+    }
+  }
+
+  resizeWebAssembly(newSize: ChartSize): void {
+    if (super.module) {
+      // console.log('Resizing the WebAssembly to width: ' + newSize.width + ' and height: ' + newSize.height);
+      super.module.ccall('resize', 'void', ['number', 'number'], [newSize.width, newSize.height]);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

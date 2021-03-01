@@ -1,9 +1,6 @@
 import { Component, Input, ViewChild, ElementRef, NgZone, SimpleChanges, OnInit, OnChanges,  OnDestroy } from '@angular/core';
-
 import * as d3 from 'd3';
-
 import { EmscriptenWasmComponentDirective } from './../../emscripten-wasm.component';
-
 import { Wd3HeatmapResult, Wd3HeatmapDomain } from './../../shared/constants/hm';
 
 const DefaultRange: NumberRange = { from: 0.0, to: 1.0 };

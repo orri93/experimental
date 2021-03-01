@@ -32,6 +32,7 @@
 typedef struct demot {
   int sdlinit;
   bool isgo;  /* Only used by the desktop demo */
+  bool iscreate;
   gos_screen screen;
   gos_rgb_gradient gradient;
   SDL_Surface* surface;
@@ -42,6 +43,7 @@ static void demo_initialize(demot* context, int width, int height);
 static void demo_parse_argument(demot* context, int argc, char** argv);
 static bool demo_create(demot* context);
 static bool demo_create_demo(demot* context);
+static bool demo_create_surface(demot* context);
 static bool demo_create_gradient(demot* context, int size);
 static void demo_create_pattern_a(demot* context);
 static void demo_create_pattern_b(demot* context);
@@ -63,10 +65,14 @@ int main(int argc, char** argv) {
   printf("Initialize the Emscripten SDL Demo\n");
   demo_initialize(&context, DEMO_DEFAULT_WIDTH, DEMO_DEFAULT_HEIGHT);
   demo_parse_argument(&context, argc, argv);
-  if (demo_create(&context)) {
-    return demo_create_demo(&context) ? EXIT_SUCCESS : EXIT_FAILURE;
+  if (context.iscreate) {
+    if (demo_create(&context)) {
+      return demo_create_demo(&context) ? EXIT_SUCCESS : EXIT_FAILURE;
+    } else {
+      return EXIT_FAILURE;
+    }
   } else {
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 }
 
@@ -75,6 +81,23 @@ EMSCRIPTEN_KEEPALIVE void shutdown() {
   demo_shutdown(&context);
 }
 
+EMSCRIPTEN_KEEPALIVE void create(int width, int height) {
+  printf("Create the SDL Demo to %d x %d\n", width, height);
+  context.screen.width = width;
+  context.screen.height = height;
+  if (demo_create_surface(&context)) {
+    demo_create_demo(&context);
+  }
+}
+
+EMSCRIPTEN_KEEPALIVE void resize(int width, int height) {
+  // printf("Resizing the SDL Demo to %d x %d\n", width, height);
+  context.screen.width = width;
+  context.screen.height = height;
+  if (demo_create_surface(&context)) {
+    demo_create_demo(&context);
+  }
+}
 
 #else
 
@@ -101,15 +124,16 @@ int main(int argc, char** argv) {
 
 #endif
 
-void demo_initialize(demot * context, int width, int height) {
+void demo_initialize(demot* context, int width, int height) {
   context->sdlinit = DEMO_SDL_INIT_DEFAULT;
   context->isgo = false;
+  context->iscreate = true;
   context->screen.width = width;
   context->screen.height = height;
   context->surface = NULL;
 }
 
-void demo_parse_argument(demot * context, int argc, char** argv) {
+void demo_parse_argument(demot* context, int argc, char** argv) {
   if (argc > 1) {
     if (gos_text_are_all_char_digits(argv[1])) {
       context->screen.width = atoi(argv[1]);
@@ -122,27 +146,46 @@ void demo_parse_argument(demot * context, int argc, char** argv) {
       printf("Setting screen height to %d\n", context->screen.height);
     }
   }
+  if (argc > 3) {
+    if (gos_text_are_all_char_digits(argv[3])) {
+      context->iscreate = atoi(argv[3]) > 0;
+      if (context->iscreate) {
+        printf("Setting is create to true\n");
+      } else {
+        printf("Setting is create to false\n");
+      }
+    }
+  }
 }
 
-bool demo_create(demot * context) {
+bool demo_create(demot* context) {
   context->sdlinit = SDL_Init(SDL_INIT_VIDEO);
   if (context->sdlinit != 0) {
     fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
     return false;
   }
+  if (demo_create_surface(context)) {
+    return demo_create_gradient(context, DEMO_COLOR_STOP_SIZE);
+  } else {
+    return false;
+  }
+}
+
+bool demo_create_surface(demot* context) {
   context->surface = SDL_SetVideoMode(
     context->screen.width,    /* Width */
     context->screen.height,   /* Heigh */
     DEMO_SDL_BPP,             /* Bits per pixel */
     SDL_SWSURFACE);           /* Flags */
-  if (context->surface == NULL) {
+  if (context->surface != NULL) {
+    return true;
+  } else {
     fprintf(stderr, "SDL_SetVideoMode Error: %s\n", SDL_GetError());
     return false;
   }
-  return demo_create_gradient(context, DEMO_COLOR_STOP_SIZE);
 }
 
-bool demo_create_demo(demot * context) {
+bool demo_create_demo(demot* context) {
   if (demo_lock(context)) {
     if (context->screen.height <= 256 && context->screen.width <= 256) {
       demo_create_pattern_a(context);
@@ -156,7 +199,7 @@ bool demo_create_demo(demot * context) {
   }
 }
 
-bool demo_create_gradient(demot * context, int size) {
+bool demo_create_gradient(demot* context, int size) {
   int i;
   int* gsizeat;
   int gsize[DEMO_COLOR_STOP_COUNT - 1];
@@ -183,7 +226,7 @@ bool demo_create_gradient(demot * context, int size) {
     GOS_COLOR_GAMMA);
 }
 
-void demo_create_pattern_a(demot * context) {
+void demo_create_pattern_a(demot* context) {
   int i, j, a;
   Uint32 pixel;
   for (i = 0; i < context->screen.width; i++) {
@@ -195,7 +238,7 @@ void demo_create_pattern_a(demot * context) {
   }
 }
 
-void demo_create_pattern_b(demot * context) {
+void demo_create_pattern_b(demot* context) {
   int i, j, k;
   gos_rgb* rgb;
   Uint32 pixel;
@@ -209,12 +252,12 @@ void demo_create_pattern_b(demot * context) {
   }
 }
 
-void demo_draw_pixel(demot * context, int x, int y, Uint32 pixel) {
+void demo_draw_pixel(demot* context, int x, int y, Uint32 pixel) {
   *(((Uint32*)(context->surface->pixels)) +
     gos_screen_index(&context->screen, x, y)) = pixel;
 }
 
-bool demo_lock(demot * context) {
+bool demo_lock(demot* context) {
   if (SDL_MUSTLOCK(context->surface)) {
     if (SDL_LockSurface(context->surface) != 0) {
       fprintf(stderr, "SDL_LockSurface Error: %s\n\n", SDL_GetError());
@@ -224,7 +267,7 @@ bool demo_lock(demot * context) {
   return true;
 }
 
-bool demo_flip(demot * context) {
+bool demo_flip(demot* context) {
   if (SDL_Flip(context->surface) != 0) {
     fprintf(stderr, "SDL_Flip Error: %s\n\n", SDL_GetError());
     return false;
@@ -233,7 +276,7 @@ bool demo_flip(demot * context) {
 }
 
 #ifndef __EMSCRIPTEN__
-bool demo_loop(demot * context) {
+bool demo_loop(demot* context) {
   SDL_Event sdlevent;
   context->isgo = true;
   while (context->isgo) {
@@ -244,7 +287,7 @@ bool demo_loop(demot * context) {
   return true;
 }
 
-bool demo_loop_work(demot * context, SDL_Event * event) {
+bool demo_loop_work(demot* context, SDL_Event * event) {
   Uint8* keystate = SDL_GetKeyState(NULL);
   while (SDL_PollEvent(event)) {
     if (!demo_handle(context, event)) {
@@ -254,7 +297,7 @@ bool demo_loop_work(demot * context, SDL_Event * event) {
   return true;
 }
 
-bool demo_handle(demot * context, SDL_Event * event) {
+bool demo_handle(demot* context, SDL_Event * event) {
   switch (event->type) {
   case SDL_QUIT:
     context->isgo = false;
@@ -271,7 +314,7 @@ bool demo_handle(demot * context, SDL_Event * event) {
   return true;
 }
 
-bool demo_handle_keyboard(demot * context, SDL_KeyboardEvent * event) {
+bool demo_handle_keyboard(demot* context, SDL_KeyboardEvent * event) {
   SDL_keysym* keysym = &(event->keysym);
   switch (keysym->sym) {
   case SDLK_q:
@@ -285,13 +328,13 @@ bool demo_handle_keyboard(demot * context, SDL_KeyboardEvent * event) {
 }
 #endif
 
-void demo_unlock(demot * context) {
+void demo_unlock(demot* context) {
   if (SDL_MUSTLOCK(context->surface)) {
     SDL_UnlockSurface(context->surface);
   }
 }
 
-void demo_shutdown(demot * context) {
+void demo_shutdown(demot* context) {
   gos_color_free_rgb_gradient(&context->gradient);
   if (context->sdlinit == 0) {
     SDL_Quit();

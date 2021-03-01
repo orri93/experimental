@@ -1,5 +1,4 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-
 import { M1c2Component } from './../m1/m1c2/m1c2.component';
 
 @Component({
@@ -12,16 +11,14 @@ export class P2Component implements OnInit {
 
   pageName = 'Page no. 2';
 
-  size: ChartSize = { width: 800, height: 400 };
+  size: ChartSize = { width: 256, height: 256 };
 
   constructor() { }
 
-  start(): void {
-    console.log('Start clicked');
-  }
-
-  stop(): void {
-    console.log('Stop clicked');
+  resizeChild(): void {
+    console.log('Resize Child clicked');
+    const newSize: ChartSize = { width: 800, height: 400 };
+    this.m1c2.resizeWebAssembly(newSize);
   }
 
   ngOnInit(): void {

@@ -24,6 +24,7 @@
     "@angular/router": "~10.2.0",
     "@ngrx/effects": "^10.1.2",
     "@ngrx/store": "^10.1.2",
+    "angular-resize-event": "^2.1.0",
     "d3": "^6.5.0",
     "lodash-es": "^4.17.21",
     "rxjs": "~6.6.0",
