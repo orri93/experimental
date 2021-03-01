@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, Observable, interval } from 'rxjs';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { AppConfiguration } from './../app.configuration';
 import { Point } from './../shared/models/wd3.model';
 import { M1c1Component } from './../m1/m1c1/m1c1.component';
