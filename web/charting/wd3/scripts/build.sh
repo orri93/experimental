@@ -88,6 +88,14 @@ ROOT_DIR=`realpath "$DIR/.."`
 # Fix spaces in folder name
 ROOT_DIR=${ROOT_DIR//\ /\\\ }
 
+# Check the environment
+if [ -z "$EMSDK" ]
+then
+  printf 'ERROR: The EMSDK environment variable is undefined. Please enable Emscripten by runing source emsdk/emsdk_env.sh.\n' >&2
+  exit 1
+fi
+
+
 echo "---------------------------------------------------------------------------"
 echo "Build script for the ${PROJECT_NAME}"
 echo "${PROJECT_NAME} root directory is defined as ${ROOT_DIR}"
