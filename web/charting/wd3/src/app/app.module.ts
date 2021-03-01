@@ -19,6 +19,7 @@ import { M1Module } from './m1/m1.module';
 import { PhComponent } from './ph/ph.component';
 import { P1Component } from './p1/p1.component';
 import { P2Component } from './p2/p2.component';
+import { P3Component } from './p3/p3.component';
 
 export function initializeApp(appConfiguration: AppConfiguration): any {
   return () => appConfiguration.load();
@@ -29,7 +30,8 @@ export function initializeApp(appConfiguration: AppConfiguration): any {
     AppComponent,
     PhComponent,
     P1Component,
-    P2Component
+    P2Component,
+    P3Component
   ],
   imports: [
     FormsModule,

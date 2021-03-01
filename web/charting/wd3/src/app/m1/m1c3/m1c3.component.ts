@@ -6,10 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./m1c3.component.scss']
 })
 export class M1c3Component implements OnInit {
+  componentName = 'Module no. 1 - Component no. 3';
 
   constructor() { }
 
   ngOnInit(): void {
   }
-
 }
