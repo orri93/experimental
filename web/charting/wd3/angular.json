@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "wd3"
+  "defaultProject": "wd3",
+  "cli": {
+    "analytics": "009a099b-5cad-4a82-9085-e1c516933197"
+  }
 }
