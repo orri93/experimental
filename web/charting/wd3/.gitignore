@@ -51,3 +51,10 @@ out/
 
 # CMake
 CMakeSettings.json
+
+# Build
+/artifacts/
+/build/
+
+# Cache
+src/wasm-cache-busting.json
