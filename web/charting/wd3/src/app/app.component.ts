@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'wd3';
+  title = 'GOS WebAssembly D3 Heatmap Charting Experiment';
 }

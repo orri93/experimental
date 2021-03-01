@@ -1,0 +1,25 @@
+{
+  "wasm": {
+    "size": { "width": 600, "height": 400 },
+    "range": {
+      "x": { "from": 0, "to": 600 },
+      "y": { "from": 0, "to": 400 },
+      "z": { "from": 0, "to": 10 }
+    },
+    "axes": { "x": 32, "y": 4, "size": { "width": 32, "height": 16 } },
+    "parsing": { "dateTime": "%Y-%m-%d %H:%M:%S" },
+    "formatting": { "time": "%H:%M:%S" },
+    "intervals": {
+      "initialization": 1000,
+      "displayCurrent": 1000,
+      "timer": 1000
+    }
+  },
+  "services": {
+    "update": {
+      "time": { "interval": 1000 },
+      "ecd": { "interval": 1000 }
+    },
+    "tag": { "interval": 1000 }
+  }
+}
