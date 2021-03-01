@@ -176,9 +176,9 @@ ${CP_LIB_CMD}
 CP_LIB_CMD="cp ${PROJECT_ARTIFACTS_DIR}/lib/*.wasm ${ROOT_DIR}/src/assets/wasm/"
 echo "${CP_LIB_CMD}"
 ${CP_LIB_CMD}
-CP_LIB_CMD="cp ${PROJECT_ARTIFACTS_DIR}/lib/*.data ${ROOT_DIR}/src/assets/wasm/"
-echo "${CP_LIB_CMD}"
-${CP_LIB_CMD}
+# CP_LIB_CMD="cp ${PROJECT_ARTIFACTS_DIR}/lib/*.data ${ROOT_DIR}/src/assets/wasm/"
+# echo "${CP_LIB_CMD}"
+# ${CP_LIB_CMD}
 
 echo "Entering ${ROOT_DIR}"
 silent_pushd ${ROOT_DIR}
