@@ -53,6 +53,8 @@ if(SDL_DESKTOP_TARGET)
 endif()
 
 if(BUILD_TESTS)
+  find_package(SDL REQUIRED)
+
   list(APPEND wd3_experiment_c_modules_hm_testable_source
     hm.c)
 
