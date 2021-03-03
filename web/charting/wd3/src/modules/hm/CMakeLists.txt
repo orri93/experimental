@@ -4,7 +4,7 @@ if(SDL_DESKTOP_TARGET)
   find_package(SDL REQUIRED)
 
   list(APPEND wd3_experiment_c_modules_hm_source
-    hmdemo.c
+    demo.c
     hmm.c
     hm.c)
 

@@ -9,10 +9,10 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #else
-#include <modules/hmdemo.h>
+#include <modules/hm/hmdemo.h>
 #endif
 
-#include <modules/hm.h>
+#include <modules/hm/hm.h>
 
 // #define WD3_MD_HM_MESSAGE_SIZE 1024
 

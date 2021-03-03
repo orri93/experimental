@@ -5,7 +5,7 @@
 
 #include <gos/types.h>
 
-#include <modules/hmtype.h>
+#include <modules/hm/types.h>
 
 #define WD3_HM_DEMO_TYPE_PATTERN  1
 #define WD3_HM_DEMO_TYPE_ECD      2

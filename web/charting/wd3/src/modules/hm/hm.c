@@ -11,7 +11,7 @@
 #include <gos/screen.h>
 #include <gos/interpolate.h>
 
-#include <modules/hm.h>
+#include <modules/hm/hm.h>
 
 #define WD3_SDL_INIT_DEFAULT         -1
 #define WD3_SDL_BPP                  32

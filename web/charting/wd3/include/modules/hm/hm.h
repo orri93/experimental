@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include <modules/hmtype.h>
+#include <modules/hm/types.h>
 
 #ifdef __cplusplus
 extern "C" {
