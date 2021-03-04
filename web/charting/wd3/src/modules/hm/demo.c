@@ -6,7 +6,7 @@
 #include <gos/noise.h>
 
 #include <modules/hm/hm.h>
-#include <modules/hm/hmdemo.h>
+#include <modules/hm/demo.h>
 
 static bool ghmd_loop_work(wd3hm* context, wd3hmdemo* demo, SDL_Event* event);
 static bool ghmd_handle(wd3hm* context, wd3hmdemo* demo, SDL_Event* event);

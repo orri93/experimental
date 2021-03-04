@@ -6,7 +6,7 @@
 
 #include <gos/scale.h>
 
-#include <modules/hm.h>
+#include <modules/hm/hm.h>
 
 #define WD3_HM_DATA_COUNT       4
 #define WD3_HM_SCREEN_WIDTH   200

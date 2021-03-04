@@ -1,7 +1,7 @@
 #ifndef WD3_HM_CPP_CONTEXT_H_
 #define WD3_HM_CPP_CONTEXT_H_
 
-#include <modules/hmpp/hmdata.h>
+#include <modules/hmpp/types.h>
 
 namespace wd3 {
 
