@@ -656,7 +656,7 @@ bool ghm_create_sdl(wd3hm* context) {
   }
   context->surface = SDL_SetVideoMode(
     context->screen.width,    /* Width */
-    context->screen.height,   /* Heigh */
+    context->screen.height,   /* Height */
     WD3_SDL_BPP,              /* Bits per pixel */
     SDL_SWSURFACE);           /* Flags */
   if (context->surface == NULL) {

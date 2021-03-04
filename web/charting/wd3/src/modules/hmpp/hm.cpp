@@ -5,36 +5,47 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #else
-
+#ifdef WD3_USE_SDL_MAIN
+#include <SDL_main.h>
+#endif
+#include <modules/hmpp/demo.h>
 #endif
 
 #include <modules/macros.h>
 #include <modules/hmpp/context.h>
 
-#define GHM_DEFAULT_WIDTH            600
-#define GHM_DEFAULT_HEIGHT           400
-
-#define GHM_SUCCESS                    0
-#define GHM_FAILURE                   -1
+static wd3::context context;
+static wd3::data::GroupVector data;
 
 #ifdef __EMSCRIPTEN__
 
 int main(int argc, char** argv) {
-  std::cout << "Initialize the EFD WASM Heatmap" << std::endl();
+  std::cout << "Initialize the WD3 WASM Heatmap" << std::endl;
   return EXIT_SUCCESS;
 }
 
 #else
 
+static wd3::demo demo(context, data);
+
 #ifdef WD3_USE_SDL_MAIN
 int SDL_main(int argc, char** argv) {
-  std::cout << "Initialize the EFD WASM Heatmap Demo with SDL Main" << std::endl();
+  std::cout << "Initialize the WD3 WASM Heatmap Demo with SDL Main" << std::endl;
 #else
 int main(int argc, char** argv) {
-  std::cout << "Initialize the EFD WASM Heatmap Demo" << std::endl();
+  std::cout << "Initialize the WD3 WASM Heatmap Demo" << std::endl;
 #endif
-  std::cout << "Initialize the EFD WASM Heatmap" << std::endl();
-  return EXIT_SUCCESS;
+  context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
+  context.parse(argc, argv);
+  if (context.initialize()) {
+    if (context.create()) {
+      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, 100)) {
+
+      }
+      return EXIT_SUCCESS;
+    }
+  }
+  return EXIT_FAILURE;
 }
 
 #endif

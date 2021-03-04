@@ -4,11 +4,13 @@
 #include <stdio.h>
 
 #include <SDL.h>
-#include <SDL_main.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #else
+#ifdef WD3_USE_SDL_MAIN
+#include <SDL_main.h>
+#endif
 #include <modules/hm/demo.h>
 #endif
 
@@ -20,7 +22,7 @@ static wd3hm context;
 #ifdef __EMSCRIPTEN__
 
 int main(int argc, char** argv) {
-  printf("Initialize the EFD WASM Heatmap\n");
+  printf("Initialize the WD3 WASM Heatmap\n");
   ghm_initialize(&context, WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
   ghm_parse_argument(&context, argc, argv);
   return ghm_create(&context) ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -150,10 +152,10 @@ static wd3hmdemo demo;
 
 #ifdef WD3_USE_SDL_MAIN
 int SDL_main(int argc, char** argv) {
-  printf("Initialize the EFD WASM Heatmap Demo with SDL Main\n");
+  printf("Initialize the WD3 WASM Heatmap Demo with SDL Main\n");
 #else
 int main(int argc, char** argv) {
-  printf("Initialize the EFD WASM Heatmap Demo\n");
+  printf("Initialize the WD3 WASM Heatmap Demo\n");
 #endif
   ghm_initialize(&context, WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
   ghm_parse_argument(&context, argc, argv);

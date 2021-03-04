@@ -80,12 +80,12 @@ echo "${PROJECT_NAME} root directory is defined as ${ROOT_DIR}"
 
 
 echo "*** Remove the old web deployment"
-REMOVE_CMD="rm -r ${DESTINATION}/efdhmc"
+REMOVE_CMD="rm -r ${DESTINATION}/wd3hmc"
 echo "${REMOVE_CMD}"
 ${REMOVE_CMD}
 
 echo "*** Deploy the web"
-COPY_CMD="cp -r ${ROOT_DIR}/dist/efdhmc ${DESTINATION}"
+COPY_CMD="cp -r ${ROOT_DIR}/dist/wd3hmc ${DESTINATION}"
 echo "${COPY_CMD}"
 ${COPY_CMD}
 

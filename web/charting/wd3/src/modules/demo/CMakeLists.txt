@@ -23,7 +23,7 @@ if(SDL_DESKTOP_TARGET)
 
   if (USE_SDL_MAIN)
     list(APPEND wd3_experiment_c_modules_demo_definitions
-      EFD_USE_SDL_MAIN)
+      WD3_USE_SDL_MAIN)
   endif (USE_SDL_MAIN)
 
   add_executable(${wd3_experiment_c_modules_demo_target}

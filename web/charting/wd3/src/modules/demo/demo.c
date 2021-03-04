@@ -12,7 +12,7 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #else
-#ifdef EFD_USE_SDL_MAIN
+#ifdef WD3_USE_SDL_MAIN
 #include <SDL_main.h>
 #endif
 #endif
@@ -101,7 +101,7 @@ EMSCRIPTEN_KEEPALIVE void resize(int width, int height) {
 
 #else
 
-#ifdef EFD_USE_SDL_MAIN
+#ifdef WD3_USE_SDL_MAIN
 int SDL_main(int argc, char** argv) {
   printf("Initialize the SDL Demo with SDL Main\n");
 #else
