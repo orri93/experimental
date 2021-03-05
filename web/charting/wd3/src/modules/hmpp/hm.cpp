@@ -14,8 +14,11 @@
 #include <modules/macros.h>
 #include <modules/hmpp/context.h>
 
+const int DataSize = 4;
+const int DataCount = 100;
+
 static wd3::context context;
-static wd3::data::GroupVector data;
+static wd3::data data(DataSize);
 
 #ifdef __EMSCRIPTEN__
 
@@ -39,10 +42,11 @@ int main(int argc, char** argv) {
   context.parse(argc, argv);
   if (context.initialize()) {
     if (context.create()) {
-      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, 100)) {
-
+      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
+        if (demo.loop()) {
+          return EXIT_SUCCESS;
+        }
       }
-      return EXIT_SUCCESS;
     }
   }
   return EXIT_FAILURE;

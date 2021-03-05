@@ -20,4 +20,12 @@ point& point::operator=(const point& point) noexcept {
   return *this;
 }
 
+void point::set(const double& depth, const double& value) noexcept {
+  _depth = depth;
+  _value = value;
+}
+
+const double& point::depth() const noexcept { return _depth; }
+const double& point::value() const noexcept { return _value; }
+
 } // namespace wd3
