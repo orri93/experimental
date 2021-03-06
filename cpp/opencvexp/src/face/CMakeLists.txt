@@ -1,34 +1,29 @@
 set(opencv_exp_face_target face)
 
-find_package(Qt5 COMPONENTS REQUIRED
-  QuickControls2
-  Quick
-  Core
-  Qml)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 find_package(OpenCV REQUIRED core imgcodecs objdetect videoio)
 
-qt5_add_resources(opencv_exp_face_qt_resources
-  ${CMAKE_CURRENT_LIST_DIR}/qml/face.qrc)
-
-qt5_add_resources(opencv_exp_face_qt_assets_resources
-  ${CMAKE_CURRENT_LIST_DIR}/assets.qrc)
-
 list(APPEND opencv_exp_face_source
-  ${opencv_exp_face_qt_assets_resources}
-  ${opencv_exp_face_qt_resources}
+  viewer.cpp
+  viewer.h
   face.cpp)
 
-# list(APPEND opencv_exp_face_include )
+list(APPEND opencv_exp_face_include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${opencv_exp_include})
 
 list(APPEND opencv_exp_face_libraries
-  Qt5::QuickControls2
-  Qt5::Quick
-  Qt5::Core
-  Qt5::Qml
-  ${OpenCV_LIBS})
-
-message(STATUS "  Face Libraries            : ${opencv_exp_face_libraries}")
+  Qt6::Widgets
+  ${OpenCV_LIBS}
+  ${opencv_exp_cv_target})
 
 # if (MSVC)
 #   list(APPEND opencv_exp_face_definitions
@@ -48,8 +43,10 @@ if (opencv_exp_face_include)
     ${opencv_exp_face_include})
 endif ()
 
-target_link_libraries(${opencv_exp_face_target}
-  ${opencv_exp_face_libraries})
+if (opencv_exp_face_libraries)
+  target_link_libraries(${opencv_exp_face_target} PRIVATE
+    ${opencv_exp_face_libraries})
+endif ()
 
 if(DEPLOY_PDB_FILES)
   install(FILES "$<TARGET_PDB_FILE:${opencv_exp_face_target}>"

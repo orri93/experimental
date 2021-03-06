@@ -25,6 +25,17 @@ option(USE_GTEST_PACKAGE
 
 set(BUILD_NUMBER "0" CACHE STRING "The build number")
 
+set(opencv_exp_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(opencv_exp_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
+
+list(APPEND opencv_exp_include
+  ${opencv_exp_source_include}
+  ${opencv_exp_binary_include})
+
+set(opencv_exp_cv_target cv)
+list(APPEND opencv_exp_cv_public_header
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/cpp/cv/detection.h")
+
 add_subdirectory(src)
 
 message(STATUS "")
