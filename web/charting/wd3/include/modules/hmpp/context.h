@@ -6,6 +6,8 @@
 #include <gos/types.h>
 
 #include <modules/hmpp/data.h>
+#include <modules/hmpp/column.h>
+#include <modules/hmpp/gradient.h>
 
 namespace wd3 {
 
@@ -17,11 +19,21 @@ public:
   bool create();
   void set(const int& width, const int& height);
   void parse(int argc, char** argv);
+  void updatexscale(const gos_range_1d& domain);
+  void updateyscale(const gos_range_1d& domain);
+  void updatezscale(const gos_range_1d& domain, const int& count);
+  bool begin();
+  bool render(::wd3::gradient& gradient, ::wd3::data& data);
+  bool complete();
   void shutdown();
 
 private:
+  double determination(::wd3::column& column, const double& value);
+  void drawpixel(const int& x, const int& y, const Uint32& pixel);
   int _sdlinit;
   gos_screen _screen;
+
+  SDL_Surface* _surface;
 
   /* Scales */
   gos_scale _xscale;
@@ -29,9 +41,7 @@ private:
   gos_scale _zscale;
 
   /* Colors */
-  gos_rgb_gradient _gradient;
-
-  SDL_Surface* _surface;
+  Uint32 _undefined;
 };
 
 } // namespace wd3

@@ -49,6 +49,9 @@ Thumbs.db
 .vs/
 out/
 
+# Visual Studio Code
+.vscode/
+
 # CMake
 CMakeSettings.json
 

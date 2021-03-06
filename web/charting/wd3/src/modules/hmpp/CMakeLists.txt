@@ -5,6 +5,7 @@ if(SDL_DESKTOP_TARGET)
 
   list(APPEND wd3_experiment_cpp_modules_hm_source
     exception.cpp
+    gradient.cpp
     context.cpp
     column.cpp
     point.cpp

@@ -1,3 +1,7 @@
+#include <cmath>
+
+#include <gos/interpolate.h>
+
 #include <modules/hmpp/exception.h>
 #include <modules/hmpp/column.h>
 
@@ -21,6 +25,11 @@ column& column::operator=(const column& column) {
     assign(column);
   }
   return *this;
+}
+
+double column::determination(const double& value) {
+  int i = index(value);
+  return i > 0 ? interpolate(i, value) : NAN;
 }
 
 void column::set(const int& index, const double& depth, const double& value) {
@@ -57,6 +66,26 @@ void column::assign(const column& column) {
   } else {
     throw ::wd3::exception("Failed to assign memory for points");
   }
+}
+
+int column::index(const double& value) const {
+  for (int i = 1; i < _size; i++) {
+    if (value >= _points[i - 1]->depth() && value < _points[i]->depth()) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+double column::interpolate(const int& index, const double& value) {
+  const point& first = *(_points[index - 1]);
+  const point& second = *(_points[index]);
+  return interpolate(first, second, value);
+}
+
+double column::interpolate(const point& first, const point& second, const double& value) {
+  double mu = (value - first.depth()) / (second.depth() - first.depth());
+  return gos_interpolate_linear(first.value(), second.value(), mu);
 }
 
 const double& column::time() const { return _time; }

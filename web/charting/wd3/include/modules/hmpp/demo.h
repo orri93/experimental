@@ -5,6 +5,8 @@
 
 #include <modules/hmpp/data.h>
 #include <modules/hmpp/context.h>
+#include <modules/hmpp/gradient.h>
+
 
 #define WD3_HMPP_DEMO_TYPE_PATTERN  1
 #define WD3_HMPP_DEMO_TYPE_ECD      2
@@ -13,7 +15,7 @@ namespace wd3 {
 
 class demo {
 public:
-  demo(::wd3::context& context, ::wd3::data& data) noexcept;
+  demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data) noexcept;
   bool create(const int& type, const int& size, const int& count, const int& step = 60);
   bool loop();
 
@@ -29,9 +31,10 @@ private:
     const int& y,
     const double& factor = 0.1,
     const double& depthfactor = 0.1,
-    const bool& isdepthrandom = true);
+    const bool& isdepthrandom = false);
 
   ::wd3::context& _context;
+  ::wd3::gradient& _gradient;
   ::wd3::data& _data;
 
   ::wd3::PointsPtr _points;

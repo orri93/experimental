@@ -30,6 +30,7 @@ void data::remove(const double& time) {
       break;
     }
   }
+  updatetimerange();
 }
 
 void data::ranges(gos_range_1d& depth, gos_range_1d& value) {
@@ -60,6 +61,16 @@ void data::range(gos_range_1d& depth) {
       }
     }
   }
+}
+
+const gos_range_1d& data::time() const { return _time; }
+
+ColumnIterator data::first() {
+  return _columns.begin();
+}
+
+ColumnIterator data::last() {
+  return _columns.end();
 }
 
 void data::updatetimerange() {

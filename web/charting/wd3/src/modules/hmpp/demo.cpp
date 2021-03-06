@@ -10,8 +10,9 @@
 
 namespace wd3 {
 
-demo::demo(::wd3::context& context, ::wd3::data& data) noexcept :
+demo::demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data) noexcept :
   _context(context),
+  _gradient(gradient),
   _data(data),
   _i(0),
   _size(0),
@@ -23,6 +24,7 @@ demo::demo(::wd3::context& context, ::wd3::data& data) noexcept :
 }
 
 bool demo::create(const int& type, const int& size, const int& count, const int& step) {
+  gos_range_1d depthrange, valuerange;
   time_t tt, now;
   double td, n, value;
   int i, j;
@@ -49,7 +51,7 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
 
     for (j = 0; j < _size; j++) {
       column.set(j, _points[j]->depth(), _points[j]->value());
-      evolve(*(_points[j]), _i, j);
+      evolve(*(_points[j]), _i, j, 0.1, 1.0, true);
     }
 
     _data.add(column);
@@ -57,6 +59,15 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
     tt += _step;
     _i++;
   }
+
+  _data.ranges(depthrange, valuerange);
+  _context.updatexscale(_data.time());
+  _context.updateyscale(depthrange);
+  _context.updatezscale(valuerange, _gradient.get().count);
+
+  _context.begin();
+  _context.render(_gradient, _data);
+  _context.complete();
 
   return true;
 }
@@ -91,24 +102,34 @@ bool demo::work() {
 }
 
 bool demo::next() {
+  gos_range_1d depthrange, valuerange;
   time_t tt, now;
   double td;
   int i;
 
   now = time(NULL);
-  tt = now - static_cast<time_t>(_step) * (static_cast<time_t>(_count) - 1);
   td = static_cast<double>(now);
-
   column column(_size, td);
   for (i = 0; i < _size; i++) {
     column.set(i, _points[i]->depth(), _points[i]->value());
     evolve(*(_points[i]), _i, i);
   }
 
-  _data.remove(tt);
+  tt = now - static_cast<time_t>(_step) * (static_cast<time_t>(_count) - 1);
+  td = static_cast<double>(tt);
+  _data.remove(td);
   _data.add(column);
 
   _i++;
+
+  _data.ranges(depthrange, valuerange);
+  _context.updatexscale(_data.time());
+  _context.updateyscale(depthrange);
+  _context.updatezscale(valuerange, _gradient.get().count);
+
+  _context.begin();
+  _context.render(_gradient, _data);
+  _context.complete();
 
   return true;
 }
@@ -164,8 +185,8 @@ void demo::evolve(
   const double& factor,
   const double& depthfactor,
   const bool& isdepthrandom) {
-  double depth = point.depth() + isdepthrandom ?
-    gos_noise_white(GOS_NOISE_DEFAULT_SEED, x, y) * depthfactor : depthfactor;
+  double depth = point.depth() + (isdepthrandom ?
+    depthfactor + gos_noise_white(GOS_NOISE_DEFAULT_SEED, x, y) : depthfactor);
   double value = point.value() +
     gos_noise_white(GOS_NOISE_DEFAULT_SEED, x, y) * factor;
   point.set(depth, value);

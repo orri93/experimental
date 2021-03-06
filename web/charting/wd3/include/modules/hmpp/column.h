@@ -15,6 +15,7 @@ public:
   column(const int& size, const double& time);
   column(const column& column);
   column& operator=(const column& column);
+  double determination(const double& value);
   void set(const int& index, const double& depth, const double& value);
   const bool is(const int& index) const;
   const point& at(const int& index) const;
@@ -23,6 +24,9 @@ public:
 
 private:
   void assign(const column& column);
+  int index(const double& value) const;
+  double interpolate(const int& index, const double& value);
+  static double interpolate(const point& first, const point& second, const double& value);
   double _time;
   int _size;
   PointsPtr _points;

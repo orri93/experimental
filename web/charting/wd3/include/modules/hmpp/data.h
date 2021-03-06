@@ -16,6 +16,10 @@ public:
   void remove(const double& time);
   void ranges(gos_range_1d& depth, gos_range_1d& value);
   void range(gos_range_1d& depth);
+  const gos_range_1d& time() const;
+  ::wd3::ColumnIterator first();
+  ::wd3::ColumnIterator last();
+  const column& nearest(const double& time);
 
 private:
   void updatetimerange();

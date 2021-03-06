@@ -12,12 +12,15 @@
 #endif
 
 #include <modules/macros.h>
+#include <modules/hmpp/data.h>
 #include <modules/hmpp/context.h>
+#include <modules/hmpp/gradient.h>
 
 const int DataSize = 4;
 const int DataCount = 100;
 
 static wd3::context context;
+static wd3::gradient gradient;
 static wd3::data data(DataSize);
 
 #ifdef __EMSCRIPTEN__
@@ -29,7 +32,7 @@ int main(int argc, char** argv) {
 
 #else
 
-static wd3::demo demo(context, data);
+static wd3::demo demo(context, gradient, data);
 
 #ifdef WD3_USE_SDL_MAIN
 int SDL_main(int argc, char** argv) {
@@ -40,11 +43,14 @@ int main(int argc, char** argv) {
 #endif
   context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
   context.parse(argc, argv);
-  if (context.initialize()) {
-    if (context.create()) {
-      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
-        if (demo.loop()) {
-          return EXIT_SUCCESS;
+  gradient.stock();
+  if (gradient.create()) {
+    if (context.initialize()) {
+      if (context.create()) {
+        if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
+          if (demo.loop()) {
+            return EXIT_SUCCESS;
+          }
         }
       }
     }
