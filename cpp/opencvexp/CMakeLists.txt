@@ -34,7 +34,7 @@ list(APPEND opencv_exp_include
 
 set(opencv_exp_cv_target cv)
 list(APPEND opencv_exp_cv_public_header
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/cpp/cv/detection.h")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/cv/detection.h")
 
 add_subdirectory(src)
 

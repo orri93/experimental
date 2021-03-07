@@ -81,13 +81,12 @@ void FaceViewer::timer() {
           int faceCount;
           switch (_context.method) {
           case ::gos::cv::detection::method::a:
-            ::gos::cv::detection::detecta(_clone, _context);
+            faceCount = ::gos::cv::detection::detecta(_clone, _context);
             break;
           case ::gos::cv::detection::method::b:
-            ::gos::cv::detection::detectb(_clone, _context);
+            faceCount = ::gos::cv::detection::detectb(_clone, _context);
             break;
           }
-          faceCount = ::gos::cv::detection::detectb(_clone, _context);
           if (faceCount > 0) {
             message = QString("Detecting %1 faces").arg(QString::number(faceCount));
           } else {
