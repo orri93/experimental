@@ -13,6 +13,8 @@
 
 #include <cv/detection.h>
 
+#include <controller.h>
+
 class FaceViewer : public QMainWindow {
   Q_OBJECT
 public:
@@ -20,19 +22,23 @@ public:
 
 private slots:
   void open();
-  void zoomIn();
-  void zoomOut();
+  void close();
   void normalSize();
   void fitToWindow();
   void about();
   void timer();
+  void onTimerChanged(int value);
+
+protected:
+  void closeEvent(QCloseEvent* event);
 
 private:
   void initialize();
   void updateActions();
   void setFrame(const QImage& frame);
   void scaleImage(const double& factor);
-  void adjustScrollBar(QScrollBar* scrollBar, const double& factor);
+
+  static void adjustScrollBar(QScrollBar* scrollBar, const double& factor);
 
   int _device;
   double _scaleFactor;
@@ -42,9 +48,7 @@ private:
 
   QLabel* _imageLabel;
   QScrollArea* _scrollArea;
-
-  QVBoxLayout* _optionLayout;
-  QHBoxLayout* _mainLayout;
+  QStatusBar* _statusBar;
 
   QAction* _zoomInAct;
   QAction* _zoomOutAct;
@@ -54,6 +58,8 @@ private:
   cv::Mat _frame;
   cv::Mat _clone;
   cv::VideoCapture _capture;
+
+  FaceDetectionController* _controller;
 
   gos::cv::detection::context _context;
 };

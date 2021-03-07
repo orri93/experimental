@@ -12,9 +12,18 @@ find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(OpenCV REQUIRED core imgcodecs objdetect videoio)
 
 list(APPEND opencv_exp_face_source
+  controller.cpp
+  detection.cpp
+  controller.h
+  detection.h
+  select.cpp
   viewer.cpp
+  select.h
   viewer.h
-  face.cpp)
+  size.cpp
+  face.cpp
+  lock.cpp
+  size.h)
 
 list(APPEND opencv_exp_face_include
   ${CMAKE_CURRENT_SOURCE_DIR}
