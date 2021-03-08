@@ -6,8 +6,8 @@
 
 namespace wd3 {
 
-static void reset(gos_range_1d& range);
-static void update(gos_range_1d& range, const double& value);
+static void reset(::gos::range::d1<>& range);
+static void update(::gos::range::d1<>& range, const double& value);
 
 data::data(const int& size) noexcept :
   _size(size),
@@ -33,7 +33,7 @@ void data::remove(const double& time) {
   updatetimerange();
 }
 
-void data::ranges(gos_range_1d& depth, gos_range_1d& value) {
+void data::ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value) {
   int i, size;
   reset(depth);
   reset(value);
@@ -49,7 +49,7 @@ void data::ranges(gos_range_1d& depth, gos_range_1d& value) {
   }
 }
 
-void data::range(gos_range_1d& depth) {
+void data::range(::gos::range::d1<>& depth) {
   int i, size;
   reset(depth);
   for (column& column : _columns) {
@@ -63,7 +63,7 @@ void data::range(gos_range_1d& depth) {
   }
 }
 
-const gos_range_1d& data::time() const { return _time; }
+const ::gos::range::d1<>& data::time() const { return _time; }
 
 ColumnIterator data::first() {
   return _columns.begin();
@@ -80,17 +80,17 @@ void data::updatetimerange() {
   }
 }
 
-void reset(gos_range_1d& range) {
-  range.from = DBL_MAX;
-  range.to = -DBL_MAX;
+void reset(::gos::range::d1<>& range) {
+  range.setfrom(DBL_MAX);
+  range.setto(-DBL_MAX);
 }
 
-void update(gos_range_1d& range, const double& value) {
-  if (value < range.from) {
-    range.from = value;
+void update(::gos::range::d1<>& range, const double& value) {
+  if (value < range.from()) {
+    range.setfrom(value);
   }
-  if (value > range.to) {
-    range.to = value;
+  if (value > range.to()) {
+    range.setto(value);
   }
 }
 

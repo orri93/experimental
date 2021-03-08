@@ -44,13 +44,12 @@ int main(int argc, char** argv) {
   context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
   context.parse(argc, argv);
   gradient.stock();
-  if (gradient.create()) {
-    if (context.initialize()) {
-      if (context.create()) {
-        if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
-          if (demo.loop()) {
-            return EXIT_SUCCESS;
-          }
+  gradient.create();
+  if (context.initialize()) {
+    if (context.create()) {
+      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
+        if (demo.loop()) {
+          return EXIT_SUCCESS;
         }
       }
     }

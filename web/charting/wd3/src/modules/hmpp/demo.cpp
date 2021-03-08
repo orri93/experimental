@@ -24,7 +24,7 @@ demo::demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data
 }
 
 bool demo::create(const int& type, const int& size, const int& count, const int& step) {
-  gos_range_1d depthrange, valuerange;
+  ::gos::range::d1<> depthrange, valuerange;
   time_t tt, now;
   double td, n, value;
   int i, j;
@@ -35,11 +35,11 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
 
   _points = std::make_unique<PointPtr[]>(_size);
 
-  value = 5.0 + gos_noise_white(GOS_NOISE_DEFAULT_SEED, 0, 0);
+  value = 5.0 + ::gos::noise::white(GOS_NOISE_DEFAULT_SEED, 0, 0);
   for (i = 0; i < _size; i++) {
     n = 1.0 + static_cast<double>(i);
     _points[i] = std::make_unique<point>(100.0 * n, value);
-    value += gos_noise_white(GOS_NOISE_DEFAULT_SEED, 0, i) + 10.0 * n;
+    value += ::gos::noise::white(GOS_NOISE_DEFAULT_SEED, 0, i) + 10.0 * n;
   }
 
   _i = 0;
@@ -63,7 +63,7 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
   _data.ranges(depthrange, valuerange);
   _context.updatexscale(_data.time());
   _context.updateyscale(depthrange);
-  _context.updatezscale(valuerange, _gradient.get().count);
+  _context.updatezscale(valuerange, _gradient.get().size());
 
   _context.begin();
   _context.render(_gradient, _data);
@@ -102,7 +102,7 @@ bool demo::work() {
 }
 
 bool demo::next() {
-  gos_range_1d depthrange, valuerange;
+  ::gos::range::d1<> depthrange, valuerange;
   time_t tt, now;
   double td;
   int i;
@@ -125,7 +125,7 @@ bool demo::next() {
   _data.ranges(depthrange, valuerange);
   _context.updatexscale(_data.time());
   _context.updateyscale(depthrange);
-  _context.updatezscale(valuerange, _gradient.get().count);
+  _context.updatezscale(valuerange, _gradient.get().size());
 
   _context.begin();
   _context.render(_gradient, _data);
@@ -186,9 +186,9 @@ void demo::evolve(
   const double& depthfactor,
   const bool& isdepthrandom) {
   double depth = point.depth() + (isdepthrandom ?
-    depthfactor + gos_noise_white(GOS_NOISE_DEFAULT_SEED, x, y) : depthfactor);
+    depthfactor + ::gos::noise::white(GOS_NOISE_DEFAULT_SEED, x, y) : depthfactor);
   double value = point.value() +
-    gos_noise_white(GOS_NOISE_DEFAULT_SEED, x, y) * factor;
+    ::gos::noise::white(GOS_NOISE_DEFAULT_SEED, x, y) * factor;
   point.set(depth, value);
 }
 

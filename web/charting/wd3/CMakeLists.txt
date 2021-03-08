@@ -69,12 +69,13 @@ endif()
 set(GOS_CPP_INSTRUCT_GOOGLE_TEST_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/extern/googletest")
 
+add_subdirectory(extern/gosc)
+add_subdirectory(extern/goscpp)
+
 include(extern/gosc/cmake/gosc.cmake)
 include(extern/goscpp/cmake/goscpp.cmake)
 
-add_subdirectory(extern/gosc)
 gosc_get_properties()
-add_subdirectory(extern/goscpp)
 goscpp_get_properties()
 
 set(wd3_experiment_c_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")

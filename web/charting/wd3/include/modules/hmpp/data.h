@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <gos/types.h>
+#include <gos/range.h>
 
 #include <modules/hmpp/column.h>
 
@@ -14,9 +14,9 @@ public:
   data(const int& size) noexcept;
   void add(const ::wd3::column& column);
   void remove(const double& time);
-  void ranges(gos_range_1d& depth, gos_range_1d& value);
-  void range(gos_range_1d& depth);
-  const gos_range_1d& time() const;
+  void ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value);
+  void range(::gos::range::d1<>& depth);
+  const ::gos::range::d1<>& time() const;
   ::wd3::ColumnIterator first();
   ::wd3::ColumnIterator last();
   const column& nearest(const double& time);
@@ -25,7 +25,7 @@ private:
   void updatetimerange();
   int _size;
   ::wd3::ColumnQueue _columns;
-  gos_range_1d _time;
+  ::gos::range::d1<> _time;
 };
 
 } // namespace wd3

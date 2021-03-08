@@ -15,11 +15,11 @@ if(SDL_DESKTOP_TARGET)
 
   list(APPEND wd3_experiment_cpp_modules_hm_include
     ${SDL_INCLUDE_DIR}
-    ${gosc_include_directories}
+    ${goscpp_include_directories}
     ${wd3_experiment_c_include})
 
   list(APPEND wd3_experiment_cpp_modules_hm_libraries
-    ${gosc_target}
+    ${goscpp_target}
     ${SDL_LIBRARY}
     ${SDLMAIN_LIBRARY})
 

@@ -85,7 +85,7 @@ double column::interpolate(const int& index, const double& value) {
 
 double column::interpolate(const point& first, const point& second, const double& value) {
   double mu = (value - first.depth()) / (second.depth() - first.depth());
-  return gos_interpolate_linear(first.value(), second.value(), mu);
+  return gos::interpolate::linear(first.value(), second.value(), mu);
 }
 
 const double& column::time() const { return _time; }
