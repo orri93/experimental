@@ -65,3 +65,10 @@ endif()
 
 install(TARGETS ${opencv_exp_face_target}
   RUNTIME DESTINATION bin)
+
+set(CPACK_PACKAGE_NAME "GOS OpenCV Face Experiment")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GOS OpenCV Face Experiment Installation")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+
+include(CPack)
+include(CPackIFW)

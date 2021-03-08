@@ -20,6 +20,7 @@ public:
 signals:
 
 private slots:
+  void onCascadeFileChanged(const QString& newFileName);
   void onFactorChanged(double value);
   void onMinimumChanged(int value);
 

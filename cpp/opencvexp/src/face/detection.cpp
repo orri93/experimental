@@ -29,6 +29,12 @@ void DetectionGroup::extra(bool enable) {
   _minimumSpinBox->setEnabled(enable);
 }
 
+void DetectionGroup::onCascadeFileChanged(const QString& newFileName) {
+  ::std::lock_guard guard(::gos::qt::lock::context_);
+  _classification.file = newFileName.toStdString();
+  _classification.classifier.load(_classification.file);
+}
+
 void DetectionGroup::onFactorChanged(double value) {
   ::std::lock_guard guard(::gos::qt::lock::context_);
   _classification.factor = value;
@@ -42,6 +48,7 @@ void DetectionGroup::onMinimumChanged(int value) {
 void DetectionGroup::initialize() {
   QString cascadeFile = QString::fromStdString(_classification.file);
   _selectCascadeFile = new SelectFileLayout(tr("Cascade File:"), cascadeFile);
+  connect(_selectCascadeFile, &SelectFileLayout::valueChanged, this, &DetectionGroup::onCascadeFileChanged);
 
   QSize size(_classification.size.width, _classification.size.height);
   _sizeLayout = new SizeLayout(tr("Size:"), size);

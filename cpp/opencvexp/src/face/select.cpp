@@ -1,6 +1,10 @@
 #include <select.h>
 
-static void initializeFileDialog(QFileDialog& dialog, QFileDialog::AcceptMode acceptMode, const QStringList& nameFilters);
+static void initializeFileDialog(
+  QFileDialog& dialog,
+  QFileDialog::AcceptMode acceptMode,
+  const QStringList& nameFilters,
+  const QString value);
 
 SelectFileLayout::SelectFileLayout(const QString& label, const QString& value, QWidget* parent) :
   QHBoxLayout(parent),
@@ -17,7 +21,8 @@ void SelectFileLayout::onBrowseClicked() {
   QStringList nameFilterList;
   nameFilterList.append(tr("XML files (*.xml)"));
   nameFilterList.append(tr("Text files (*.txt)"));
-  initializeFileDialog(fileDialog, QFileDialog::AcceptOpen, nameFilterList);
+  initializeFileDialog(fileDialog, QFileDialog::AcceptOpen, nameFilterList, _value);
+  fileDialog.selectFile(_value);
   int result = fileDialog.exec();
   if (result == QDialog::Accepted) {
     _edit->setText(fileDialog.selectedFiles().first());
@@ -47,13 +52,23 @@ void SelectFileLayout::initialize(const QString& label) {
   addWidget(_set);
 }
 
-void initializeFileDialog(QFileDialog& dialog, QFileDialog::AcceptMode acceptMode, const QStringList& nameFilters) {
+void initializeFileDialog(
+  QFileDialog& dialog,
+  QFileDialog::AcceptMode acceptMode,
+  const QStringList& nameFilters,
+  const QString value) {
   static bool firstDialog_ = true;
 
   if (firstDialog_) {
     firstDialog_ = false;
-    const QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-    dialog.setDirectory(locations.isEmpty() ? QDir::currentPath() : locations.last());
+
+    QFileInfo fileInfo(value);
+    if (fileInfo.exists()) {
+      dialog.setDirectory(fileInfo.dir());
+    } else {
+      const QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+      dialog.setDirectory(locations.isEmpty() ? QDir::currentPath() : locations.last());
+    }
   }
 
   dialog.setFileMode(QFileDialog::AnyFile);
