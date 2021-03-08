@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include <SDL.h>
 
@@ -20,24 +21,17 @@
 
 namespace wd3 {
 
-namespace initialize {
-static void range(::gos::range::d1<>& range, const double& from = 0.0, const double& to = 1.0) noexcept;
-static void scale(::gos::scale<>& scale) noexcept;
-static void screen(::gos::screen<>& screen, const int& width = 0, const int& height = 0) noexcept;
-} // namespace initialize
-
-namespace update {
-static void scale(::gos::scale<>& scale, const ::gos::range::d1<>& domain, const int maximum);
-} // namespace update
+namespace nearest {
+static ::wd3::type::duration neighbor(
+  const ::wd3::type::time& first,
+  const ::wd3::type::time& second,
+  const ::wd3::type::time& value);
+} // namespace nearest
 
 context::context() noexcept :
   _sdlinit(WD3_SDL_INIT_DEFAULT),
   _surface(NULL),
   _undefined(0) {
-  ::wd3::initialize::screen(_screen);
-  ::wd3::initialize::scale(_xscale);
-  ::wd3::initialize::scale(_yscale);
-  ::wd3::initialize::scale(_zscale);
 }
 
 context::~context() {
@@ -93,16 +87,19 @@ void context::parse(int argc, char** argv) {
   }
 }
 
-void context::updatexscale(const ::gos::range::d1<>& domain) {
-  update::scale(_xscale, domain, _screen.width());
+void context::updatexscale(const ::gos::range::d1<::wd3::type::time>& domain) {
+  _xscale.setdomain(domain);
+  _xscale.setrange(0, _screen.width());
 }
 
-void context::updateyscale(const ::gos::range::d1<>& domain) {
-  update::scale(_yscale, domain, _screen.height());
+void context::updateyscale(const ::gos::range::d1<double>& domain) {
+  _yscale.setdomain(domain);
+  _yscale.setrange(0, _screen.height());
 }
 
-void context::updatezscale(const ::gos::range::d1<>& domain, const int& count) {
-  update::scale(_zscale, domain, count);
+void context::updatezscale(const ::gos::range::d1<double>& domain, const int& count) {
+  _zscale.setdomain(domain);
+  _zscale.setrange(0, count);
 }
 
 bool context::begin() {
@@ -116,17 +113,19 @@ bool context::begin() {
 }
 
 bool context::render(wd3::gradient& gradient, wd3::data& data) {
+  const ::wd3::type::duration moment = ::wd3::type::duration();
   int k, i = 0;
   Uint32 pixel;
-  double t, fz, fy;
+  ::wd3::type::time t;
+  double fz;
   ColumnIterator it = data.first();
   ColumnIterator end = data.last();
   if (it != end) {
     ColumnIterator next = it + 1;
     for (int x = 0; x < _screen.width(); x++) {
       if (next != end) {
-        t = _xscale.reverse(static_cast<double>(x));
-        while (::gos::nearest::neighbor(it->time(), next->time(), t)) {
+        t = _xscale.reverse(x);
+        while (::wd3::nearest::neighbor(it->time(), next->time(), t) > moment) {
           it = next;
           next = it + 1;
           i++;
@@ -136,8 +135,7 @@ bool context::render(wd3::gradient& gradient, wd3::data& data) {
         }
       }
       for (int y = 0; y < _screen.height(); y++) {
-        fy = static_cast<double>(y);
-        fz = determination(*it, fy);
+        fz = determination(*it, y);
         if (::isfinite(fz)) {
           k = static_cast<int>(_zscale.value(fz));
           const ::gos::color::rgb<>& rgb = gradient.get().at(k);
@@ -171,7 +169,7 @@ void context::shutdown() {
   }
 }
 
-double context::determination(column& column, const double& value) {
+double context::determination(column& column, const int& value) {
   double y = _yscale.reverse(value);
   return column.determination(y);
 }
@@ -180,29 +178,15 @@ void context::drawpixel(const int& x, const int& y, const Uint32& pixel) {
   *(((Uint32*)(_surface->pixels)) + _screen.index(x, y)) = pixel;
 }
 
-namespace initialize {
-void range(::gos::range::d1<>& range, const double& from, const double& to) noexcept {
-  range.setfrom(from);
-  range.setto(to);
+namespace nearest {
+::wd3::type::duration neighbor(
+  const ::wd3::type::time& first,
+  const ::wd3::type::time& second,
+  const ::wd3::type::time& value) {
+  ::wd3::type::duration fd = ::std::chrono::abs(first - value);
+  ::wd3::type::duration sd = ::std::chrono::abs(second - value);
+  return fd - sd;
 }
-void scale(::gos::scale<>& scale) noexcept {
-  ::gos::range::d1<> domain, range;
-  ::wd3::initialize::range(domain);
-  ::wd3::initialize::range(range);
-  scale.setdomain(domain);
-  scale.setrange(range);
-}
-void screen(::gos::screen<>& screen, const int& width, const int& height) noexcept {
-  screen.setwidth(width);
-  screen.setheight(height);
-}
-} // namespace initialize
-
-namespace update {
-void scale(::gos::scale<>& scale, const ::gos::range::d1<>& domain, const int maximum) {
-  scale.setdomain(domain);
-  scale.setrange(0.0, static_cast<double>(maximum) - 1.0);
-}
-} // namespace update
+} // namespace nearest
 
 } // namespace wd3

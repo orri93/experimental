@@ -17,17 +17,21 @@ demo::demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data
   _i(0),
   _size(0),
   _count(0),
-  _step(0),
   _isgo(false),
   _isrun(false),
   _event() {
 }
 
-bool demo::create(const int& type, const int& size, const int& count, const int& step) {
+bool demo::create(
+  const int& type,
+  const int& size,
+  const int& count,
+  const ::wd3::type::duration& step) {
   ::gos::range::d1<> depthrange, valuerange;
-  time_t tt, now;
-  double td, n, value;
-  int i, j;
+  ::wd3::type::duration duration;
+  ::wd3::type::time tt, now;
+  double n, value;
+  int i, j, gc;
 
   _size = size;
   _count = count;
@@ -43,11 +47,11 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
   }
 
   _i = 0;
-  now = time(NULL);
-  tt = now - static_cast<time_t>(_step) * (static_cast<time_t>(_count) - 1);
+  now = ::wd3::type::clock::now();
+  duration = _step * (_count - 1);
+  tt = now - duration;
   while (tt <= now) {
-    td = static_cast<double>(tt);
-    column column(_size, td);
+    column column(_size, tt);
 
     for (j = 0; j < _size; j++) {
       column.set(j, _points[j]->depth(), _points[j]->value());
@@ -60,10 +64,11 @@ bool demo::create(const int& type, const int& size, const int& count, const int&
     _i++;
   }
 
+  gc = static_cast<int>(_gradient.get().size());
   _data.ranges(depthrange, valuerange);
   _context.updatexscale(_data.time());
   _context.updateyscale(depthrange);
-  _context.updatezscale(valuerange, _gradient.get().size());
+  _context.updatezscale(valuerange, gc);
 
   _context.begin();
   _context.render(_gradient, _data);
@@ -103,29 +108,29 @@ bool demo::work() {
 
 bool demo::next() {
   ::gos::range::d1<> depthrange, valuerange;
-  time_t tt, now;
-  double td;
-  int i;
+  ::wd3::type::duration duration;
+  ::wd3::type::time tt, now;
+  int i, gc;
 
-  now = time(NULL);
-  td = static_cast<double>(now);
-  column column(_size, td);
+  now = ::wd3::type::clock::now();
+  column column(_size, now);
   for (i = 0; i < _size; i++) {
     column.set(i, _points[i]->depth(), _points[i]->value());
     evolve(*(_points[i]), _i, i);
   }
 
-  tt = now - static_cast<time_t>(_step) * (static_cast<time_t>(_count) - 1);
-  td = static_cast<double>(tt);
-  _data.remove(td);
+  duration = _step * (_count - 1);
+  tt = now - duration;
+  _data.remove(tt);
   _data.add(column);
 
   _i++;
 
+  gc = static_cast<int>(_gradient.get().size());
   _data.ranges(depthrange, valuerange);
   _context.updatexscale(_data.time());
   _context.updateyscale(depthrange);
-  _context.updatezscale(valuerange, _gradient.get().size());
+  _context.updatezscale(valuerange, gc);
 
   _context.begin();
   _context.render(_gradient, _data);

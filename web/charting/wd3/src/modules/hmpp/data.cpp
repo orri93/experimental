@@ -1,26 +1,25 @@
 #include <cfloat>
 
 #include <vector>
+#include <limits>
 
 #include <modules/hmpp/data.h>
 
 namespace wd3 {
 
 static void reset(::gos::range::d1<>& range);
-static void update(::gos::range::d1<>& range, const double& value);
 
 data::data(const int& size) noexcept :
-  _size(size),
-  _time({ DBL_MAX, -DBL_MAX }) {
+  _size(size) {
+  _time.reset(::wd3::type::time::min(), ::wd3::type::time::max());
 }
 
 void data::add(const column& column) {
-  const double& t = column.time();
   _columns.push_back(column);
-  update(_time, t);
+  _time.update(column.time());
 }
 
-void data::remove(const double& time) {
+void data::remove(const ::wd3::type::time& time) {
   ColumnIterator it = _columns.begin();
   while (it != _columns.end()) {
     if (it->time() <= time) {
@@ -35,15 +34,15 @@ void data::remove(const double& time) {
 
 void data::ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value) {
   int i, size;
-  reset(depth);
-  reset(value);
+  depth.reset(-DBL_MAX, DBL_MAX);
+  value.reset(-DBL_MAX, DBL_MAX);
   for (column& column : _columns) {
     size = column.size();
     for (i = 0; i < size; i++) {
       if (column.is(i)) {
         const point& p = column.at(i);
-        update(depth, p.depth());
-        update(value, p.value());
+        depth.update(p.depth());
+        value.update(p.value());
       }
     }
   }
@@ -51,19 +50,19 @@ void data::ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value) {
 
 void data::range(::gos::range::d1<>& depth) {
   int i, size;
-  reset(depth);
+  depth.reset(-DBL_MAX, DBL_MAX);
   for (column& column : _columns) {
     size = column.size();
     for (i = 0; i < size; i++) {
       if (column.is(i)) {
         const point& p = column.at(i);
-        update(depth, p.depth());
+        depth.update(p.depth());
       }
     }
   }
 }
 
-const ::gos::range::d1<>& data::time() const { return _time; }
+const ::gos::range::d1<::wd3::type::time>& data::time() const { return _time; }
 
 ColumnIterator data::first() {
   return _columns.begin();
@@ -74,24 +73,15 @@ ColumnIterator data::last() {
 }
 
 void data::updatetimerange() {
-  reset(_time);
+  _time.reset(::wd3::type::time::min(), ::wd3::type::time::max());
   for (column& column : _columns) {
-    update(_time, column.time());
+    _time.update(column.time());
   }
 }
 
 void reset(::gos::range::d1<>& range) {
   range.setfrom(DBL_MAX);
   range.setto(-DBL_MAX);
-}
-
-void update(::gos::range::d1<>& range, const double& value) {
-  if (value < range.from()) {
-    range.setfrom(value);
-  }
-  if (value > range.to()) {
-    range.setto(value);
-  }
 }
 
 } // namespace wd3

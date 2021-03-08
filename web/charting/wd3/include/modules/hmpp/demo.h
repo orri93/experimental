@@ -3,10 +3,10 @@
 
 #include <SDL.h>
 
-#include <modules/hmpp/data.h>
+#include <modules/hmpp/types.h>
 #include <modules/hmpp/context.h>
 #include <modules/hmpp/gradient.h>
-
+#include <modules/hmpp/data.h>
 
 #define WD3_HMPP_DEMO_TYPE_PATTERN  1
 #define WD3_HMPP_DEMO_TYPE_ECD      2
@@ -16,7 +16,11 @@ namespace wd3 {
 class demo {
 public:
   demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data) noexcept;
-  bool create(const int& type, const int& size, const int& count, const int& step = 60);
+  bool create(
+    const int& type,
+    const int& size,
+    const int& count,
+    const ::wd3::type::duration& step = ::std::chrono::seconds(1));
   bool loop();
 
 private:
@@ -39,10 +43,11 @@ private:
 
   ::wd3::PointsPtr _points;
 
+  ::wd3::type::duration _step;
+
   int _i;
   int _size;
   int _count;
-  int _step;
   bool _isgo;
   bool _isrun;
 

@@ -7,7 +7,7 @@
 
 namespace wd3 {
 
-column::column(const int& size, const double& time) :
+column::column(const int& size, const ::wd3::type::time& time) :
   _time(time),
   _size(size) {
   _points = std::make_unique<PointPtr[]>(_size);
@@ -88,7 +88,7 @@ double column::interpolate(const point& first, const point& second, const double
   return gos::interpolate::linear(first.value(), second.value(), mu);
 }
 
-const double& column::time() const { return _time; }
+const ::wd3::type::time& column::time() const { return _time; }
 const int& column::size() const { return _size; }
 
 } // namespace wd3
