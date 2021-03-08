@@ -36,15 +36,6 @@ endif (SDL_DESKTOP_TARGET)
 
 set(BUILD_NUMBER "0" CACHE STRING "The build number")
 
-set(wd3_experiment_c_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
-set(wd3_experiment_c_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
-
-list(APPEND wd3_experiment_c_include
-  ${wd3_experiment_c_source_include}
-  ${wd3_experiment_c_binary_include})
-
-include(extern/gosc/cmake/gosc.cmake)
-
 set(TIDY_ARGUMENTS "-checks=*,-clang-analyzer-alpha.* "
   CACHE STRING "Arguments for Clang-Tidy check")
 set(TIDY_FIX_ARGUMENTS "-list-checks=*,-clang-analyzer-alpha.* "
@@ -75,8 +66,23 @@ if(CLANG_TIDY)
   endif()
 endif()
 
+set(GOS_CPP_INSTRUCT_GOOGLE_TEST_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/gosc/extern/googletest")
+
+include(extern/gosc/cmake/gosc.cmake)
+include(extern/goscpp/cmake/goscpp.cmake)
+
 add_subdirectory(extern/gosc)
 gosc_get_properties()
+add_subdirectory(extern/goscpp)
+goscpp_get_properties()
+
+set(wd3_experiment_c_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(wd3_experiment_c_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
+
+list(APPEND wd3_experiment_c_include
+  ${wd3_experiment_c_source_include}
+  ${wd3_experiment_c_binary_include})
 
 if(BUILD_TESTS)
   set(wd3_experiment_c_modules_hm_testable_target testablehm)
