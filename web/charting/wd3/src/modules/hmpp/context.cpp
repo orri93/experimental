@@ -79,7 +79,7 @@ void context::parse(int argc, char** argv) {
     }
   }
   if (argc > 2) {
-    std::string a2(argv[1]);
+    std::string a2(argv[2]);
     if (gos::text::are::all::digits(a2)) {
       _screen.setheight(::atoi(a2.c_str()));
       std::cout << "Setting screen height to " << _screen.height() << std::endl;
