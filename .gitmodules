@@ -58,3 +58,6 @@
 [submodule "web/charting/wd3/extern/goscpp"]
 	path = web/charting/wd3/extern/goscpp
 	url = git@github.com:orri93/goscpp.git
+[submodule "web/charting/wd3/extern/date"]
+	path = web/charting/wd3/extern/date
+	url = https://github.com/HowardHinnant/date.git

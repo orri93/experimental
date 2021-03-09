@@ -71,12 +71,18 @@ set(GOS_CPP_INSTRUCT_GOOGLE_TEST_PATH
 
 add_subdirectory(extern/gosc)
 add_subdirectory(extern/goscpp)
+add_subdirectory(extern/date)
 
 include(extern/gosc/cmake/gosc.cmake)
 include(extern/goscpp/cmake/goscpp.cmake)
 
 gosc_get_properties()
 goscpp_get_properties()
+
+set(wd3_experiment_extern_date_dir
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/date")
+set(wd3_experiment_extern_date_include
+  "${wd3_experiment_extern_date_dir}/include")
 
 set(wd3_experiment_c_source_include "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(wd3_experiment_c_binary_include "${CMAKE_CURRENT_BINARY_DIR}/include")
@@ -87,6 +93,7 @@ list(APPEND wd3_experiment_c_include
 
 if(BUILD_TESTS)
   set(wd3_experiment_c_modules_hm_testable_target testablehm)
+  set(wd3_experiment_cpp_modules_hm_testable_target testablehmpp)
 endif()
 
 add_subdirectory(src)
@@ -121,9 +128,9 @@ if (EM_TARGET)
   else ()
     set(wd3_experiment_c_em_assertions 0)
   endif ()
-  message(STATUS "  Assertions              : ${wd3_experiment_c_em_assertions}")
+  message(STATUS "  Assertions                : ${wd3_experiment_c_em_assertions}")
 
-  # The Heat-map WebAssembly Module
+  # The Heat-map C WebAssembly Module
   set(wd3_experiment_c_em_hm_target hmwasm)
   list(APPEND wd3_experiment_c_em_hm_source
     "${wd3_experiment_c_em_modules_dir}/hm/hmm.c"
@@ -149,10 +156,52 @@ if (EM_TARGET)
     COMMAND emcc ${wd3_experiment_c_em_hm_args} -o ${wd3_experiment_c_em_hm_js} ${wd3_experiment_c_em_hm_source}
     BYPRODUCTS ${wd3_experiment_c_em_hm_js} ${wd3_experiment_c_em_hm_wasm}
     DEPENDS ${wd3_experiment_c_em_hm_source}
-    COMMENT "Building WD3 SDL Heatmap Web Assembly")
+    COMMENT "Building the WD3 C SDL Heatmap Web Assembly")
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_hm_js}"
     DESTINATION lib)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_c_em_hm_wasm}"
+    DESTINATION lib)
+
+  # The Heat-map C++ WebAssembly Module
+  set(wd3_experiment_cpp_em_hmpp_target hmppwasm)
+  list(APPEND wd3_experiment_cpp_em_hmpp_source
+    "${wd3_experiment_c_em_modules_dir}/hmpp/emscripten.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/exception.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/gradient.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/context.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/column.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/global.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/point.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/data.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/time.cpp"
+    "${wd3_experiment_c_em_modules_dir}/hmpp/hm.cpp"
+    ${goscpp_source})
+  list(APPEND wd3_experiment_cpp_em_hmpp_include
+    ${goscpp_include_directories}
+    ${wd3_experiment_c_source_include}
+    ${wd3_experiment_extern_date_include})
+  list(TRANSFORM wd3_experiment_cpp_em_hmpp_include PREPEND -I)
+  set(wd3_experiment_cpp_em_hmpp_args
+    ${wd3_experiment_cpp_em_hmpp_include}
+    -std=c++17
+    -O3
+    -s MODULARIZE=1
+#   -s USE_SDL=2
+    -s TOTAL_MEMORY=67108864
+#   -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+    -s ASSERTIONS=${wd3_experiment_c_em_assertions}
+    -s EXPORT_NAME="HmppModule"
+    -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall']")
+  set(wd3_experiment_cpp_em_hmpp_js hmpp.js)
+  set(wd3_experiment_cpp_em_hmpp_wasm hmpp.wasm)
+  add_custom_target(${wd3_experiment_cpp_em_hmpp_target} ALL
+    COMMAND em++ ${wd3_experiment_cpp_em_hmpp_args} -o ${wd3_experiment_cpp_em_hmpp_js} ${wd3_experiment_cpp_em_hmpp_source}
+    BYPRODUCTS ${wd3_experiment_cpp_em_hmpp_js} ${wd3_experiment_cpp_em_hmpp_wasm}
+    DEPENDS ${wd3_experiment_cpp_em_hmpp_source}
+    COMMENT "Building the WD3 C++ SDL Heatmap Web Assembly")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_cpp_em_hmpp_js}"
+    DESTINATION lib)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${wd3_experiment_cpp_em_hmpp_wasm}"
     DESTINATION lib)
 
   # The Demo WebAssembly Module

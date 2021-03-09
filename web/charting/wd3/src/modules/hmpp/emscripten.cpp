@@ -5,11 +5,12 @@
 #include <string>
 #include <memory>
 
+#include <modules/hmpp/types.h>
 #include <modules/hmpp/global.h>
 #include <modules/hmpp/emscripten.h>
-#include <modules/macros.h>
-
 #include <modules/hmpp/column.h>
+#include <modules/hmpp/time.h>
+#include <modules/macros.h>
 
 namespace wd3 {
 namespace emscripten {
@@ -17,7 +18,7 @@ typedef std::unique_ptr<wd3::column> ColumnPtr;
 ColumnPtr column;
 namespace time {
 namespace parse {
-std::string format = "%Y-%m-%d %H:%M:%S";
+std::string format = WD3_TIME_DEFAULT_PARSE_FORMAT;
 } // namespace parse
 } // namespace time
 int main(int argc, char** argv) {
@@ -35,54 +36,54 @@ int main(int argc, char** argv) {
 
 #if defined(__EMSCRIPTEN__) || defined(WD3_DEVELOPE_EMSCRIPTEN)
 
-#if defined(WD3_DEVELOPE_EMSCRIPTEN)
-#ifndef EMSCRIPTEN_KEEPALIVE
-#define EMSCRIPTEN_KEEPALIVE
-#endif
-#endif
-
-EMSCRIPTEN_KEEPALIVE int change(int count, bool copy) {
-  return 0;
-}
-
-EMSCRIPTEN_KEEPALIVE bool startData(int size) {
+bool startData(int size) {
   wd3::global::data = std::make_unique<wd3::data>(size);
   if (wd3::global::data) {
     return true;
   } else {
     std::cerr << "Failed to create WD3 data" << std::endl;
-    return false;
   }
+  return false;
 }
 
-EMSCRIPTEN_KEEPALIVE bool startColumn() {
+bool startColumn(const char* timetext) {
   if (wd3::global::data) {
+    wd3::type::time time = wd3::time::parse(timetext);
     wd3::emscripten::column =
-      std::make_unique<wd3::column>(wd3::global::data->size());
+      std::make_unique<wd3::column>(wd3::global::data->size(), time);
     if (wd3::emscripten::column) {
       return true;
     } else {
       std::cerr << "Failed to create WD3 column" << std::endl;
-      return false;
     }
   } else {
     std::cerr << "WD3 data is undefined" << std::endl;
-    return false;
   }
+  return false;
 }
 
-EMSCRIPTEN_KEEPALIVE bool setColumn(int index, double depth, double value) {
+bool setColumn(int index, double depth, double value) {
   if (wd3::emscripten::column) {
     wd3::emscripten::column->set(index, depth, value);
     return true;
   } else {
     std::cerr << "WD3 column is undefined" << std::endl;
-    return false;
   }
+  return false;
 }
 
-EMSCRIPTEN_KEEPALIVE bool addColumn() {
-
+bool addColumn() {
+  if (wd3::global::data) {
+    if (wd3::emscripten::column) {
+      wd3::global::data->add(*wd3::emscripten::column);
+      return true;
+    } else {
+      std::cerr << "WD3 column is undefined" << std::endl;
+    }
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
 }
 
 #endif
