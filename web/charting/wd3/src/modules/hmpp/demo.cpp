@@ -7,6 +7,8 @@
 #include <gos/noise.h>
 
 #include <modules/hmpp/demo.h>
+#include <modules/hmpp/global.h>
+#include <modules/macros.h>
 
 namespace wd3 {
 
@@ -14,6 +16,7 @@ demo::demo(::wd3::context& context, ::wd3::gradient& gradient, ::wd3::data& data
   _context(context),
   _gradient(gradient),
   _data(data),
+  _step(),
   _i(0),
   _size(0),
   _count(0),
@@ -195,6 +198,27 @@ void demo::evolve(
   double value = point.value() +
     ::gos::noise::white(GOS_NOISE_DEFAULT_SEED, x, y) * factor;
   point.set(depth, value);
+}
+
+int demo::dmain(int argc, char** argv) {
+  const int DataSize = 4;
+  const int DataCount = 100;
+  wd3::global::data = std::make_unique<wd3::data>(DataSize);
+  wd3::demo demo(wd3::global::context, wd3::global::gradient, *wd3::global::data);
+  wd3::global::context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
+  wd3::global::context.parse(argc, argv);
+  wd3::global::gradient.stock();
+  wd3::global::gradient.create();
+  if (wd3::global::context.initialize()) {
+    if (wd3::global::context.create()) {
+      if (demo.create(WD3_HMPP_DEMO_TYPE_PATTERN, DataSize, DataCount)) {
+        if (demo.loop()) {
+          return EXIT_SUCCESS;
+        }
+      }
+    }
+  }
+  return EXIT_FAILURE;
 }
 
 } // namespace wd3

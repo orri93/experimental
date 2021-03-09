@@ -14,6 +14,8 @@ data::data(const int& size) noexcept :
   _time.reset(::wd3::type::time::min(), ::wd3::type::time::max());
 }
 
+const int& data::size() const { return _size; }
+
 void data::add(const column& column) {
   _columns.push_back(column);
   _time.update(column.time());

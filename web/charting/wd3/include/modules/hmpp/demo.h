@@ -23,6 +23,8 @@ public:
     const ::wd3::type::duration& step = ::std::chrono::seconds(1));
   bool loop();
 
+  static int dmain(int argc, char** argv);
+
 private:
   bool work();
   bool next();

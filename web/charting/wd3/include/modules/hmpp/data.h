@@ -15,6 +15,7 @@ namespace wd3 {
 class data {
 public:
   data(const int& size) noexcept;
+  const int& size() const;
   void add(const ::wd3::column& column);
   void remove(const ::wd3::type::time& time);
   void ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value);

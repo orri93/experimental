@@ -4,14 +4,15 @@ if(SDL_DESKTOP_TARGET)
   find_package(SDL REQUIRED)
 
   list(APPEND wd3_experiment_cpp_modules_hm_source
-    exception.cpp
-    gradient.cpp
-    context.cpp
-    column.cpp
-    point.cpp
-    data.cpp
-    demo.cpp
-    hm.cpp)
+    "exception.cpp"
+    "gradient.cpp"
+    "context.cpp"
+    "column.cpp"
+    "global.cpp"
+    "point.cpp"
+    "data.cpp"
+    "demo.cpp"
+    "hm.cpp")
 
   list(APPEND wd3_experiment_cpp_modules_hm_include
     ${SDL_INCLUDE_DIR}
@@ -32,6 +33,13 @@ if(SDL_DESKTOP_TARGET)
     list(APPEND wd3_experiment_cpp_modules_hm_definitions
       WD3_USE_SDL_MAIN)
   endif (USE_SDL_MAIN)
+
+  if (DEVELOPE_EMSCRIPTEN)
+    list(APPEND wd3_experiment_cpp_modules_hm_source
+      "emscripten.cpp")
+    list(APPEND wd3_experiment_cpp_modules_hm_definitions
+      WD3_DEVELOPE_EMSCRIPTEN)
+  endif (DEVELOPE_EMSCRIPTEN)
 
   add_executable(${wd3_experiment_cpp_modules_hm_target}
     ${wd3_experiment_cpp_modules_hm_source})
