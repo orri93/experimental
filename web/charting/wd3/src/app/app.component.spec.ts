@@ -20,16 +20,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'wd3'`, () => {
+  it(`should have as title 'GOS WebAssembly D3 Heatmap Charting Experiment'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('wd3');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('wd3 app is running!');
+    expect(app.title).toEqual('GOS WebAssembly D3 Heatmap Charting Experiment');
   });
 });

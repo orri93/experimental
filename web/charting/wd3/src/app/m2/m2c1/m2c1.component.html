@@ -1,0 +1,10 @@
+<h4>{{componentName}}</h4>
+
+<div class="alert alert-warning" role="alert" *ngIf="error">{{error}}</div>
+
+<div id="hmpp" #chart>
+  <svg id="axes"></svg>
+  <canvas oncontextmenu="event.preventDefault()" #canvas></canvas>
+</div>
+
+<p></p>

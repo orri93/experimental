@@ -1,0 +1,12 @@
+<h4>{{componentName}}</h4>
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--9-col" #wd3div (resized) = "onWd3Resized($event)">
+    <app-m2c1 #m2c1
+      [size] = "size"
+      [axes] = "axes"
+      [toolCount] = "toolCount"
+      [timeFormat] = "timeFormat"
+    ></app-m2c1>
+  </div>
+</div>

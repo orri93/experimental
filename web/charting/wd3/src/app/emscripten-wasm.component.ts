@@ -1,4 +1,5 @@
 import { AfterViewInit, Directive, ElementRef } from '@angular/core';
+import { Observable } from 'rxjs';
 import { loadScript } from './tools';
 import { environment } from './../environments/environment';
 import wasmCacheBusting from '../wasm-cache-busting.json';
@@ -13,6 +14,7 @@ export abstract class EmscriptenWasmComponentDirective<
 
   private resolvedModule: M;
   protected moduleDecorator: EmscriptenModuleDecorator<M>;
+  protected observable: Observable<M>;
 
   protected constructor(
     private moduleExportName: string,
@@ -50,6 +52,7 @@ export abstract class EmscriptenWasmComponentDirective<
       })
       .then((mod) => {
         this.resolvedModule = mod;
+        this.moduleResolved();
       });
   }
 
@@ -68,5 +71,9 @@ export abstract class EmscriptenWasmComponentDirective<
       console.error('Undefined canvas');
     }
     return canvasElement;
+  }
+
+  protected moduleResolved(): void {
+    console.log('WebAssembly module ' + this.moduleExportName + 'has been resolved');
   }
 }

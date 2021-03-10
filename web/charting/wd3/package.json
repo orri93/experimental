@@ -27,6 +27,7 @@
     "angular-resize-event": "^2.1.0",
     "d3": "^6.5.0",
     "lodash-es": "^4.17.21",
+    "moment": "^2.29.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

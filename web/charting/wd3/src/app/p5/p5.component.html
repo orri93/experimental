@@ -1,0 +1,19 @@
+<h3>{{pageName}}</h3>
+
+<div>
+  <p>Child Size width: {{childSize.width}} and height: {{childSize.height}}</p>
+</div>
+
+<app-m2c2 #m2c2
+  [size] = "size"
+  [axes] = "axes"
+  [toolCount] = "toolCount"
+  [timeFormat] = "timeFormat"
+  (sizeChangedEvent) = "childSizeChanged($event)"
+></app-m2c2>
+
+<span>
+  <span class="p5-button">
+    <button mat-raised-button (click)="onInitialize();">Initialize</button>
+  </span>
+</span>

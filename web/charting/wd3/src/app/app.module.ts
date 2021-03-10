@@ -17,12 +17,14 @@ import { AppComponent } from './app.component';
 import { AppConfiguration } from './app.configuration';
 
 import { M1Module } from './m1/m1.module';
+import { M2Module } from './m2/m2.module';
 
 import { PhComponent } from './ph/ph.component';
 import { P1Component } from './p1/p1.component';
 import { P2Component } from './p2/p2.component';
 import { P3Component } from './p3/p3.component';
 import { P4Component } from './p4/p4.component';
+import { P5Component } from './p5/p5.component';
 
 export function initializeApp(appConfiguration: AppConfiguration): any {
   return () => appConfiguration.load();
@@ -35,7 +37,8 @@ export function initializeApp(appConfiguration: AppConfiguration): any {
     P1Component,
     P2Component,
     P3Component,
-    P4Component
+    P4Component,
+    P5Component
   ],
   imports: [
     FormsModule,
@@ -48,7 +51,8 @@ export function initializeApp(appConfiguration: AppConfiguration): any {
     EffectsModule.forRoot([]),
     AngularResizedEventModule,
     MatButtonModule,
-    M1Module
+    M1Module,
+    M2Module
   ],
   providers: [
     AppConfiguration, {

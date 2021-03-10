@@ -68,6 +68,8 @@ bool context::create() {
 void context::set(const int& width, const int& height) {
   _screen.setwidth(width);
   _screen.setheight(height);
+  _xscale.setrange(0, _screen.width());
+  _yscale.setrange(0, _screen.height());
 }
 
 void context::parse(int argc, char** argv) {
@@ -110,6 +112,14 @@ bool context::begin() {
     }
   }
   return true;
+}
+
+void context::clear(const int& value) {
+  ::memset(
+    _surface->pixels,
+    value,
+    static_cast<size_t>(_screen.width()) *
+    static_cast<size_t>(_screen.height()));
 }
 
 bool context::render(wd3::gradient& gradient, wd3::data& data) {

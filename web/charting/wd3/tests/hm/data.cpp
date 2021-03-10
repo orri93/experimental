@@ -1,4 +1,3 @@
-#include <cstdbool>
 #include <cmath>
 
 #include <gtest/gtest.h>

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+#include <string>
 #include <vector>
 
 #include <gos/color.h>
@@ -17,11 +18,12 @@ public:
   gradient() noexcept;
   void add(const uint8_t& red, const uint8_t& green, const uint8_t& blue, const int& size = 64);
   void add(const uint32_t& color, const int& size = 64);
+  bool add(::std::string text, const int& size = 64);
   void stock(const int& size = 64);
   void create();
   const RgbVector& get() const;
   void reset();
-  void shutdown();
+
 private:
   RgbVector _gradients;
   IntegerVector _sizes;

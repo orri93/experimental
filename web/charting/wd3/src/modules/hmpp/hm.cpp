@@ -3,7 +3,6 @@
 #include <iostream>
 
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
 #include <modules/hmpp/emscripten.h>
 #else
 #ifdef WD3_USE_SDL_MAIN

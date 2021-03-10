@@ -1,3 +1,4 @@
+#include <string>
 #include <memory>
 #include <algorithm>
 
@@ -18,6 +19,17 @@ void gradient::add(const uint8_t& red, const uint8_t& green, const uint8_t& blue
 void gradient::add(const uint32_t& color, const int& size) {
   _stops.push_back(::gos::color::make_rgb(color));
   _sizes.push_back(size);
+}
+
+bool gradient::add(std::string text, const int& size) {
+  gos::color::rgb rgb;
+  if (rgb.assign(text)) {
+    _stops.push_back(rgb);
+    _sizes.push_back(size);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void gradient::stock(const int& size) {

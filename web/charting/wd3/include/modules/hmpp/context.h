@@ -30,6 +30,7 @@ public:
   void updateyscale(const ::gos::range::d1<double>& domain);
   void updatezscale(const ::gos::range::d1<double>& domain, const int& count);
   bool begin();
+  void clear(const int& value = 0);
   bool render(::wd3::gradient& gradient, ::wd3::data& data);
   bool complete();
   void shutdown();

@@ -78,6 +78,11 @@ if(BUILD_TESTS)
     ${wd3_experiment_c_include}
     ${wd3_experiment_extern_date_include})
 
+  if (MSVC)
+    list(APPEND wd3_experiment_cpp_modules_hm_testable_definitions
+      _SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING)
+  endif (MSVC)
+
   if (SDL_INCLUDE_DIR)
     message(STATUS "  SDL Include detected      : ${SDL_INCLUDE_DIR}")
     list(APPEND wd3_experiment_cpp_modules_hm_testable_include

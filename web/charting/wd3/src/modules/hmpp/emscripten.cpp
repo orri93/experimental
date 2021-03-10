@@ -34,7 +34,41 @@ int main(int argc, char** argv) {
 } // namespace emscripten
 } // namespace wd3
 
-#if defined(__EMSCRIPTEN__) || defined(WD3_DEVELOPE_EMSCRIPTEN)
+// void testEmscripten() { std::cout << "Test Emscripten keepalive function" << std::endl; }
+
+/*
+ *  Gradient interface
+ */
+
+void resetGradient() {
+  wd3::global::gradient.reset();
+}
+
+void addGradientColorStop(int color, int size) {
+  wd3::global::gradient.add(static_cast<uint32_t>(color), size);
+}
+
+bool addGradientColorStopText(const char* text, int size) {
+  if (wd3::global::gradient.add(text, size)) {
+    return true;
+  } else {
+    std::cerr << "Failed to add '" << text <<
+      "' as gradient color stop text" << std::endl;
+    return false;
+  }
+}
+
+void stockGradient(int size) {
+  wd3::global::gradient.stock(size);
+}
+
+void createGradient() {
+  wd3::global::gradient.create();
+}
+
+/*
+ *  Data interface
+ */
 
 bool startData(int size) {
   wd3::global::data = std::make_unique<wd3::data>(size);
@@ -46,9 +80,40 @@ bool startData(int size) {
   return false;
 }
 
+bool removeDate(const char* timetext) {
+  if (wd3::global::data) {
+    wd3::type::time time = wd3::time::parse(timetext);
+    wd3::global::data->remove(time);
+    return true;
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
+}
+
+/*
+ *  Column interface
+ */
+
 bool startColumn(const char* timetext) {
   if (wd3::global::data) {
     wd3::type::time time = wd3::time::parse(timetext);
+    wd3::emscripten::column =
+      std::make_unique<wd3::column>(wd3::global::data->size(), time);
+    if (wd3::emscripten::column) {
+      return true;
+    } else {
+      std::cerr << "Failed to create WD3 column" << std::endl;
+    }
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
+}
+
+bool startColumnNow() {
+  if (wd3::global::data) {
+    wd3::type::time time = wd3::type::clock::now();
     wd3::emscripten::column =
       std::make_unique<wd3::column>(wd3::global::data->size(), time);
     if (wd3::emscripten::column) {
@@ -86,4 +151,106 @@ bool addColumn() {
   return false;
 }
 
-#endif
+/*
+ *  Scale interface
+ */
+
+bool updateScaleX() {
+  if (wd3::global::data) {
+    const gos::range::d1<wd3::type::time> domain =
+      wd3::global::data->time();
+    wd3::global::context.updatexscale(domain);
+    return true;
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
+}
+
+bool updateScaleY() {
+  if (wd3::global::data) {
+    ::gos::range::d1<> domain;
+    wd3::global::data->range(domain);
+    wd3::global::context.updateyscale(domain);
+    return true;
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
+}
+
+bool updateScaleYZ() {
+  if (wd3::global::data) {
+    gos::range::d1<> ydomain, zdomain;
+    wd3::global::data->ranges(ydomain, zdomain);
+    wd3::global::context.updateyscale(ydomain);
+    int gc = static_cast<int>(wd3::global::gradient.get().size());
+    wd3::global::context.updatezscale(zdomain, gc);
+    return true;
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return false;
+}
+
+void setScaleZ(double from, double to) {
+  gos::range::d1 domain = gos::range::make_d1(from, to);
+  int gc = static_cast<int>(wd3::global::gradient.get().size());
+  wd3::global::context.updatezscale(domain, gc);
+}
+
+/*
+ *  Render interface
+ */
+
+bool render() {
+  bool result = false;
+  if (wd3::global::data) {
+    if (wd3::global::context.begin()) {
+      result = wd3::global::context.render(
+        wd3::global::gradient,
+        *wd3::global::data);
+      if (!result) {
+        std::cerr << "WD3 render failed" << std::endl;
+      }
+      if (wd3::global::context.complete()) {
+        return result;
+      } else {
+        std::cerr << "WD3 complete render failed" << std::endl;
+      }
+    } else {
+      std::cerr << "WD3 begin render failed" << std::endl;
+    }
+  } else {
+    std::cerr << "WD3 data is undefined" << std::endl;
+  }
+  return result;
+}
+
+bool clear(int value) {
+  if (wd3::global::context.begin()) {
+    wd3::global::context.clear(value);
+    if (wd3::global::context.complete()) {
+      return true;
+    } else {
+      std::cerr << "WD3 complete render failed" << std::endl;
+    }
+  } else {
+    std::cerr << "WD3 begin render failed" << std::endl;
+  }
+  return false;
+}
+
+bool resize(int width, int height, int value) {
+  wd3::global::context.set(width, height);
+  if (wd3::global::context.create()) {
+    if (wd3::global::data) {
+      return render();
+    } else {
+      return clear(value);
+    }
+  } else {
+    std::cerr << "WD3 create failed" << std::endl;
+  }
+  return false;
+}
