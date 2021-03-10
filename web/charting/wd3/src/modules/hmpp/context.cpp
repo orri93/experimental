@@ -104,6 +104,10 @@ void context::updatezscale(const ::gos::range::d1<double>& domain, const int& co
   _zscale.setrange(0, count);
 }
 
+const ::wd3::time::scale<int>& context::getxscale() const { return _xscale; }
+const ::gos::scale<double, int>& context::getyscale() const { return _yscale; }
+const ::gos::scale<double, int>& context::getzscale() const { return _zscale; }
+
 bool context::begin() {
   if (SDL_MUSTLOCK(_surface)) {
     if (SDL_LockSurface(_surface) != WD3_SDL_SUCCESS) {

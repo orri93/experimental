@@ -1,7 +1,9 @@
-import { Component, Input, ViewChild, ElementRef, NgZone, SimpleChanges, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { Component, Input, Output, ViewChild, ElementRef, EventEmitter, NgZone, SimpleChanges, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import * as d3 from 'd3';
+import * as moment from 'moment';
 import { EmscriptenWasmComponentDirective } from './../../emscripten-wasm.component';
 
+export const HmppDateTimeFormatting = 'YYYY-MM-DD hh:mm:ss.SSSS';
 const DefaultRange: NumberRange = { from: 0.0, to: 1.0 };
 
 @Component({
@@ -12,6 +14,7 @@ const DefaultRange: NumberRange = { from: 0.0, to: 1.0 };
 export class M2c1Component extends EmscriptenWasmComponentDirective implements OnInit, OnChanges, OnDestroy {
   @ViewChild('canvas') canvas: ElementRef;
   @ViewChild('chart') chart: ElementRef;
+  @Output() moduleResolvedEvent = new EventEmitter();
   @Input() size: ChartSize;
   @Input() axes: ChartAxes;
   @Input() toolCount: number;
@@ -31,6 +34,8 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
 
   error: string;
 
+  actualSize: ChartSize;
+
   private formatTime: any;
 
   constructor(private ngZone: NgZone) {
@@ -38,14 +43,15 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
     this.createTimeFormatter();
     const self = this;
     this.moduleDecorator = (mod) => {
-      let haveSize = false;
       let args = [];
       if (self.size) {
+        self.actualSize = {
+          width: self.size.width,
+          height: self.size.height };
         args = [
           self.size.width.toString(),
           self.size.height.toString()
         ];
-        haveSize = true;
       }
       mod.arguments = args;
       mod.preRun = [];
@@ -93,22 +99,17 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
       .style('top', (2 * this.axes.y) + 'px');
   }
 
-  private scaleItems(size: ChartSize): void {
-    this.scaleHmDiv(size);
-    this.scaleSvgAxes(size);
-  }
-
-  private createScaleX(): void {
+  private createScaleX(size: ChartSize): void {
     this.xScale = d3.scaleLinear()
       .domain([this.xRange.from, this.xRange.to])
-      .range([0, this.size.width]);
+      .range([0, size.width]);
   }
 
-  private createScaleY(): void {
+  private createScaleY(size: ChartSize): void {
     this.yScale = d3.scaleLinear()
       .domain([this.yRange.from, this.yRange.to])
-      // .range([this.size.height, 0]);
-      .range([0, this.size.height]);
+      // .range([size.height, 0]);
+      .range([0, size.height]);
   }
 
   private drawAxesX(size: ChartSize): void {
@@ -152,8 +153,8 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
   }
 
   private createScales(): void {
-    this.createScaleX();
-    this.createScaleY();
+    this.createScaleX(this.size);
+    this.createScaleY(this.size);
   }
 
   private drawAxes(): void {
@@ -161,15 +162,20 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
     this.drawAxesY();
   }
 
+  scaleItems(size: ChartSize): void {
+    this.scaleHmDiv(size);
+    this.scaleSvgAxes(size);
+  }
+
   renderAxesX(size = this.size): void {
     this.removeAxesX();
-    this.createScaleX();
+    this.createScaleX(size);
     this.drawAxesX(size);
   }
 
-  renderAxesY(): void {
+  renderAxesY(size = this.size): void {
     this.removeAxesY();
-    this.createScaleY();
+    this.createScaleY(size);
     this.drawAxesY();
   }
 
@@ -312,6 +318,35 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
     }
   }
 
+  getScaleXDomain(): NumberRange {
+    let result: NumberRange = { from: 0, to: 0 };
+    if (super.module) {
+      const from = super.module.ccall('getScaleXDomainFrom', 'string', [], []);
+      const to = super.module.ccall('getScaleXDomainTo', 'string', [], []);
+      result.from = moment(from, HmppDateTimeFormatting).local().valueOf();
+      result.to = moment(to, HmppDateTimeFormatting).local().valueOf();
+    }
+    return result;
+  }
+
+  getScaleYDomain(): NumberRange {
+    let result: NumberRange = { from: 0, to: 0 };
+    if (super.module) {
+      result.from = super.module.ccall('getScaleYDomainFrom', 'number', [], []);
+      result.to = super.module.ccall('getScaleYDomainTo', 'number', [], []);
+    }
+    return result;
+  }
+
+  getScaleZDomain(): NumberRange {
+    let result: NumberRange = { from: 0, to: 0 };
+    if (super.module) {
+      result.from = super.module.ccall('getScaleZDomainFrom', 'number', [], []);
+      result.to = super.module.ccall('getScaleZDomainTo', 'number', [], []);
+    }
+    return result;
+  }
+
   render(): void {
     if (super.module) {
       const result = super.module.ccall('render', 'boolean', [ ], [ ]);
@@ -341,6 +376,10 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
         'void',
         [ 'number', 'number', 'number' ],
         [ newSize.width, newSize.height, value ]);
+      if (this.actualSize) {
+        this.actualSize.width = newSize.width;
+        this.actualSize.height = newSize.height;
+      }
     }
   }
 
@@ -350,6 +389,7 @@ export class M2c1Component extends EmscriptenWasmComponentDirective implements O
     this.createScales();
     this.drawAxes();
     this.clear();
+    this.moduleResolvedEvent.emit();
   }
 
   ngOnInit(): void {

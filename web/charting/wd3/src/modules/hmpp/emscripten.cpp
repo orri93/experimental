@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 
 #include <iostream>
 #include <iomanip>
@@ -12,25 +13,19 @@
 #include <modules/hmpp/time.h>
 #include <modules/macros.h>
 
+#define WD3_EMSCRIPTEN_RESULT_STRING_LENGTH 1024
+
 namespace wd3 {
 namespace emscripten {
 typedef std::unique_ptr<wd3::column> ColumnPtr;
-ColumnPtr column;
-namespace time {
-namespace parse {
-std::string format = WD3_TIME_DEFAULT_PARSE_FORMAT;
+static ColumnPtr column;
+namespace result {
+namespace string {
+static char wd3EmscriptenResultString[WD3_EMSCRIPTEN_RESULT_STRING_LENGTH];
+void set(const std::string& text);
+const char* get();
 } // namespace parse
 } // namespace time
-int main(int argc, char** argv) {
-  wd3::global::context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
-  wd3::global::context.parse(argc, argv);
-  wd3::global::gradient.stock();
-  wd3::global::gradient.create();
-  if (wd3::global::context.initialize()) {
-    return wd3::global::context.create() ? EXIT_SUCCESS : EXIT_FAILURE;
-  }
-  return EXIT_FAILURE;
-}
 } // namespace emscripten
 } // namespace wd3
 
@@ -199,6 +194,40 @@ void setScaleZ(double from, double to) {
   wd3::global::context.updatezscale(domain, gc);
 }
 
+const char* getScaleXDomainFrom() {
+  const ::wd3::time::scale<int>& scale = wd3::global::context.getxscale();
+  std::string text = ::wd3::time::format(scale.domain().from());
+  wd3::emscripten::result::string::set(text);
+  return wd3::emscripten::result::string::get();
+}
+
+const char* getScaleXDomainTo() {
+  const ::wd3::time::scale<int>& scale = wd3::global::context.getxscale();
+  std::string text = ::wd3::time::format(scale.domain().to());
+  wd3::emscripten::result::string::set(text);
+  return wd3::emscripten::result::string::get();
+}
+
+double getScaleYDomainFrom() {
+  const ::gos::scale<double, int>& scale = wd3::global::context.getyscale();
+  return scale.domain().from();
+}
+
+double getScaleYDomainTo() {
+  const ::gos::scale<double, int>& scale = wd3::global::context.getyscale();
+  return scale.domain().to();
+}
+
+double getScaleZDomainFrom() {
+  const ::gos::scale<double, int>& scale = wd3::global::context.getzscale();
+  return scale.domain().from();
+}
+
+double getScaleZDomainTo() {
+  const ::gos::scale<double, int>& scale = wd3::global::context.getzscale();
+  return scale.domain().to();
+}
+
 /*
  *  Render interface
  */
@@ -254,3 +283,43 @@ bool resize(int width, int height, int value) {
   }
   return false;
 }
+
+namespace wd3 {
+namespace emscripten {
+namespace result {
+namespace string {
+void set(const std::string& text) {
+#ifdef __EMSCRIPTEN__
+  if (text.length() + 1 < WD3_EMSCRIPTEN_RESULT_STRING_LENGTH) {
+    ::strncpy(
+      wd3EmscriptenResultString,
+      text.c_str(),
+      text.length() + 1);
+} else {
+    wd3EmscriptenResultString[0] = '\0';
+  }
+#else
+  ::strncpy_s(
+    wd3EmscriptenResultString,
+    WD3_EMSCRIPTEN_RESULT_STRING_LENGTH,
+    text.c_str(),
+    text.length() + 1);
+#endif
+}
+const char* get() {
+  return ::wd3::emscripten::result::string::wd3EmscriptenResultString;
+}
+} // namespace parse
+} // namespace time
+int main(int argc, char** argv) {
+  wd3::global::context.set(WD3_DEFAULT_WIDTH, WD3_DEFAULT_HEIGHT);
+  wd3::global::context.parse(argc, argv);
+  wd3::global::gradient.stock();
+  wd3::global::gradient.create();
+  if (wd3::global::context.initialize()) {
+    return wd3::global::context.create() ? EXIT_SUCCESS : EXIT_FAILURE;
+  }
+  return EXIT_FAILURE;
+}
+} // namespace emscripten
+} // namespace wd3

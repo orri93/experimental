@@ -11,14 +11,14 @@ export class MockDataService {
 
   constructor() { }
 
-  static evolvePoint(point: Point, valueFactor = 0.1, depthFactor = 0.1, randomDepth = false): void {
+  static evolvePoint(point: Point, valueFactor = 0.1, depthFactor = 0.1, randomDepth = true): void {
     point.depth += randomDepth ? Math.random() * depthFactor : depthFactor;
     point.value += Math.random() * valueFactor;
   }
 
-  evolve(index: number): Point {
+  evolve(index: number, valueFactor = 0.1, depthFactor = 0.1, randomDepth = true): Point {
     const point: Point = { depth: this.points[index].depth, value: this.points[index].value };
-    MockDataService.evolvePoint(this.points[index]);
+    MockDataService.evolvePoint(this.points[index], valueFactor, depthFactor, randomDepth);
     return point;
   }
 

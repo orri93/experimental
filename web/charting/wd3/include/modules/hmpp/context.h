@@ -29,6 +29,9 @@ public:
   void updatexscale(const ::gos::range::d1<::wd3::type::time>& domain);
   void updateyscale(const ::gos::range::d1<double>& domain);
   void updatezscale(const ::gos::range::d1<double>& domain, const int& count);
+  const ::wd3::time::scale<int>& getxscale() const;
+  const ::gos::scale<double, int>& getyscale() const;
+  const ::gos::scale<double, int>& getzscale() const;
   bool begin();
   void clear(const int& value = 0);
   bool render(::wd3::gradient& gradient, ::wd3::data& data);

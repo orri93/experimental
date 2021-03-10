@@ -1,11 +1,10 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Subscription, Observable, interval } from 'rxjs';
 import * as moment from 'moment';
 import { ResizedEvent } from 'angular-resize-event';
-import { M2c1Component } from './../m2c1/m2c1.component';
+import { M2c1Component, HmppDateTimeFormatting } from './../m2c1/m2c1.component';
 import { MockDataService } from './../../shared/services/mock-data.service';
 import { Point } from 'src/app/shared/models/wd3.model';
-
-const HmppDateTimeFormatting = 'YYYY-MM-DD hh:mm:ss.SSSS';
 
 @Component({
   selector: 'app-m2c2',
@@ -25,8 +24,59 @@ export class M2c2Component {
 
   private webAssemblyOriginalHeight: number;
   private ignoreResize = false;
+  private initialized = false;
+  private observable: Observable<number>;
+  private timer: Subscription;
 
   constructor(private mockDataService: MockDataService) {
+    this.observable = interval(10);
+  }
+
+  private createTimer(): void {
+    this.timer = this.observable.subscribe(( x => { this.onTimer(); }));
+  }
+
+  private onTimer(): void {
+    let size = this.size;
+    let point: Point;
+    let timeFormat: string;
+    let time = moment();
+    let from = time.clone();
+
+    if (this.m2c1.actualSize) {
+      size = this.m2c1.actualSize;
+    }
+
+    from.subtract(1, 'minute');
+
+    timeFormat = time.utc().format(HmppDateTimeFormatting);
+    this.m2c1.startColumn(timeFormat);
+    for (let i = 0; i < this.toolCount; i++) {
+      point = this.mockDataService.evolve(i, 0.5, 0.1, true)
+      this.m2c1.setColumn(i, point.depth, point.value);
+    }
+    this.m2c1.addColumn();
+    timeFormat = from.utc().format(HmppDateTimeFormatting);
+    this.m2c1.removeDate(timeFormat);
+
+    this.m2c1.xRange.from = from.valueOf();
+    this.m2c1.xRange.to = time.valueOf();
+
+    this.m2c1.renderAxesX(size);
+    this.m2c1.updateScaleX();
+    this.m2c1.updateScaleYZ();
+
+    const yDomain: NumberRange = this.m2c1.getScaleYDomain();
+    this.m2c1.yRange.from = yDomain.from;
+    this.m2c1.yRange.to = yDomain.to;
+    this.m2c1.renderAxesY(size);
+    this.m2c1.scaleItems(size);
+    this.m2c1.render();
+  }
+
+  onModuleResolved(): void {
+    console.log('On Module Resolved');
+    this.initialize();
   }
 
   onWd3Resized(event: ResizedEvent): void {
@@ -53,11 +103,11 @@ export class M2c2Component {
     this.sizeChangedEvent.emit(this.size);
   }
 
-  initialize(count: number): void {
+  initialize(count = 100): void {
+    let point: Point;
+    let timeFormat: string;
     let at = moment().subtract(count, 'seconds');
     let from = at.clone();
-    let timeFormat: string;
-    let point: Point;
     this.mockDataService.initialize(this.toolCount);
     this.m2c1.startData(this.toolCount);
     for (let i = 0; i < count; i++) {
@@ -75,9 +125,42 @@ export class M2c2Component {
       at.utc().format(HmppDateTimeFormatting))
     this.m2c1.xRange.from = from.valueOf();
     this.m2c1.xRange.to = at.valueOf();
-    this.m2c1.renderAxesX();
+    this.m2c1.renderAxesX(this.size);
     this.m2c1.updateScaleX();
     this.m2c1.updateScaleYZ();
+    const yDomain: NumberRange = this.m2c1.getScaleYDomain();
+    this.m2c1.yRange.from = yDomain.from;
+    this.m2c1.yRange.to = yDomain.to;
+    this.m2c1.renderAxesY(this.size);
     this.m2c1.render();
+    this.initialized = true;
+  }
+
+  start(): void {
+    if (!this.initialized) {
+      this.initialize();
+    }
+    if (this.timer) {
+      if (this.timer.closed) {
+        this.createTimer();
+      } else {
+        console.warn('Timer is still opened');
+      }
+    } else {
+      this.createTimer();
+    }
+  }
+
+  stop(): void {
+    console.log('Stop clicked');
+    if (this.timer) {
+      if (this.timer.closed) {
+        console.warn('Timer is already closed');
+      } else {
+        this.timer.unsubscribe();
+      }
+    } else {
+      console.warn('The timer is still undefined');
+    }
   }
 }

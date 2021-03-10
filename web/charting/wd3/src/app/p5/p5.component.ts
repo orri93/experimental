@@ -34,7 +34,13 @@ export class P5Component {
     this.changeDetector.detectChanges();
   }
 
-  onInitialize(): void {
-    this.m2c2.initialize(100);
+  onStart(): void {
+    console.log('Start clicked');
+    this.m2c2.start();
+  }
+
+  onStop(): void {
+    console.log('Stop clicked');
+    this.m2c2.stop();
   }
 }

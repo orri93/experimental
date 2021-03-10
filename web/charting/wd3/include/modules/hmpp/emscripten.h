@@ -4,12 +4,6 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 
-namespace wd3 {
-namespace emscripten {
-int main(int argc, char** argv);
-} // namespace emscripten
-} // namespace wd3
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,6 +40,12 @@ EMSCRIPTEN_KEEPALIVE bool updateScaleX();
 EMSCRIPTEN_KEEPALIVE bool updateScaleY();
 EMSCRIPTEN_KEEPALIVE bool updateScaleYZ();
 EMSCRIPTEN_KEEPALIVE void setScaleZ(double from, double to);
+EMSCRIPTEN_KEEPALIVE const char* getScaleXDomainFrom();
+EMSCRIPTEN_KEEPALIVE const char* getScaleXDomainTo();
+EMSCRIPTEN_KEEPALIVE double getScaleYDomainFrom();
+EMSCRIPTEN_KEEPALIVE double getScaleYDomainTo();
+EMSCRIPTEN_KEEPALIVE double getScaleZDomainFrom();
+EMSCRIPTEN_KEEPALIVE double getScaleZDomainTo();
 
 /*
  *  Render interface
@@ -57,6 +57,12 @@ EMSCRIPTEN_KEEPALIVE bool resize(int width, int height, int value);
 #ifdef __cplusplus
 }
 #endif
+
+namespace wd3 {
+namespace emscripten {
+int main(int argc, char** argv);
+} // namespace emscripten
+} // namespace wd3
 
 #endif
 
