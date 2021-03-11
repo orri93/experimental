@@ -1,0 +1,33 @@
+# Use multi-stage builds see
+# https://docs.docker.com/develop/develop-images/multistage-build/
+
+#
+# Build WebAssembly C Code with emscripten SDK V2.0.14
+#
+FROM emscripten/emsdk:2.0.14 AS wasm
+COPY . .
+RUN emcc -Iinclude -O3 -s MODULARIZE=1 -s TOTAL_MEMORY=67108864 -s ASSERTIONS=0 -s EXPORT_NAME="HmModule" -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] -o hm.js src/gos/interpolate.c src/gos/geometry.c src/gos/screen.c src/gos/color.c src/gos/scale.c src/gos/text.c src/modules/hm/hmm.c src/modules/hm/hm.c
+RUN emcc -Iinclude -O3 -s MODULARIZE=1 -s TOTAL_MEMORY=67108864 -s ASSERTIONS=0 -s EXPORT_NAME="DemoModule" -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] -o demo.js src/gos/interpolate.c src/gos/screen.c src/gos/color.c src/gos/text.c src/modules/demo/demo.c
+
+#
+# Build static web with node V8.9
+#
+FROM node:8.9 AS node
+WORKDIR /opt/static
+COPY . .
+COPY --from=wasm /src/hm.js app/assets/wasm
+COPY --from=wasm /src/hm.wasm app/assets/wasm
+COPY --from=wasm /src/demo.js app/assets/wasm
+COPY --from=wasm /src/demo.wasm app/assets/wasm
+# Updating npm
+RUN npm install -g npm@6.4.1
+# Installing Angular
+RUN npm install -g @angular/cli@6.1.2
+# Update dependencies
+RUN npm install
+# Execute the builds
+RUN npm run wasm
+RUN npm run scaffold
+RUN npm run build-dll
+# RUN npm run build-dev
+RUN npm run build-prod

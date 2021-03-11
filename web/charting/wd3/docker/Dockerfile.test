@@ -1,0 +1,24 @@
+#
+# Test WebAssembly C Code
+#
+FROM debian:buster AS builder
+WORKDIR /opt/static
+# Update and install dependencies
+RUN apt-get update
+RUN apt-get --assume-yes install build-essential ninja-build cmake libsdl1.2-dev
+# Copy the source to image
+COPY . .
+# Create directories with CMake
+RUN cmake -E make_directory /opt/build/release
+RUN cmake -E make_directory /opt/tests
+# Create the build
+RUN cmake -E chdir /opt/build/release cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/artifacts/release -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=On -DCMAKE_BUILD_TYPE=release -DEM_TARGET:BOOL=Off -DBUILD_TESTS:BOOL=On /opt/static/
+# Build with CMake
+RUN cmake --build /opt/build/release --target all --config release
+# Install
+RUN cmake --build /opt/build/release --target install --config release
+# Test with CTest
+RUN cmake -E chdir /opt/build/release ctest --build-config release
+# Test and generate XML Reports
+RUN /opt/build/release/tests/gos/gosctest --gtest_output=xml:/opt/tests/gosctest.xml
+RUN /opt/build/release/tests/modules/efdhmtest --gtest_output=xml:/opt/tests/efdhmtest.xml
