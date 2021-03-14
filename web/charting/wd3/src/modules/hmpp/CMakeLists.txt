@@ -51,6 +51,11 @@ if(SDL_DESKTOP_TARGET)
       ${wd3_experiment_cpp_modules_hm_definitions})
   endif ()
 
+  set_target_properties(${wd3_experiment_cpp_modules_hm_target} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+
   target_include_directories(${wd3_experiment_cpp_modules_hm_target} PUBLIC
     ${wd3_experiment_cpp_modules_hm_include})
 
@@ -102,6 +107,11 @@ if(BUILD_TESTS)
     target_compile_definitions(${wd3_experiment_cpp_modules_hm_testable_target}
       PUBLIC ${wd3_experiment_cpp_modules_hm_testable_definitions})
   endif ()
+
+  set_target_properties(${wd3_experiment_cpp_modules_hm_testable_target} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
 
   target_include_directories(${wd3_experiment_cpp_modules_hm_testable_target}
     PUBLIC ${wd3_experiment_cpp_modules_hm_testable_include})
