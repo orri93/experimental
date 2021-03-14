@@ -38,7 +38,12 @@ while :; do
       BUILD_DOCS=OFF
       ;;
     -n|--build-number)
-      BUILD_NUMBER=$2
+      shift
+      BUILD_NUMBER=$1
+      ;;
+    -b|--base-href)
+      shift
+      BASE_HREF=$1
       ;;
     --)              # End of all options.
       shift
@@ -118,6 +123,10 @@ CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} -DEM_TARGET:BOOL=On"
 CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} -DBUILD_TESTS:BOOL=On"
 CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} ${ROOT_DIR}"
 
+if [ -z "$BASE_HREF" ]
+then
+  echo "- Base href is defined as ${BASE_HREF}"
+fi
 echo "- Build number is defined as ${BUILD_NUMBER}"
 echo "- Install path is defined as ${PROJECT_ARTIFACTS_DIR}"
 echo "- CMake build system is defined as ${CMAKE_SYSTEM}"
@@ -189,7 +198,12 @@ echo "${NPM_WASM_CMD}"
 ${NPM_WASM_CMD}
 
 echo "*** Build Angular Web"
-NG_BUILD_CMD="ng build --prod"
+if [ -z "$BASE_HREF" ]
+then
+  NG_BUILD_CMD="ng build --prod --base-href="'"'"${BASE_HREF}"'"'
+else
+  NG_BUILD_CMD="ng build --prod"
+fi
 echo "${NG_BUILD_CMD}"
 ${NG_BUILD_CMD}
 
