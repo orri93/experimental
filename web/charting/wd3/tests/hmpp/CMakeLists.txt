@@ -45,6 +45,11 @@ if (wd3_hmpp_test_definitions)
     ${wd3_hmpp_test_definitions})
 endif ()
 
+set_target_properties(${wd3_hmpp_test_target} PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF)
+
 target_include_directories(${wd3_hmpp_test_target} PUBLIC
   ${wd3_hmpp_test_include})
 
