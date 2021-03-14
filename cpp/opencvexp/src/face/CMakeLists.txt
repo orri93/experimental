@@ -66,9 +66,29 @@ endif()
 install(TARGETS ${opencv_exp_face_target}
   RUNTIME DESTINATION bin)
 
-set(CPACK_PACKAGE_NAME "GOS OpenCV Face Experiment")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GOS OpenCV Face Experiment Installation")
-set(CPACK_PACKAGE_VERSION "1.0.0")
+if (WIN32)
+  get_target_property(OPEN_CV_IMPORTED_CONFIGURATIONS opencv_world IMPORTED_CONFIGURATIONS)
+  get_target_property(OPEN_CV_IMPORTED_LOCATION_RELEASE opencv_world IMPORTED_LOCATION_RELEASE)
+  get_target_property(OPEN_CV_IMPORTED_LOCATION_DEBUG opencv_world IMPORTED_LOCATION_DEBUG)
 
-include(CPack)
-include(CPackIFW)
+  add_custom_command(
+    TARGET ${opencv_exp_face_target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/windeployqt_stuff
+    COMMAND $ENV{QTDIR}/bin/windeployqt.exe --compiler-runtime --dir ${CMAKE_BINARY_DIR}/windeployqt_stuff $<TARGET_FILE:${opencv_exp_face_target}>)
+  
+  install(
+    DIRECTORY ${CMAKE_BINARY_DIR}/windeployqt_stuff/
+    DESTINATION ${PROJECT_NAME}
+    COMPONENT face_installer)
+endif (WIN32)
+
+message(STATUS "")
+message(STATUS "${PROJECT_DESCRIPTION} ${PROJECT_VERSION} ${opencv_exp_face_target} BUILD SUMMARY")
+
+message(STATUS "  OpenCV Include            : ${OpenCV_INCLUDE_DIRS}")
+message(STATUS "  OpenCV Libraries          : ${OpenCV_LIBS}")
+message(STATUS "  OpenCV Installation       : ${OpenCV_INSTALL_PATH}")
+message(STATUS "  OpenCV Components         : ${OpenCV_LIB_COMPONENTS}")
+message(STATUS "  OpenCV Configurations     : ${OPEN_CV_IMPORTED_CONFIGURATIONS}")
+message(STATUS "  OpenCV Release            : ${OPEN_CV_IMPORTED_LOCATION_RELEASE}")
+message(STATUS "  OpenCV Debug              : ${OPEN_CV_IMPORTED_LOCATION_DEBUG}")

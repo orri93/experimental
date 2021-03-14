@@ -38,6 +38,32 @@ list(APPEND opencv_exp_cv_public_header
 
 add_subdirectory(src)
 
+set(CPACK_PACKAGE_NAME "GOS OpenCV Face Experiment")
+set(CPACK_PACKAGE_FILE_NAME face)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GOS OpenCV Face Experiment Installation")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_COMPONENTS_ALL face_installer)
+set(CPACK_IFW_PACKAGE_START_MENU_DIRECTORY Qt_CPackIFW)
+set(CPACK_GENERATOR IFW)
+set(CPACK_IFW_VERBOSE ON)
+
+include(CPack)
+include(CPackIFW)
+
+cpack_add_component(
+  face_installer
+  DISPLAY_NAME "Qt CPackIFW"
+  DESCRIPTION "Install me"
+  REQUIRED)
+
+cpack_ifw_configure_component(
+  face_installer
+  FORCED_INSTALLATION
+  NAME qt.cpackifw.installer
+  VERSION ${PROJECT_VERSION} # Version of component
+  LICENSES License ${face_SOURCE_DIR}/LICENSE
+  DEFAULT TRUE)
+
 message(STATUS "")
 message(STATUS "${PROJECT_DESCRIPTION} ${PROJECT_VERSION} BUILD SUMMARY")
 message(STATUS "  Install prefix            : ${CMAKE_INSTALL_PREFIX}")
@@ -58,9 +84,6 @@ message(STATUS "  C++ Compiler flags        : ${CMAKE_CXX_FLAGS}")
 if (MSVC_VERSION)
 message(STATUS "  MSVC Version              : ${MSVC_VERSION}")
 endif (MSVC_VERSION)
-
-message(STATUS "  OpenCV Include            : ${OpenCV_INCLUDE_DIRS}")
-message(STATUS "  OpenCV Libraries          : ${OpenCV_LIBS}")
 
 if (BUILD_TESTS)
   message(STATUS "Building Tests")
