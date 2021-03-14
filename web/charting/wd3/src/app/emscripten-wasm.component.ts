@@ -74,6 +74,6 @@ export abstract class EmscriptenWasmComponentDirective<
   }
 
   protected moduleResolved(): void {
-    console.log('WebAssembly module ' + this.moduleExportName + 'has been resolved');
+    console.log('WebAssembly module ' + this.moduleExportName + ' has been resolved');
   }
 }

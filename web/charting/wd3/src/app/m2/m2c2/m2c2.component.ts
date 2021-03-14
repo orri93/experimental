@@ -52,7 +52,7 @@ export class M2c2Component {
     timeFormat = time.utc().format(HmppDateTimeFormatting);
     this.m2c1.startColumn(timeFormat);
     for (let i = 0; i < this.toolCount; i++) {
-      point = this.mockDataService.evolve(i, 0.5, 0.1, true)
+      point = this.mockDataService.evolve(i, 0.5, 0.1, true);
       this.m2c1.setColumn(i, point.depth, point.value);
     }
     this.m2c1.addColumn();
