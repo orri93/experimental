@@ -198,7 +198,7 @@ if [ -z "$BASE_HREF" ]
 then
   NG_BUILD_CMD="ng build --prod"
 else
-  NG_BUILD_CMD="ng build --prod --base-href="'"'"${BASE_HREF}"'"'
+  NG_BUILD_CMD="ng build --prod --base-href=${BASE_HREF}"
 fi
 echo "${NG_BUILD_CMD}"
 ${NG_BUILD_CMD}
