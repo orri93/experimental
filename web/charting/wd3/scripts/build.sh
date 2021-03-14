@@ -123,10 +123,6 @@ CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} -DEM_TARGET:BOOL=On"
 CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} -DBUILD_TESTS:BOOL=On"
 CMAKE_CREATE_OPTIONS="${CMAKE_CREATE_OPTIONS} ${ROOT_DIR}"
 
-if [ -z "$BASE_HREF" ]
-then
-  echo "- Base href is defined as ${BASE_HREF}"
-fi
 echo "- Build number is defined as ${BUILD_NUMBER}"
 echo "- Install path is defined as ${PROJECT_ARTIFACTS_DIR}"
 echo "- CMake build system is defined as ${CMAKE_SYSTEM}"
@@ -200,9 +196,9 @@ ${NPM_WASM_CMD}
 echo "*** Build Angular Web"
 if [ -z "$BASE_HREF" ]
 then
-  NG_BUILD_CMD="ng build --prod --base-href="'"'"${BASE_HREF}"'"'
-else
   NG_BUILD_CMD="ng build --prod"
+else
+  NG_BUILD_CMD="ng build --prod --base-href="'"'"${BASE_HREF}"'"'
 fi
 echo "${NG_BUILD_CMD}"
 ${NG_BUILD_CMD}
