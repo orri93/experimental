@@ -18,6 +18,8 @@ EMSCRIPTEN_KEEPALIVE void addGradientColorStop(int color, int size);
 EMSCRIPTEN_KEEPALIVE bool addGradientColorStopText(const char* text, int size);
 EMSCRIPTEN_KEEPALIVE void stockGradient(int size);
 EMSCRIPTEN_KEEPALIVE void createGradient();
+EMSCRIPTEN_KEEPALIVE int gradientTotalSize();
+EMSCRIPTEN_KEEPALIVE const char* getGradientColor(int index);
 
 /*
  *  Data interface

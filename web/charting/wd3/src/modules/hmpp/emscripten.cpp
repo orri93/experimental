@@ -61,6 +61,19 @@ void createGradient() {
   wd3::global::gradient.create();
 }
 
+int gradientTotalSize() {
+  const wd3::RgbVector& rgbv = wd3::global::gradient.get();
+  return static_cast<int>(rgbv.size());
+}
+
+const char* getGradientColor(int index) {
+  const wd3::RgbVector& rgbv = wd3::global::gradient.get();
+  gos::color::rgb<> rgb = rgbv.at(index);
+  std::string text = rgb.text();
+  wd3::emscripten::result::string::set(text);
+  return wd3::emscripten::result::string::get();
+}
+
 /*
  *  Data interface
  */
