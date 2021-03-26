@@ -65,6 +65,22 @@ bool context::create() {
   return true;
 }
 
+void context::setDefaultColor(const uint32_t& color) {
+  gos::color::rgb<> rgb(color);
+  _undefined = pixel(rgb);
+}
+
+bool context::setDefaultColorText(const std::string& color) {
+  gos::color::rgb<> rgb;
+  bool result = rgb.assign(color);
+  if (result) {
+    _undefined = pixel(rgb);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 void context::set(const int& width, const int& height) {
   _screen.setwidth(width);
   _screen.setheight(height);
@@ -107,6 +123,14 @@ void context::updatezscale(const ::gos::range::d1<double>& domain, const int& co
 const ::wd3::time::scale<int>& context::getxscale() const { return _xscale; }
 const ::gos::scale<double, int>& context::getyscale() const { return _yscale; }
 const ::gos::scale<double, int>& context::getzscale() const { return _zscale; }
+
+void context::getzcolor(wd3::gradient& gradient, gos::color::rgb<>& rgb, const double& value) {
+  const wd3::RgbVector rgbv = gradient.get();
+  int z = _zscale.value(value);
+  if ( z >= 0 && z < rgbv.size()) {
+    rgb = rgbv.at(z);
+  }
+}
 
 bool context::begin() {
   if (SDL_MUSTLOCK(_surface)) {
@@ -153,7 +177,7 @@ bool context::render(wd3::gradient& gradient, wd3::data& data) {
         if (::isfinite(fz)) {
           k = static_cast<int>(_zscale.value(fz));
           const ::gos::color::rgb<>& rgb = gradient.get().at(k);
-          pixel = SDL_MapRGB(_surface->format, rgb.r(), rgb.g(), rgb.b());
+          pixel = this->pixel(rgb);
         } else {
           pixel = _undefined;
         }
@@ -181,6 +205,10 @@ void context::shutdown() {
     _sdlinit = WD3_SDL_INIT_DEFAULT;
     _surface = NULL;
   }
+}
+
+Uint32 context::pixel(const ::gos::color::rgb<>& rgb) {
+  return SDL_MapRGB(_surface->format, rgb.r(), rgb.g(), rgb.b());
 }
 
 double context::determination(column& column, const int& value) {

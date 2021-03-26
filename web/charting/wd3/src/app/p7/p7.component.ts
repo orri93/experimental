@@ -1,7 +1,8 @@
-import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import * as _ from 'lodash-es';
-import { AppConfiguration } from './../app.configuration';
-import { M4c2Component } from './../m4/m4c2/m4c2.component';
+import { ResizedEvent } from 'angular-resize-event';
+import { M5c2Component } from './../m5/m5c2/m5c2.component';
+import { M5Service } from './../m5/shared/services/m5.service';
 
 @Component({
   selector: 'app-p7',
@@ -9,17 +10,14 @@ import { M4c2Component } from './../m4/m4c2/m4c2.component';
   styleUrls: ['./p7.component.scss']
 })
 export class P7Component {
-  @ViewChild('m4c2') m4c2: M4c2Component;
+  @ViewChild('m5c2') m5c2: M5c2Component;
 
   pageName = 'Page no. 7';
 
-  childSize: ChartSize = { width: 0, height: 0};
+  constructor() { }
 
-  constructor(private changeDetector: ChangeDetectorRef) { }
-  
-  childSizeChanged(size: ChartSize): void {
-    console.log('On Child Size Changed');
-    this.childSize = _.clone(size);
-    this.changeDetector.detectChanges();
+  onWd3Resized(event: ResizedEvent): void {
+    const newSize: ChartSize = M5Service.resizedEventNewSize(event);
+    this.m5c2.handleSizing(newSize);
   }
 }

@@ -165,6 +165,7 @@ if (EM_TARGET)
   # The Heat-map C++ WebAssembly Module
   set(wd3_experiment_cpp_em_hmpp_target hmppwasm)
   list(APPEND wd3_experiment_cpp_em_hmpp_source
+    "${wd3_experiment_c_em_modules_dir}/hmpp/statistics.cpp"
     "${wd3_experiment_c_em_modules_dir}/hmpp/emscripten.cpp"
     "${wd3_experiment_c_em_modules_dir}/hmpp/exception.cpp"
     "${wd3_experiment_c_em_modules_dir}/hmpp/gradient.cpp"

@@ -2,6 +2,7 @@
 #define WD3_HM_CPP_POINT_H_
 
 #include <memory>
+#include <vector>
 
 namespace wd3 {
 
@@ -20,6 +21,8 @@ private:
 
 typedef ::std::unique_ptr<point> PointPtr;
 typedef ::std::unique_ptr<::wd3::PointPtr[]> PointsPtr;
+
+typedef ::std::vector<PointPtr> PointPtrVector;
 
 } // namespace wd3
 

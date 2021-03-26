@@ -3,8 +3,6 @@
 
 #include <ctime>
 
-#include <vector>
-
 #include <gos/range.h>
 
 #include <modules/hmpp/types.h>
@@ -16,6 +14,7 @@ class data {
 public:
   data(const int& size) noexcept;
   const int& size() const;
+  const ::wd3::ColumnSize count() const;
   void add(const ::wd3::column& column);
   void remove(const ::wd3::type::time& time);
   void ranges(::gos::range::d1<>& depth, ::gos::range::d1<>& value);
@@ -23,7 +22,7 @@ public:
   const ::gos::range::d1<::wd3::type::time>& time() const;
   ::wd3::ColumnIterator first();
   ::wd3::ColumnIterator last();
-  const column& nearest(const double& time);
+  void sort();
 
 private:
   void updatetimerange();

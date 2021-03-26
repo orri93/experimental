@@ -1,0 +1,22 @@
+{
+  "size": { "width": 600, "height": 400 },
+  "axes": {
+    "x": 59,
+    "y": 4,
+    "size": { "width": 59, "height": 48 },
+    "color": "#ffffd4" },
+  "legend": {
+    "margin": 10,
+    "width": 10
+  },
+  "formatting": { "time": "%H:%M:%S" },
+  "intervals": {
+    "initialization": 1000,
+    "displayCurrent": 1000,
+    "timer": 1
+  },
+  "padding": 89,
+  "count": 5,
+  "range": { "time": 60 },
+  "mock": { "count": 100 }
+}

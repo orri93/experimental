@@ -8,6 +8,7 @@
 
 #include <modules/hmpp/types.h>
 #include <modules/hmpp/global.h>
+#include <modules/hmpp/statistics.h>
 #include <modules/hmpp/emscripten.h>
 #include <modules/hmpp/column.h>
 #include <modules/hmpp/time.h>
@@ -75,6 +76,27 @@ const char* getGradientColor(int index) {
 }
 
 /*
+ *  Color interface
+ */
+
+void setUndefinedColor(int color) {
+  wd3::global::context.setDefaultColor(static_cast<uint32_t>(color));
+}
+
+void setUndefinedColorText(const char* text) {
+  wd3::global::context.setDefaultColorText(text);
+}
+
+const char* getZedColor(double value, const char* defaultcolor) {
+  gos::color::rgb<> rgb;
+  rgb.assign(defaultcolor);
+  wd3::global::context.getzcolor(wd3::global::gradient, rgb, value);
+  std::string text = rgb.text();
+  wd3::emscripten::result::string::set(text);
+  return wd3::emscripten::result::string::get();
+}
+
+/*
  *  Data interface
  */
 
@@ -97,6 +119,14 @@ bool removeDate(const char* timetext) {
     std::cerr << "WD3 data is undefined" << std::endl;
   }
   return false;
+}
+
+void sortData() {
+  if (wd3::global::data) {
+    wd3::global::data->sort();
+  } else {
+    std::cerr << "GHM data is undefined" << std::endl;
+  }
 }
 
 /*
@@ -157,6 +187,12 @@ bool addColumn() {
     std::cerr << "WD3 data is undefined" << std::endl;
   }
   return false;
+}
+
+void sortColumn() {
+  if (wd3::emscripten::column) {
+    wd3::emscripten::column->sort();
+  }
 }
 
 /*
@@ -295,6 +331,39 @@ bool resize(int width, int height, int value) {
     std::cerr << "WD3 create failed" << std::endl;
   }
   return false;
+}
+
+/*
+ *  Debug interface
+ */
+void debugReport() {
+  int i, size, count;
+  if (wd3::global::data) {
+    size = wd3::global::data->size();
+    count = static_cast<int>(wd3::global::data->count());
+    std::cout << "Data size: " << size << std::endl;
+    std::cout << "Data count: " << wd3::global::data->count() << std::endl;
+    wd3::column sum(size, wd3::type::clock::now());
+    wd3::column mean(size, wd3::type::clock::now());
+    wd3::column squaresum(size, wd3::type::clock::now());
+    wd3::column diffsquare(size, wd3::type::clock::now());
+    wd3::column sd(size, wd3::type::clock::now());
+    wd3::statistics::sum(*wd3::global::data, sum, squaresum);
+    wd3::statistics::mean(mean, sum, size, count);
+    wd3::statistics::diffsquare(*wd3::global::data, mean, diffsquare);
+    wd3::statistics::sd(sd, diffsquare, size, count);
+    for (i = 0; i < size; i++) {
+      if (mean.is(i) && sd.is(i)) {
+        wd3::point meanp = mean.at(i);
+        wd3::point sdp = sd.at(i);
+        std::cout << "Data mean, SD for depth and value for #" << i
+          << " are " << meanp.depth() << " (" << sdp.depth()
+          << ") and " << meanp.value() << " (" << sdp.value() << ")" << std::endl;
+      }
+    }
+  } else {
+    std::cout << "Data is undefined" << std::endl;
+  }
 }
 
 namespace wd3 {

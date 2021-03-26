@@ -1,9 +1,5 @@
 <h3>{{pageName}}</h3>
 
-<div>
-  <p>Child Size width: {{childSize.width}} and height: {{childSize.height}}</p>
+<div class="mdl-cell mdl-cell--9-col" (resized) = "onWd3Resized($event)">
+  <app-m5c2 #m5c2></app-m5c2>
 </div>
-
-<app-m4c2 #m4c2
-  (sizeChangedEvent) = "childSizeChanged($event)"
-></app-m4c2>

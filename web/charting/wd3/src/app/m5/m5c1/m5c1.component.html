@@ -1,0 +1,10 @@
+<div class="alert alert-warning" role="alert" *ngIf="error">{{error}}</div>
+
+<div id="wd3-hm" #wd3chart>
+  <svg id="wd3-axes"></svg>
+  <canvas
+    class="wd3-canvas"
+    #canvaswd3
+    oncontextmenu="event.preventDefault()"
+  ></canvas>
+</div>

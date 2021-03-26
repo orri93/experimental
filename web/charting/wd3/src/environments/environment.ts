@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   wasmAssetsPath: '/assets/wasm',
-  configurationFile: '/assets/configuration.json'
+  configurationFile: '/assets/configuration.json',
+  configurationPath: '/assets/configuration/'
 };
 
 /*

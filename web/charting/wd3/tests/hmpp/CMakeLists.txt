@@ -8,6 +8,9 @@ set(wd3_hmpp_test_name wd3hmpptest)
 # find_package(SDL REQUIRED)
 
 list(APPEND wd3_hmpp_test_source
+  column.cpp
+  point.cpp
+  data.cpp
   time.cpp)
 
 list(APPEND wd3_hmpp_test_include

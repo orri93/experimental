@@ -24,6 +24,8 @@ public:
   ~context();
   bool initialize();
   bool create();
+  void setDefaultColor(const uint32_t& color);
+  bool setDefaultColorText(const ::std::string& color);
   void set(const int& width, const int& height);
   void parse(int argc, char** argv);
   void updatexscale(const ::gos::range::d1<::wd3::type::time>& domain);
@@ -32,6 +34,7 @@ public:
   const ::wd3::time::scale<int>& getxscale() const;
   const ::gos::scale<double, int>& getyscale() const;
   const ::gos::scale<double, int>& getzscale() const;
+  void getzcolor(::wd3::gradient& gradient, ::gos::color::rgb<>& rgb, const double& value);
   bool begin();
   void clear(const int& value = 0);
   bool render(::wd3::gradient& gradient, ::wd3::data& data);
@@ -39,6 +42,7 @@ public:
   void shutdown();
 
 private:
+  Uint32 pixel(const ::gos::color::rgb<>& rgb);
   double determination(::wd3::column& column, const int& value);
   void drawpixel(const int& x, const int& y, const Uint32& pixel);
   int _sdlinit;

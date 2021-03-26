@@ -22,10 +22,18 @@ EMSCRIPTEN_KEEPALIVE int gradientTotalSize();
 EMSCRIPTEN_KEEPALIVE const char* getGradientColor(int index);
 
 /*
+ *  Color interface
+ */
+EMSCRIPTEN_KEEPALIVE void setUndefinedColor(int color);
+EMSCRIPTEN_KEEPALIVE void setUndefinedColorText(const char* text);
+EMSCRIPTEN_KEEPALIVE const char* getZedColor(double value, const char* defaultcolor);
+
+/*
  *  Data interface
  */
 EMSCRIPTEN_KEEPALIVE bool startData(int size);
 EMSCRIPTEN_KEEPALIVE bool removeDate(const char* timetext);
+EMSCRIPTEN_KEEPALIVE void sortData();
 
 /*
  *  Column interface
@@ -34,6 +42,7 @@ EMSCRIPTEN_KEEPALIVE bool startColumn(const char* timetext);
 EMSCRIPTEN_KEEPALIVE bool startColumnNow();
 EMSCRIPTEN_KEEPALIVE bool setColumn(int index, double depth, double value);
 EMSCRIPTEN_KEEPALIVE bool addColumn();
+EMSCRIPTEN_KEEPALIVE void sortColumn();
 
 /*
  *  Scale interface
@@ -55,6 +64,11 @@ EMSCRIPTEN_KEEPALIVE double getScaleZDomainTo();
 EMSCRIPTEN_KEEPALIVE bool render();
 EMSCRIPTEN_KEEPALIVE bool clear(int value);
 EMSCRIPTEN_KEEPALIVE bool resize(int width, int height, int value);
+
+/*
+ *  Debug interface
+ */
+EMSCRIPTEN_KEEPALIVE void debugReport();
 
 #ifdef __cplusplus
 }

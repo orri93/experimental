@@ -9,7 +9,7 @@ namespace wd3 {
 namespace test {
 namespace time {
 
-TEST(EfdHmppTimeTest, Parse) {
+TEST(Wd3HmppTimeTest, Parse) {
   wd3::type::time time, now;
   std::string text;
 
@@ -24,7 +24,7 @@ TEST(EfdHmppTimeTest, Parse) {
   EXPECT_LT(now, time);
 }
 
-TEST(EfdHmppTimeTest, Format) {
+TEST(Wd3HmppTimeTest, Format) {
   wd3::type::time time;
   std::string text, original;
   size_t pos;

@@ -1,11 +1,25 @@
 #include <cmath>
 
+#include <algorithm>
+
 #include <gos/interpolate.h>
 
 #include <modules/hmpp/exception.h>
 #include <modules/hmpp/column.h>
 
 namespace wd3 {
+
+namespace convert {
+namespace to {
+static void vector(PointPtrVector& vector, PointsPtr& points, const int& count);
+} // namespace to
+namespace from {
+static void vector(PointsPtr& points, PointPtrVector& vector);
+} // namespace from
+} // namespace convert
+namespace compare {
+static bool points(const PointPtr& a, const PointPtr& b);
+} // namespace compare
 
 column::column(const int& size, const ::wd3::type::time& time) :
   _time(time),
@@ -25,6 +39,22 @@ column& column::operator=(const column& column) {
     assign(column);
   }
   return *this;
+}
+
+bool column::operator==(const column& column) const {
+  return _time == column._time;
+}
+
+bool column::operator!=(const column& column) const {
+  return _time != column._time;
+}
+
+bool column::operator<(const column& column) const {
+  return _time < column._time;
+}
+
+bool column::operator>(const column& column) const {
+  return _time > column._time;
 }
 
 double column::determination(const double& value) {
@@ -52,6 +82,16 @@ const point& column::at(const int& index) const {
   }
 }
 
+const ::wd3::type::time& column::time() const { return _time; }
+const int& column::size() const { return _size; }
+
+void column::sort() {
+  wd3::PointPtrVector vector;
+  wd3::convert::to::vector(vector, _points, _size);
+  std::sort(vector.begin(), vector.end(), wd3::compare::points);
+  wd3::convert::from::vector(_points, vector);
+}
+
 void column::assign(const column& column) {
   _time = column._time;
   _size = column._size;
@@ -70,8 +110,10 @@ void column::assign(const column& column) {
 
 int column::index(const double& value) const {
   for (int i = 1; i < _size; i++) {
-    if (value >= _points[i - 1]->depth() && value < _points[i]->depth()) {
-      return i;
+    if (is(i - 1) && is(i)) {
+      if (value >= _points[i - 1]->depth() && value < _points[i]->depth()) {
+        return i;
+      }
     }
   }
   return -1;
@@ -88,7 +130,31 @@ double column::interpolate(const point& first, const point& second, const double
   return gos::interpolate::linear(first.value(), second.value(), mu);
 }
 
-const ::wd3::type::time& column::time() const { return _time; }
-const int& column::size() const { return _size; }
+namespace convert {
+namespace to {
+void vector(PointPtrVector& vector, PointsPtr& points, const int& count) {
+  for (int i = 0; i < count; i++) {
+    vector.push_back(std::move(points[i]));
+  }
+}
+} // namespace to
+namespace from {
+void vector(PointsPtr& points, PointPtrVector& vector) {
+  int i = 0;
+  for (PointPtr& point : vector) {
+    points[i++] = std::move(point);
+  }
+}
+} // namespace from
+} // namespace convert
+namespace compare {
+bool points(const PointPtr& a, const PointPtr& b) {
+  if (((bool)a) && ((bool)b)) {
+    return a->depth() < b->depth();
+  } else {
+    return (bool)a;
+  }
+}
+} // namespace compare
 
 } // namespace wd3

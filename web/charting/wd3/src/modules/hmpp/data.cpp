@@ -1,6 +1,6 @@
 #include <cfloat>
 
-#include <vector>
+#include <algorithm>
 #include <limits>
 
 #include <modules/hmpp/data.h>
@@ -15,6 +15,8 @@ data::data(const int& size) noexcept :
 }
 
 const int& data::size() const { return _size; }
+
+const ::wd3::ColumnSize data::count() const { return _columns.size(); }
 
 void data::add(const column& column) {
   _columns.push_back(column);
@@ -72,6 +74,10 @@ ColumnIterator data::first() {
 
 ColumnIterator data::last() {
   return _columns.end();
+}
+
+void data::sort() {
+  std::sort(_columns.begin(), _columns.end());
 }
 
 void data::updatetimerange() {

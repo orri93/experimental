@@ -4,6 +4,7 @@ if(SDL_DESKTOP_TARGET)
   find_package(SDL REQUIRED)
 
   list(APPEND wd3_experiment_cpp_modules_hm_source
+    "statistics.cpp"
     "exception.cpp"
     "gradient.cpp"
     "context.cpp"
@@ -76,6 +77,11 @@ if(BUILD_TESTS)
 # find_package(SDL REQUIRED)
 
   list(APPEND wd3_experiment_cpp_modules_hm_testable_source
+    "statistics.cpp"
+    "exception.cpp"
+    "column.cpp"
+    "point.cpp"
+    "data.cpp"
     "time.cpp")
 
   list(APPEND wd3_experiment_cpp_modules_hm_testable_include

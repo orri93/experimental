@@ -17,6 +17,11 @@ interface ChartSize {
   height: number;
 }
 
+interface ChartLegend {
+  margin: number;
+  width: number;
+}
+
 interface ChartAxes {
   x: number;
   y: number;
