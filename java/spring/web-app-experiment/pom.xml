@@ -30,7 +30,7 @@
 		<log4j2-log-path>file://var/log/</log4j2-log-path>
 
 		<!-- Version properties for dependencies -->
-		<org.springframework-spring-framework-bom.version>5.1.2.RELEASE</org.springframework-spring-framework-bom.version>
+		<org.springframework-spring-framework-bom.version>5.1.18.RELEASE</org.springframework-spring-framework-bom.version>
 		<org.apache.camel-camel-parent.version>2.21.1</org.apache.camel-camel-parent.version>
 		<com.sun.xml.bind.version>2.2.11</com.sun.xml.bind.version>
 		<javax.xml.bind-jaxb-api.version>2.3.0</javax.xml.bind-jaxb-api.version>
