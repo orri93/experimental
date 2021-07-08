@@ -23,3 +23,5 @@ message(STATUS "  CMAKE_CURRENT_SOURCE_DIR  : ${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "  C   Compiler ID           : ${CMAKE_C_COMPILER_ID}")
 message(STATUS "  C   Compiler Version      : ${CMAKE_C_COMPILER_VERSION}")
 message(STATUS "  C   Compiler flags        : ${CMAKE_C_FLAGS}")
+
+message(STATUS "  open62541 Include         : ${open62541_INCLUDE_DIR}")
