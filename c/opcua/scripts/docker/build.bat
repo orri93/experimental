@@ -14,13 +14,13 @@ ECHO ---------------------------------------------------------------------------
 ECHO Docker build script for the %PROJECT_NAME%
 ECHO %PROJECT_NAME% root directory is defined as %PROJECT_ROOT_DIR%
 
+REM FOR /f "delims=" %%x IN ("%PROJECT_ROOT_DIR%\version.txt") DO SET VERSION=%%x
 SET /p VERSION=<"%PROJECT_ROOT_DIR%\version.txt"
 SET NUMBER=%VERSION%.%BUILD_NUMBER%
 
 SET CONTAINER=opcuaex
-SET REGISTRY=
-REM FOR /f "delims=" %%x IN ("%PROJECT_ROOT_DIR%\version.txt") DO SET VERSION=%%x
-REM SET IMAGE=%REGISTRY%/%CONTAINER%:%VERSION%-build
+REM SET REGISTRY=
+REM SET IMAGE=%REGISTRY%/%CONTAINER%:%NUMBER%-build
 SET IMAGE=%CONTAINER%:%NUMBER%-build
 SET FILE=%PROJECT_ROOT_DIR%\src\server\Dockerfile
 

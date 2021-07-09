@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <signal.h>
 
-#include <open62541/server.h>
+#include <open62541/server_config_default.h>
 #include <open62541/plugin/log_stdout.h>
 
 #define UA_TUTORIAL_GOS_TEST_VALUE_NODE_ID "test-value"
@@ -67,8 +67,9 @@ int main(void) {
   signal(SIGINT, stopHandler);
   signal(SIGTERM, stopHandler);
 
-  UA_ServerConfig *config = UA_ServerConfig_new_default();
-  UA_Server *server = UA_Server_new(config);
+  UA_Server *server = UA_Server_new();
+  UA_ServerConfig *config = UA_Server_getConfig(server);
+  UA_ServerConfig_setDefault(config);
 
   addGeneratedVariable(server);
   addValueCallbackToGeneratedVariable(server);
@@ -76,7 +77,6 @@ int main(void) {
 
   UA_StatusCode retval = UA_Server_run(server, &running);
   UA_Server_delete(server);
-  UA_ServerConfig_delete(config);
 
   return (int)retval;
 }
