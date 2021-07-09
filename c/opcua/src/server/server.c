@@ -2,6 +2,7 @@
 #include <signal.h>
 
 #include <open62541/server.h>
+#include <open62541/plugin/log_stdout.h>
 
 #define UA_TUTORIAL_GOS_TEST_VALUE_NODE_ID "test-value"
 #define UA_TUTORIAL_GOS_TEST_VALUE_NAME UA_TUTORIAL_GOS_TEST_VALUE_NODE_ID
