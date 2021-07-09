@@ -104,7 +104,16 @@ void addGeneratedVariable(UA_Server *server) {
   UA_NodeId parentNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
   UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
   UA_NodeId variableTypeNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE);
-  UA_Server_addVariableNode(server, currentNodeId, parentNodeId, parentReferenceNodeId, currentName, variableTypeNodeId, attr, NULL, NULL);
+  UA_Server_addVariableNode(
+    server,
+    currentNodeId,
+    parentNodeId,
+    parentReferenceNodeId,
+    currentName,
+    variableTypeNodeId,
+    attr,
+    NULL,
+    NULL);
 
   generateValue(server);
 }
@@ -157,7 +166,10 @@ UA_StatusCode readGenerated(
   const UA_NumericRange *range,
   UA_DataValue *dataValue) {
   UA_Double real = generate();
-  UA_Variant_setScalarCopy(&dataValue->value, &real, &UA_TYPES[UA_TUTORIAL_GOS_TEST_VALUE_TYPE]);
+  UA_Variant_setScalarCopy(
+    &dataValue->value,
+    &real,
+    &UA_TYPES[UA_TUTORIAL_GOS_TEST_VALUE_TYPE]);
   dataValue->hasValue = true;
   return UA_STATUSCODE_GOOD;
 }
@@ -186,8 +198,17 @@ void addGeneratedDataSourceVariable(UA_Server *server) {
   UA_DataSource timeDataSource;
   timeDataSource.read = readGenerated;
   timeDataSource.write = writeGenerated;
-  UA_Server_addDataSourceVariableNode(server, currentNodeId, parentNodeId, parentReferenceNodeId, currentName,
-                                      variableTypeNodeId, attr, timeDataSource, NULL, NULL);
+  UA_Server_addDataSourceVariableNode(
+    server,
+    currentNodeId,
+    parentNodeId,
+    parentReferenceNodeId,
+    currentName,
+    variableTypeNodeId,
+    attr,
+    timeDataSource,
+    NULL,
+    NULL);
 }
 
 /** It follows the main server code, making use of the above definitions. */
