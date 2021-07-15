@@ -8,7 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gos.OpcUa.Client.ConsoleApp
+namespace Gos.OpcUa.Client.Exp.ConsoleApp
 {
     public class ExampleClient : LibUA.Client
     {

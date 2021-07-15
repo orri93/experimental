@@ -61,3 +61,6 @@
 [submodule "web/charting/wd3/extern/date"]
 	path = web/charting/wd3/extern/date
 	url = https://github.com/HowardHinnant/date.git
+[submodule "extern/LibUA"]
+	path = extern/LibUA
+	url = https://github.com/nauful/LibUA.git
