@@ -13,6 +13,7 @@ namespace Gos.OpcUa.General.Client
         private const int DefaultTimeout = 1000;
 
         public bool UseCertificate { get; private set; }
+        public bool IgnoreBad { get; private set; }
 
         public string Target { get; private set; }
 

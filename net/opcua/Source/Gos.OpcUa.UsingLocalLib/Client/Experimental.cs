@@ -91,9 +91,11 @@ namespace Gos.OpcUa.Client
                 }
             }
 
+            DataValue[] dataValues = null;
+            ReadValues(client, out dataValues);
+
             client.Disconnect();
             client.Dispose();
-
 
             return Success;
         }
@@ -256,6 +258,29 @@ namespace Gos.OpcUa.Client
                     ex.Message));
             }
             return false;
+        }
+
+        private static readonly NodeId NodeIdBitPosition = new NodeId(2, "Wbc.rs_bit_position");
+        private static readonly NodeId NodeIdBlockHeight = new NodeId(2, "Wbc.rs_block_height");
+        private static readonly NodeId NodeIdFlowIn = new NodeId(2, "Wbc.rs_flow_in");
+        private static readonly NodeId NodeIdTest = new NodeId(1, "test-value");
+
+        private static void ReadValues(LibUA.Client client, out DataValue[] dataValues)
+        {
+            ReadValueId[] readValueIds = new ReadValueId[]
+            {
+                new ReadValueId(NodeIdTest, NodeAttribute.Value, null, new QualifiedName(0, null))
+            };
+
+            StatusCode readResult = client.Read(readValueIds, out dataValues);
+            if (Types.StatusCodeIsBad((uint)readResult))
+            {
+                Console.Error.WriteLine(String.Format(
+                    "Failed to Read from server '{0}' code: {1} ({2})",
+                    client.Target,
+                    readResult,
+                    (uint)readResult));
+            }
         }
     }
 }
