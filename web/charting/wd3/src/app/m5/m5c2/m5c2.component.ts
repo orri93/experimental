@@ -47,7 +47,7 @@ export class M5c2Component {
     const at = moment().subtract(configuration.range.time, 'seconds');
     for (let i = 0; i < configuration.mock.count; i++) {
       const points: Point[] = this.mockService.next();
-      this.wd3.addDataMomentUtc(points, at);
+      this.wd3.addDataMoment(points, at);
       at.add(configuration.range.time / configuration.mock.count, 'seconds');
     }
     this.mockService.depthStep *= 0.05;

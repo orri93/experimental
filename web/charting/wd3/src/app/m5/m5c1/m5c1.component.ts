@@ -38,9 +38,9 @@ export class M5c1Component<M extends EmscriptenModule = EmscriptenModule> implem
   axesSvg: any;
   wd3Canvas: any;
 
-  xScale: any;
-  yScale: any;
-  zScale: any;
+  xScale: d3.ScaleTime<number, number, never>;
+  yScale: d3.ScaleLinear<number, number, never>;
+  zScale: d3.ScaleLinear<number, number, never>;
 
   xRange: NumberRange = { from: DefaultRange.from, to: DefaultRange.to };
   yRange: NumberRange = { from: DefaultRange.from, to: DefaultRange.to };
@@ -215,16 +215,15 @@ export class M5c1Component<M extends EmscriptenModule = EmscriptenModule> implem
    *  Create Scales
    */
   private createScaleX(wasmSize: ChartSize): void {
-    this.xScale = d3.scaleLinear()
+    this.xScale = d3.scaleTime()
       .domain([this.xRange.from, this.xRange.to])
       .range([0, wasmSize.width]);
   }
 
   private createScaleY(wasmSize: ChartSize): void {
     this.yScale = d3.scaleLinear()
-      .domain([this.yRange.from, this.yRange.to])
-      // .range([size.height, 0]);
-      .range([0, wasmSize.height]);
+      .range([0, wasmSize.height])
+      .domain([this.yRange.from, this.yRange.to]);
   }
 
   private createScaleZ(wasmSize: ChartSize): void {
@@ -243,7 +242,7 @@ export class M5c1Component<M extends EmscriptenModule = EmscriptenModule> implem
       .attr('transform', 'translate('
         + this.axes.x + ','
         + (wasmSize.height + this.axes.y) + ')')
-      .call(d3.axisBottom(this.xScale).tickFormat(formatter));
+      .call(d3.axisBottom(this.xScale).tickFormat(formatter).ticks(12));
     g.selectAll('text')
       .style('text-anchor', 'end')
       .attr('dx', '-.8em')
