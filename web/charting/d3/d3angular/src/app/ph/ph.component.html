@@ -1,0 +1,7 @@
+<h3>{{pageName}}</h3>
+
+<span *ngFor="let page of pages">
+  <span class="page-button">
+    <a mat-raised-button color="primary" routerLink="{{ page.routerLink }}">{{ page.name }}</a>
+  </span>
+</span>
