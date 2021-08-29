@@ -64,3 +64,6 @@
 [submodule "extern/LibUA"]
 	path = extern/LibUA
 	url = https://github.com/nauful/LibUA.git
+[submodule "c/nn/extern/genann"]
+	path = c/nn/extern/genann
+	url = https://github.com/codeplea/genann.git
