@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
   struct iris* iris_array = 0;
   struct iris* training_array = 0;
   struct iris* verifying_array = 0;
+  genann* ann;
 
   /* Load the data from file. */
   count = load_data(argc > 1 ? argv[1] : 0, &iris_array);
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
      * 2 hidden layer(s) of 4 neurons.
      * 3 outputs (1 per class)
      */
-    genann* ann = genann_init(4, 2, 4, 3);
+    ann = genann_init(4, 2, 4, 3);
     if (ann) {
       // train_from_data(ann, training_array, training, 1000, 0.01); // 298 ms no failure
       train_from_data(ann, training_array, training, 500, 0.02);     // 104 ms no failure
