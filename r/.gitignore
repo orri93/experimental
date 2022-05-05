@@ -1,0 +1,14 @@
+# R
+*.RData
+*.Rhistory
+.Rproj.user/
+
+#
+# Visual Studio Code
+#
+.vscode/
+
+#
+# RPubs
+#
+rsconnect/
