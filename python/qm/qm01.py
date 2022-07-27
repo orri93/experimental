@@ -53,9 +53,7 @@ def animate(i):
   lrp.set_ydata(np.real(p))
   return [lv, lap, lrp]
 
-ani = animation.FuncAnimation(figure, animate, frames=600, interval=4, blit=True, save_count=50)
-# Combine all the operations and display
-
+ani = animation.FuncAnimation(figure, animate, frames=600, interval=2, blit=True, save_count=50)
 ani.save('qm01.gif', writer='imagemagick', fps=60)
 
 plt.show()
