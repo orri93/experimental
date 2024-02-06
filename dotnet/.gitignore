@@ -1,0 +1,20 @@
+# Visual Studio
+*.csproj.user
+*.v12.suo
+.vs/
+
+# Build
+obj/
+bin/
+
+# NuGet
+packages/
+
+# Logging
+*.log
+
+# Artifacts
+*.zip
+
+# Diff
+*.cs.bak

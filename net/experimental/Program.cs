@@ -6,7 +6,7 @@ namespace experimental
   {
     static void Main(string[] args)
     {
-      Console.WriteLine("Hello World!");
+      RegularExpression.Experiment();
     }
   }
 }
