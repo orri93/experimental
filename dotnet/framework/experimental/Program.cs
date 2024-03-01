@@ -10,6 +10,7 @@ namespace experimental
     {
         static void Main(string[] args)
         {
+            TimeCalculations.Experiment();
             RegularExpression.Experiment();
             FileProperties.Experiment();
         }
