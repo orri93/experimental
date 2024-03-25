@@ -10,6 +10,8 @@ namespace experimental
     {
         static void Main(string[] args)
         {
+            //EratosthenesSieve.Experiment();
+            ClockExperiment.Experiment();
             TimeCalculations.Experiment();
             RegularExpression.Experiment();
             FileProperties.Experiment();
