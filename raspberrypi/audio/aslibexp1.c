@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
   for (i = 0; i < 44100; i++) {
     short sample[2];
     sample[0] = (short) (32767.0 * sin(2 * M_PI * 440 * i / 44100));
-    sample[1] = sample[0];
+    sample[1] = (short) (32767.0 * cos(2 * M_PI * 440 * i / 44100));
     snd_pcm_writei(pcm, sample, 2);
   }
 
