@@ -18,8 +18,7 @@
 
 #define PCM_DEVICE "default"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   int i;
   snd_pcm_t *pcm;
 
@@ -30,10 +29,10 @@ int main(int argc, char *argv[])
   snd_pcm_set_params(pcm,
     SND_PCM_FORMAT_S16_LE,
     SND_PCM_ACCESS_RW_INTERLEAVED,
-    2, /* channels */
-    44100, /* sample rate */
-    1, /* allow resampling */
-    0); /* latency */
+    2,     /* channels         */
+    44100, /* sample rate      */
+    1,     /* allow resampling */
+    0);    /* latency          */
 
   /* Generate a sine wave */
   for (i = 0; i < 44100; i++) {
