@@ -2,7 +2,7 @@
  * Raspberry Pi Audio output experiment 1 using C asound library
  *
  * Compile:
- *   gcc -Wall -pthread -o aslibexp1 aslibexp1.c -lasound
+ *   gcc -Wall -pthread -o aslibexp1 aslibexp1.c -lm -lasound
  *
  * Usage:
  *   ./aslibexp1
@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <alsa/asoundlib.h>
 
