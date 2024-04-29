@@ -1,0 +1,64 @@
+/*
+ * Raspberry Pi Audio output experiment 2 using C asound library
+ *
+ * Compile:
+ *   gcc -Wall -pthread -o aslibexp2 aslibexp2.c -lm -lasound
+ *
+ * Usage:
+ *   ./aslibexp2
+ *
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <math.h>
+
+#include <alsa/asoundlib.h>
+
+#define PCM_DEVICE "default"
+
+int main(int argc, char *argv[]) {
+  int i;
+  short minval, maxval, val;
+  short sample[44100];
+  snd_pcm_t *pcm;
+
+  /* Open the ALSA sounde device */
+  snd_pcm_open(&pcm, PCM_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
+
+  /* Set the ALSA sound device parameters */
+  snd_pcm_set_params(pcm,
+    SND_PCM_FORMAT_S16_LE,
+    SND_PCM_ACCESS_RW_INTERLEAVED,
+    2,     /* channels         */
+    44100, /* sample rate      */
+    1,     /* allow resampling */
+    0);    /* latency          */
+
+  minval = SHRT_MAX;
+  maxval = SHRT_MIN;
+
+  /* Generate a sine wave */
+  for (i = 0; i < 44100; i++) {
+    val = (short) (32767.0 * sin(2 * M_PI * 440 * i / 44100));
+    if (val < minval) {
+      minval = val;
+    }
+    if (val > maxval) {
+      maxval = val;
+    }
+    sample[i] = val;
+  }
+
+  printf("Minimum value: %d\n", minval);
+  printf("Maximum value: %d\n", maxval);
+
+  snd_pcm_writei(pcm, sample, 44100);
+
+  /* Close the ALSA sound device */
+  snd_pcm_close(pcm);
+
+  return EXIT_SUCCESS;
+}
