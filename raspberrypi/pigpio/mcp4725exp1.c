@@ -154,6 +154,7 @@ int mcp4725writeregistermode(MCP4725 *mcp4725, const uint16_t value, uint8_t reg
 
 }
 
+/* Read the register value. See datasheet page 20. Typical 3 or 5 bytes. */
 uint8_t mcp4725readregister(MCP4725 *mcp4725, uint8_t* buffer, const uint8_t length) {
   int i2ch;
 
@@ -163,7 +164,7 @@ uint8_t mcp4725readregister(MCP4725 *mcp4725, uint8_t* buffer, const uint8_t len
     return i2ch;
   }
 
-  
+
 }
 
 /* General Call (the name comes from the datasheet) */
