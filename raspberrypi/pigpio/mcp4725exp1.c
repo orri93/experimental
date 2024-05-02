@@ -143,8 +143,6 @@ int mcp4725setvalue(MCP4725 *mcp4725, const uint16_t value) {
 }
 
 int mcp4725writefastmode(MCP4725 *mcp4725, const uint16_t value) {
-  
-
   uint8_t l = value & 0xFF;
   uint8_t h = ((value / 256) & 0x0F);  /* set C0 = C1 = 0, no PDmode */
   h = h | (mcp4725->powerdownmode << 4);
