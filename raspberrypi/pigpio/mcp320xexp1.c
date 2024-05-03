@@ -20,8 +20,6 @@
 #define SPI_CHANNEL       0
 #define SPI_SPEED   1000000
 
-static char* binray_repr(uint16_t value);
-
 int main(int argc, char *argv[]) {
   uint16_t value;
   MCP320X mcp320x;
@@ -59,13 +57,4 @@ int main(int argc, char *argv[]) {
   gpioTerminate();
 
   return 0;
-}
-
-char* binray_repr(uint16_t value) {
-  static char bin_str[17];
-  bin_str[16] = '\0';
-  for (int i = 15; i >= 0; i--) {
-    bin_str[15 - i] = (value & (1 << i)) ? '1' : '0';
-  }
-  return bin_str;
 }
