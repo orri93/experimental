@@ -105,12 +105,10 @@ typedef struct {
 
 typedef struct {
   Mcp320xSpi spi;
-  MCP320X_TYPE type;
-  uint16_t vref;
-  uint32_t speed;
+  int type;
 } MCP320X;
 
-void mcp320x_init(MCP320X* mcp320x, Mcp320xSpi* spi, MCP320X_TYPE type, uint16_t vref);
+void mcp320x_init(MCP320X* mcp320x, Mcp320xSpi* spi, int type);
 uint16_t mcp320x_read(MCP320X* mcp320x, uint16_t ch);
 
 #endif /* _MCP320X_H_ */

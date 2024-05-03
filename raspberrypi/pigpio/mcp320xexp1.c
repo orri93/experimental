@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   spi.baud = SPI_SPEED;
   spi.flags = 0;
 
-  mcp320x_init(&mcp320x, &spi, MCP320X_MCP3208, 3300);
+  mcp320x_init(&mcp320x, &spi, MCP320X_MCP3208);
 
   value = mcp320x_read(&mcp320x, MCP3208_SINGLE_0);
   printf("Channel 0: %d\n", value);
