@@ -207,3 +207,4 @@ CMakeSettings.json
 # Visual Studio CMake
 .vs/
 out/
+.Rproj.user
