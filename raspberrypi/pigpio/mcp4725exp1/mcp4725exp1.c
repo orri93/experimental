@@ -22,21 +22,19 @@
  * I2C bus 1 pins are
  *   SDA: GPIO2
  *   SCL: GPIO3
+ *
+ * The A0 pin on the MCP4725 is used to change the address
+ *   Normally the address is 0x62
+ *   But when A0 is connected to VDD, the address becomes 0x63
  */
-#define MCP4725_BUS        1
-#define MCP4725_ADDRESS 0x62
-#define MCP4725_FLAGS      0
+#define MCP4725_BUS         1
+#define MCP4725_ADDRESS  0x62
+#define MCP4725_FLAGS       0
+
+#define MCP4725_MAXIMUM 0xfff
 
 int main(int argc, char *argv[]) {
-  int ret, i2ch;
-  Mcp4725i2c mcp4725i2c;
-  Mcp4725 mcp4725;
-
-  mcp4725i2c.bus = MCP4725_BUS;
-  mcp4725i2c.address = MCP4725_ADDRESS;
-  mcp4725i2c.flags = MCP4725_FLAGS;
-
-  mcp4725init(&mcp4725, &mcp4725i2c);
+  int ret, i2ch, i;
 
   ret = gpioInitialise();
   if (ret < 0) {
@@ -51,7 +49,15 @@ int main(int argc, char *argv[]) {
   }
 
   printf("Setting the DAC to 0V\n");
-  mcp4725write(i2ch, 0);
+  mcp4725_write(i2ch, 0);
+  printf("Setting the DAC to nV\n");
+  mcp4725_write(i2ch, 255);
+  printf("Setting the DAC to maxV\n");
+  mcp4725_write(i2ch, MCP4725_MAXIMUM);
+
+  //for (i = 1; i <= MCP4725_MAXIMUM; i++) {
+  //  mcp4725_write(i2ch, i);
+  //}
 
   i2cClose(i2ch);
 
