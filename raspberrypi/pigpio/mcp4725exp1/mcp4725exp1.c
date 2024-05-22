@@ -48,16 +48,14 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  printf("Setting the DAC to 0V\n");
+  printf("Setting the DAC to zero\n");
   mcp4725_write(i2ch, 0);
-  printf("Setting the DAC to nV\n");
-  mcp4725_write(i2ch, 255);
-  printf("Setting the DAC to maxV\n");
+  printf("Setting the DAC to half\n");
+  mcp4725_write(i2ch, MCP4725_MAXIMUM / 2);
+  printf("Setting the DAC to max\n");
   mcp4725_write(i2ch, MCP4725_MAXIMUM);
-
-  //for (i = 1; i <= MCP4725_MAXIMUM; i++) {
-  //  mcp4725_write(i2ch, i);
-  //}
+  printf("Setting the DAC to zero\n");
+  mcp4725_write(i2ch, 0);  
 
   i2cClose(i2ch);
 
