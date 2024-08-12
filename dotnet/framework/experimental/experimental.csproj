@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClockExperiment.cs" />
+    <Compile Include="CryptoExperiment.cs" />
     <Compile Include="EratosthenesSieve.cs" />
     <Compile Include="FileProperties.cs" />
     <Compile Include="MovingStatistics.cs" />

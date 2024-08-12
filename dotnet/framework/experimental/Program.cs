@@ -10,6 +10,7 @@ namespace experimental
     {
         static void Main(string[] args)
         {
+            CryptoExperiment.Experiment();
             //Statistics.ExperimentA();
             Statistics.ExperimentB(123);
             Statistics.ExperimentB(456);
