@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:latest
+    env_file: db.env
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    networks:
+      - integration-experiment-a-net
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  activemq:
+    image: apache/activemq-classic:5.18.6
+    env_file: activemq.env
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+      - "1883:1883"
+    networks:
+      - integration-experiment-a-net
+    extra_hosts:
+      - "gosazure:${GOSAZURE}"
+    volumes:
+      - ./activemq-conf/activemq.xml:/opt/apache-activemq/conf/activemq.xml
+      - ./activemq-conf/camel.xml:/opt/apache-activemq/conf/camel.xml
+      - ./activemq-conf/jetty-realm.properties:/opt/apache-activemq/conf/jetty-realm.properties
+      - ./activemq-lib/postgresql-42.2.14.jar:/opt/apache-activemq/lib/postgresql-42.2.14.jar
+      - ./activemq-lib/camel/camel-sql-2.25.4.jar:/opt/apache-activemq/lib/camel/camel-sql-2.25.4.jar
+      - ./activemq-lib/camel/camel-jdbc-2.25.4.jar:/opt/apache-activemq/lib/camel/camel-jdbc-2.25.4.jar
+      - ./activemq-lib/camel/camel-jackson-2.25.4.jar:/opt/apache-activemq/lib/camel/camel-jackson-2.25.4.jar
+      - ./activemq-lib/optional/spring-jdbc-5.3.39.jar:/opt/apache-activemq/lib/optional/spring-jdbc-5.3.39.jar
+      - ./activemq-lib/optional/jackson-databind-2.9.10.7.jar:/opt/apache-activemq/lib/optional/jackson-databind-2.9.10.7.jar
+      - ./activemq-lib/optional/jackson-module-jaxb-annotations-2.9.10.jar:/opt/apache-activemq/lib/optional/jackson-module-jaxb-annotations-2.9.10.jar
+      - activemq-data:/opt/apache-activemq/data
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+  activemq-data:
+
+networks:
+  integration-experiment-a-net:

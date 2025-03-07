@@ -1,0 +1,118 @@
+ <!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!--
+
+    Lets deploy some Enterprise Integration Patterns inside the ActiveMQ Message Broker
+    For more information, see:
+
+    http://camel.apache.org
+
+    Include this file in your configuration to enable Camel
+
+    e.g. <import resource="camel.xml"/>
+
+-->
+<beans
+   xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+       Lets configure some Camel endpoints
+
+       http://camel.apache.org/components.html
+    -->
+    <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource" destroy-method="close">
+        <property name="serverName" value="db" />
+        <property name="databaseName" value="activemq" />
+        <property name="portNumber" value="5432" />
+        <property name="user" value="activemq" />
+        <property name="password" value="password" />
+        <property name="dataSourceName" value="postgres" />
+        <property name="initialConnections" value="1" />
+        <property name="maxConnections" value="10" />
+    </bean>
+
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="vm://localhost?create=false"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+    <bean id="activemqc" class="org.apache.camel.component.jms.JmsComponent" >
+        <property name="connectionFactory">
+          <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://gosazure:61616"/>
+            <property name="userName" value="${activemq.username}"/>
+            <property name="password" value="${activemq.password}"/>
+          </bean>
+        </property>
+    </bean>
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- Developing route -->
+        <route>
+            <from uri="activemq:topic:iam.indambmon1.temperature"/>
+            <setBody>
+                <simple>{"ts": "${date:now:yyyy-MM-dd HH:mm:ss.SSSZ}", "value": ${body}}</simple>
+            </setBody>
+            <to uri="activemq:queue:iam.dev1.temperature"/>
+        </route>
+        <route>
+            <from uri="activemq:topic:iam.indambmon1.temperature"/>
+            <setBody>
+                <simple>{"ts": "${date:now:yyyy-MM-dd HH:mm:ss.SSSZ}", "value": ${body}}</simple>
+            </setBody>
+            <to uri="activemq:queue:iam.dev2.temperature"/>
+        </route>
+        <route>
+            <from uri="activemq:queue:iam.dev1.temperature"/>
+            <unmarshal>
+                <json library="Jackson"/>
+            </unmarshal>
+            <setBody>
+                <simple>INSERT INTO iam VALUES ('${body[ts]}', 'indambmon1', 'temperature', ${body[value]})</simple>
+            </setBody>
+            <to uri="jdbc:postgres-ds"/>
+        </route>
+
+        <!-- dataFormats><json id="jack" library="Jackson"/></dataFormats -->
+
+        <!-- route>
+            <from uri="jetty:http://0.0.0.0:8080/jdbcWeb"/>
+            <when>
+                <simple>${headers.CamelHttpMethod} == "GET"</simple>
+                <setBody>
+                    <constant>SELECT * FROM post_data</constant>
+                </setBody>
+                <to uri="jdbc:postgres-ds"/>
+            </when>
+       </route -->
+
+    </camelContext>
+
+
+
+</beans>
+

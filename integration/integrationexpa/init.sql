@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS iam (
+  ts TIMESTAMPTZ NOT NULL,
+  device VARCHAR(16) NOT NULL,
+  measurement VARCHAR(16) NOT NULL,
+  value decimal NOT NULL
+);
