@@ -1,0 +1,8 @@
+[project]
+name = "codeinfolders"
+version = "0.1.0"
+description = "A project with code in folders"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0", "wheel"]
