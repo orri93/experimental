@@ -24,10 +24,8 @@ agent = Agent(
 )
 
 async def main():
-  runner = Runner(agent=agent)
-  question = "What is the current price of AAPL stock?"
-  response = await runner.run(question)
-  print(f"Response: {response}")
+  result = await Runner.run(agent, input="What is the current price of AAPL stock?")
+  print(result.final_output)
 
 if __name__ == "__main__":
   asyncio.run(main())
