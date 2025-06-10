@@ -31,5 +31,11 @@ export OPENAI_API_KEY=your_openai_api_key
 ## Run the Agent
 
 ```bash
-python main.py
+python aiagent01.py
+```
+
+## Run the Agent with Debugging
+
+```bash
+python -m debugpy --listen 5678 --wait-for-client aiagent01.py
 ```

@@ -19,9 +19,8 @@ Question: {question}
 
 agent = Agent(
   name="Financial Assistant",
-  description="An AI assistant that provides real-time stock prices.",
-  tools=[get_stock_price],
-  template=template
+  instructions=template,
+  tools=[get_stock_price]
 )
 
 async def main():
