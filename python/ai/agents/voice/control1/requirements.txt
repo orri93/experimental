@@ -1,0 +1,4 @@
+numpy
+dotenv
+sounddevice
+openai-agents[voice]
