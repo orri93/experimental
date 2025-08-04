@@ -1,0 +1,5 @@
+numpy
+dotenv
+sounddevice
+openai-agents[voice]
+adafruit-blinka
