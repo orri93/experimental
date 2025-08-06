@@ -1,4 +1,3 @@
-import curses
 import time
 
 import numpy as np
@@ -9,40 +8,34 @@ import digitalio
 
 from typing import Optional
 
-def _record_audio(screen: curses.window, button: digitalio.DigitalInOut, device: int, samplerate: float) -> npt.NDArray[np.float32]:
+def _record_audio(button: digitalio.DigitalInOut, device: int, samplerate: float) -> npt.NDArray[np.float32]:
   """
-  Internal curses-based recording. Press space to start/stop.
+  Button-based recording. Press button to start/stop.
   """
   recording = False
   audio_buffer: list[npt.NDArray[np.float32]] = []
+  last_button_state = button.value
 
   def _audio_callback(indata, frames, time_info, status):
     if status:
-      screen.addstr(f"Status: {status}\n")
-      screen.refresh()
+      print(f"Status: {status}")
     if recording:
       audio_buffer.append(indata.copy())
 
-  screen.nodelay(True)
-  screen.clear()
-  screen.addstr(
-    f"Press <spacebar> to start recording at {int(samplerate)} Hz. "
-    "Press <spacebar> again to stop.\n"
-  )
-  screen.refresh()
+  print(f"Press button to start recording at {int(samplerate)} Hz. Press button again to stop.")
 
   with sd.InputStream(device=device, samplerate=samplerate, channels=1, dtype=np.float32, callback=_audio_callback):
     while True:
-      key = screen.getch()
-      if key == ord(' '):
+      current_button_state = button.value
+      # Detect button press (transition from False to True)
+      if current_button_state and not last_button_state:
         recording = not recording
         if recording:
-          screen.addstr("Recording started...\n")
+          print("Recording started...")
         else:
-          screen.addstr("Recording stopped.\n")
-          screen.refresh()
+          print("Recording stopped.")
           break
-        screen.refresh()
+      last_button_state = current_button_state
       time.sleep(0.05)
 
   if audio_buffer:
@@ -52,9 +45,9 @@ def _record_audio(screen: curses.window, button: digitalio.DigitalInOut, device:
 
 def record_audio(button: digitalio.DigitalInOut, device: int, samplerate: float) -> npt.NDArray[np.float32]:
   """
-  Wrapper for curses recording. Returns recorded float32 audio at given samplerate.
+  Button-based recording. Returns recorded float32 audio at given samplerate.
   """
-  return curses.wrapper(lambda scr: _record_audio(scr, button, device, samplerate))
+  return _record_audio(button, device, samplerate)
 
 class AudioPlayer:
   """
