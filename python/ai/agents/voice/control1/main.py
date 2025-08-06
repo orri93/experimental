@@ -16,8 +16,8 @@ load_dotenv()
 
 audio_input_device = int(os.getenv("AUDIO_INPUT_DEVICE", 0))
 audio_output_device = int(os.getenv("AUDIO_OUTPUT_DEVICE", 0))
-audio_samplerate = float(os.getenv("AUDIO_SAMPLERATE", 44100))
-
+audio_input_sample_rate = float(os.getenv("AUDIO_INPUT_SAMPLERATE", 24000))
+audio_output_sample_rate = float(os.getenv("AUDIO_OUTPUT_SAMPLERATE", 24000))
 
 class WorkflowCallbacks(SingleAgentWorkflowCallbacks):
   def on_run(self, workflow: SingleAgentVoiceWorkflow, transcription: str) -> None:
@@ -35,7 +35,7 @@ async def main():
       print("\nReady for voice command...")
       
       # Record audio input
-      audio_buffer = record_audio(audio_input_device, audio_samplerate)
+      audio_buffer = record_audio(audio_input_device, audio_input_sample_rate)
       
       # Check if any audio was recorded
       if len(audio_buffer) == 0:
@@ -48,7 +48,7 @@ async def main():
       result = await pipeline.run(audio_input)
 
       print("Playing response...")
-      with AudioPlayer(device=audio_output_device, samplerate=audio_samplerate) as player:
+      with AudioPlayer(device=audio_output_device, samplerate=audio_output_sample_rate) as player:
         async for event in result.stream():
           if event.type == "voice_stream_event_audio":
             if event.data is not None:
