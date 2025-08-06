@@ -15,7 +15,8 @@ load_dotenv()
 
 audio_input_device = int(os.getenv("AUDIO_INPUT_DEVICE", 0))
 audio_output_device = int(os.getenv("AUDIO_OUTPUT_DEVICE", 0))
-audio_samplerate = float(os.getenv("AUDIO_SAMPLERATE", 44100))
+audio_input_sample_rate = float(os.getenv("AUDIO_INPUT_SAMPLERATE", 24000))
+audio_output_sample_rate = float(os.getenv("AUDIO_OUTPUT_SAMPLERATE", 24000))
 
 
 class WorkflowCallbacks(SingleAgentWorkflowCallbacks):
@@ -25,11 +26,11 @@ class WorkflowCallbacks(SingleAgentWorkflowCallbacks):
 async def main():
   pipeline = VoicePipeline(workflow=SingleAgentVoiceWorkflow(control_agent, callbacks=WorkflowCallbacks()))
 
-  audio_input = AudioInput(buffer=record_audio(button, audio_input_device, audio_samplerate))
+  audio_input = AudioInput(buffer=record_audio(button, audio_input_device, audio_input_sample_rate))
 
   result = await pipeline.run(audio_input)
 
-  with AudioPlayer(device=audio_output_device, samplerate=audio_samplerate) as player:
+  with AudioPlayer(device=audio_output_device, samplerate=audio_output_sample_rate) as player:
     async for event in result.stream():
       if event.type == "voice_stream_event_audio":
         player.add_audio(event.data)
