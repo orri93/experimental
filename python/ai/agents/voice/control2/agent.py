@@ -4,13 +4,13 @@ import digitalio
 from agents import Agent, function_tool
 from agents.extensions.handoff_prompt import prompt_with_handoff_instructions
 
-_red_led = digitalio.DigitalInOut(board.D18)
+_red_led = digitalio.DigitalInOut(board.D5)
 _red_led.direction = digitalio.Direction.OUTPUT
 
-_green_led = digitalio.DigitalInOut(board.D23)
+_green_led = digitalio.DigitalInOut(board.D6)
 _green_led.direction = digitalio.Direction.OUTPUT
 
-_yellow_led = digitalio.DigitalInOut(board.D24)
+_yellow_led = digitalio.DigitalInOut(board.D13)
 _yellow_led.direction = digitalio.Direction.OUTPUT
 
 @function_tool
